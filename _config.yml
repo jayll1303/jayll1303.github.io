@@ -6,4 +6,5 @@ remote_theme: pages-themes/hacker@v0.2.0
 plugins:
   - jekyll-remote-theme
 repository: jayll1303/jayll1303.github.io
+future: true
 
