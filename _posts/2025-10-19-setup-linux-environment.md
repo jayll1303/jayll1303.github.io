@@ -3,9 +3,8 @@ layout: post
 title: "Setup Linux Environment"
 date: 2025-10-20 00:33:00 +0000
 categories: [IT]
+tags: linux, git, python
 ---
-
-# Setup linux environment
 
 ## Git & Github
 
