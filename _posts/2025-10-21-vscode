@@ -1,0 +1,18 @@
+---
+layout: post
+title: "VSCode tips/tricks/hotkey"
+date: 2025-10-20 00:33:00 +0000
+categories: [IT]
+tags: [vscode, tips, trick, hotkey]
+author: "JayLL"
+---
+
+## Wrap Lines
+
+Use hotkey ```Alt+Z``` or SETTING: ```Ctrl+,``` then search for ```word wrap``` keyword
+
+## Collapse code ranges
+
+```Ctrl+K Ctrl+<number>``` for example ```Ctrl+K Ctrl+3``` 
+
+⚠️Note: In [Cursor](https://www.cursor.com/): ```Ctrl+M Ctrl+3```
