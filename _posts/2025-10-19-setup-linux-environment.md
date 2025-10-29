@@ -82,6 +82,13 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo systemctl start docker
 ```
 
+[Run docker without ```sudo```](https://docs.docker.com/engine/install/linux-postinstall/)
+
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
 ## [Docker Compose](https://docs.docker.com/compose/install/linux/)
 
 ### Install using the repository
