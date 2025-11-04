@@ -3,7 +3,7 @@ layout: post
 title: "Useful linux command"
 date: 2025-10-28 01:09:22 +0000
 categories: [Prompt templates]
-tags: [prompt, prompt template, gemini, genai, stable diffusion, flux, nano banana, avatar]
+tags: [Linux, linux, command]
 author: "JayLL"
 ---
 
