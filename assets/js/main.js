@@ -311,51 +311,31 @@
       pageContent.appendChild(thread);
       
       // Enhance code blocks with copy button
-      const botCodeBlocks = pageContent.querySelectorAll('.message--bot pre > code');
-      botCodeBlocks.forEach(function(code) {
+      const allCodeBlocks = pageContent.querySelectorAll('pre > code');
+      allCodeBlocks.forEach(function(code) {
         const pre = code.parentElement;
         if (pre.parentElement && pre.parentElement.classList.contains('codeblock')) return;
-        
-        // Detect language
-        let lang = 'text';
-        (code.className || '').split(/\s+/).some(function(cls) {
-          const match = cls.match(/^language-([a-z0-9+_-]+)/i);
-          if (match) {
-            lang = match[1].toLowerCase();
-            return true;
-          }
-          return false;
-        });
         
         // Create wrapper
         const wrap = document.createElement('div');
         wrap.className = 'codeblock';
         
-        const header = document.createElement('div');
-        header.className = 'codeblock__header';
-        
-        const langEl = document.createElement('div');
-        langEl.className = 'codeblock__lang';
-        langEl.textContent = lang;
-        
         const btn = document.createElement('button');
         btn.className = 'codeblock__btn';
         btn.type = 'button';
-        btn.textContent = 'Copy code';
-        
-        header.appendChild(langEl);
-        header.appendChild(btn);
+        btn.innerHTML = '❏';
+        btn.setAttribute('aria-label', 'Copy code');
         
         pre.parentElement.insertBefore(wrap, pre);
-        wrap.appendChild(header);
         wrap.appendChild(pre);
+        wrap.appendChild(btn);
         
         // Copy functionality
         btn.addEventListener('click', function() {
           const text = code.innerText;
           const done = () => {
-            btn.textContent = 'Copied!';
-            setTimeout(() => btn.textContent = 'Copy code', 1200);
+            btn.innerHTML = '✓';
+            setTimeout(() => btn.innerHTML = '📋', 1200);
           };
           
           const fallbackCopy = () => {

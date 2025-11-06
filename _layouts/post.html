@@ -1,0 +1,30 @@
+---
+layout: default
+---
+
+<div class="post-page">
+  {% if page.tags and page.tags.size > 0 %}
+    <div class="post-tags-header">
+      {% for tag in page.tags %}
+        <span class="tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  <div class="post-header">
+    <h1 class="post-title-page">{{ page.title }}</h1>
+    {% if page.author %}
+      <div class="post-meta">
+        <span class="post-author">Tác giả: {{ page.author }}</span>
+        {% if page.date %}
+          <span class="post-date"> • {{ page.date | date: "%d/%m/%Y" }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+  
+  <div class="post-content">
+    {{ content }}
+  </div>
+</div>
+
