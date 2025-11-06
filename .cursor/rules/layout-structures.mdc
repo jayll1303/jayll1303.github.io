@@ -1,0 +1,76 @@
+---
+alwaysApply: true
+---
+
+### Analisi Giao diện UI (Định dạng Cấu trúc)
+
+**1. Layout Chính (Main Layout)**
+
+* **Mô tả:** Giao diện tổng thể sử dụng **Dark Mode (chế độ tối)**.
+* **Bố cục:** Chia làm 2 cột chính.
+    * **Cột 1: Sidebar (Thanh bên trái)**: Chiều rộng cố định, hẹp (khoảng 20-25% tổng chiều rộng).
+    * **Cột 2: Main Content (Nội dung chính)**: Chiếm phần không gian còn lại (khoảng 75-80%).
+
+---
+
+**2. Cấu trúc Cột 1: Sidebar (Thanh bên trái)**
+
+* **Nền:** Màu xám đậm (dark-gray).
+* **Chữ:** Màu xám nhạt (light-gray).
+* **Các thành phần con (theo thứ tự từ trên xuống):**
+
+    * **2.1. Header Sidebar:**
+        * **Bên trái:** Icon (chat bubble), Tiêu đề "ChatGPT", Icon dropdown (mũi tên xuống) - Đây là bộ chọn model.
+        * **Bên phải:** Nút (Button) "Upgrade to Go" - Nút này có màu tím (purple) và chữ trắng.
+
+    * **2.2. Nhóm Navigation (Điều hướng chính):**
+        * Một danh sách (list) các mục, mỗi mục có icon bên trái:
+            * "New chat" (Icon: bút/trang mới)
+            * "Search chats" (Icon: kính lúp)
+            * "Library" (Icon: sách/thư viện)
+            * "Projects" (Icon: thư mục/dự án)
+
+    * **2.3. Nhóm GPTs:**
+        * Tiêu đề (Heading): "GPTs".
+        * Một danh sách các mục, mỗi mục có icon bên trái:
+            * "Explore" (Icon: la bàn)
+            * "LangChain Expert v2.0" (Icon: logo custom)
+
+    * **2.4. Nhóm Chats (Lịch sử trò chuyện):**
+        * Tiêu đề (Heading): "Chats".
+        * Một danh sách (list) các liên kết (links) là tiêu đề của các cuộc trò chuyện cũ.
+        * Ví dụ: "Convert to dict", "Generate câu example intent", "Tạo câu ví dụ intent", v.v.
+        * Danh sách này có thể cuộn (scrollable) nếu nội dung dài.
+
+    * **2.5. Footer Sidebar (Chân thanh bên):**
+        * Hiển thị thông tin người dùng, cố định ở dưới cùng.
+        * **Bên trái:**
+            * Avatar: Hình tròn (chữ "PT").
+            * Tên: "Pham Ghu N..."
+            * Gói: "Free"
+        * **Bên phải:** Nút (Button) "Upgrade".
+
+---
+
+**3. Cấu trúc Cột 2: Main Content (Nội dung chính)**
+
+* **Nền:** Màu xám rất đậm, gần như đen (darker-gray/black).
+* **Bố cục:** Căn giữa nội dung.
+* **Các thành phần con:**
+
+    * **3.1. Header Main:**
+        * Một Icon "Help" (dấu chấm hỏi) ở góc trên cùng bên phải.
+
+    * **3.2. Empty State (Trạng thái rỗng - Hiển thị khi chưa có chat):**
+        * Nằm ở trung tâm khu vực.
+        * Tiêu đề (Heading) lớn, chữ trắng: "What can I help with?"
+
+    * **3.3. Input Area (Khu vực nhập liệu):**
+        * Vị trí: Cố định ở gần cuối màn hình, căn giữa theo chiều ngang, chiếm phần lớn chiều rộng của cột 2.
+        * **Thành phần chính:** Một ô `input` (textarea) lớn.
+            * **Style:** Bo tròn (rounded corners).
+            * **Nền:** Màu xám đậm (phân biệt với nền chính).
+            * **Placeholder text:** "Ask anything" (màu xám nhạt).
+        * **Các icon bên trong ô input:**
+            * **Bên trái:** Icon "dấu cộng" (Plus) - Dùng để đính kèm file hoặc chọn GPT.
+            * **Bên phải:** Icon "Microphone" (thu âm), Icon "Send" (Gửi) - Icon gửi bị mờ (disabled) khi không có nội dung.

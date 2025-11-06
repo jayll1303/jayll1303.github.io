@@ -1,0 +1,36 @@
+---
+layout: default
+---
+
+<div class="category-page">
+  <h1 class="category-title">{{ page.category_name }}</h1>
+  
+  {% assign category_posts = site.posts | where_exp: "post", "post.categories contains page.category_name" %}
+  {% assign sorted_posts = category_posts | sort: 'date' | reverse %}
+  
+  {% if sorted_posts.size > 0 %}
+    <div class="category-posts">
+      <p class="category-count">{{ sorted_posts.size }} bài viết</p>
+      <ul class="posts-list">
+        {% for post in sorted_posts %}
+          <li class="post-item">
+            <a href="{{ post.url | relative_url }}" class="post-link">
+              <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+              <span class="post-title">{{ post.title }}</span>
+            </a>
+            {% if post.tags and post.tags.size > 0 %}
+              <div class="post-tags">
+                {% for tag in post.tags %}
+                  <span class="tag">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <p class="no-posts">Chưa có bài viết nào trong category này.</p>
+  {% endif %}
+</div>
+
