@@ -1,0 +1,32 @@
+/* Utilities */
+
+/* Scrollbars - consistent with dark theme */
+.sidebar__scroll,
+.main__content {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-gutter: stable both-edges; /* prevent layout shift */
+}
+/* WebKit */
+.sidebar__scroll::-webkit-scrollbar,
+.main__content::-webkit-scrollbar {
+  width: var(--spacing-md);
+  height: var(--spacing-md);
+}
+.sidebar__scroll::-webkit-scrollbar-track,
+.main__content::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+.sidebar__scroll::-webkit-scrollbar-thumb,
+.main__content::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent; /* creates inset pill */
+  background-clip: content-box;
+}
+.sidebar__scroll::-webkit-scrollbar-thumb:hover,
+.main__content::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+

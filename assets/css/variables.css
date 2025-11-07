@@ -1,0 +1,220 @@
+:root {
+  --bg: #0e0f10;
+  --bg-elev: #1b1d1f;
+  --bg-elev-2: #232528;
+  --text: #e6e7e9;
+  --muted: #9aa0a6;
+  --accent: #7c5cff;
+  --border: #2a2d31;
+  --green: #10b981;
+  /* Scrollbar tones */
+  --scrollbar-thumb: #3a3f45;
+  --scrollbar-thumb-hover: #4a5057;
+  --scrollbar-track: transparent;
+  /* Footer overlay gradient (dark) */
+  --overlay-start: rgba(14,15,16,.9);
+  --overlay-end: rgba(14,15,16,1);
+  /* Unified chat width to match the composer (responsive) */
+  --chat-max-width: clamp(280px, 92vw, 880px);
+  
+  /* Spacing system */
+  --spacing: .25rem;
+  --spacing-1: calc(var(--spacing) * 1);    /* 0.25rem = 4px */
+  --spacing-2: calc(var(--spacing) * 2);    /* 0.5rem = 8px */
+  --spacing-3: calc(var(--spacing) * 3);    /* 0.75rem = 12px */
+  --spacing-4: calc(var(--spacing) * 4);    /* 1rem = 16px */
+  --spacing-5: calc(var(--spacing) * 5);    /* 1.25rem = 20px */
+  --spacing-6: calc(var(--spacing) * 6);    /* 1.5rem = 24px */
+  --spacing-7: calc(var(--spacing) * 7);    /* 1.75rem = 28px */
+  --spacing-8: calc(var(--spacing) * 8);    /* 2rem = 32px */
+  --spacing-9: calc(var(--spacing) * 9);    /* 2.25rem = 36px */
+  --spacing-10: calc(var(--spacing) * 10);  /* 2.5rem = 40px */
+  --spacing-15: calc(var(--spacing) * 15);  /* 3.75rem = 60px */
+  --spacing-20: calc(var(--spacing) * 20);  /* 5rem = 80px */
+  
+  /* Common spacing values (semantic names) */
+  --spacing-xs: calc(var(--spacing) * 1.5);  /* 0.375rem = 6px */
+  --spacing-sm: calc(var(--spacing) * 2);    /* 0.5rem = 8px */
+  --spacing-md: calc(var(--spacing) * 2.5);  /* 0.625rem = 10px */
+  --spacing-lg: calc(var(--spacing) * 3);    /* 0.75rem = 12px */
+  --spacing-xl: calc(var(--spacing) * 3.5);  /* 0.875rem = 14px */
+  --spacing-2xl: calc(var(--spacing) * 4);   /* 1rem = 16px */
+  --spacing-3xl: calc(var(--spacing) * 4.5); /* 1.125rem = 18px */
+  --spacing-4xl: calc(var(--spacing) * 5);   /* 1.25rem = 20px */
+  --spacing-5xl: calc(var(--spacing) * 6);   /* 1.5rem = 24px */
+  --spacing-6xl: calc(var(--spacing) * 7);   /* 1.75rem = 28px */
+  --spacing-7xl: calc(var(--spacing) * 9);   /* 2.25rem = 36px */
+  --spacing-8xl: calc(var(--spacing) * 10);  /* 2.5rem = 40px */
+  --spacing-9xl: calc(var(--spacing) * 15);  /* 3.75rem = 60px */
+  --spacing-10xl: calc(var(--spacing) * 20); /* 5rem = 80px */
+  
+  /* Breakpoints */
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+  
+  /* Container sizes */
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+  
+  /* Font sizes */
+  --text-xs: .75rem;
+  --text-xs--line-height: 1.33333;
+  --text-sm: .875rem;
+  --text-sm--line-height: 1.42857;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.55556;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.4;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.33333;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 1.11111;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 1;
+  
+  /* Font weights */
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* Letter spacing */
+  --tracking-tighter: -.05em;
+  --tracking-tight: -.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: .025em;
+  --tracking-wider: .05em;
+  --tracking-widest: .1em;
+  
+  /* Line heights */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  
+  /* Border radius */
+  --radius-xs: .125rem;
+  --radius-sm: .25rem;
+  --radius-md: .375rem;
+  --radius-lg: .5rem;
+  --radius-xl: .75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+  --radius-6xl: 1.1rem;
+  
+  /* Shadows */
+  --shadow-lg: 0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  --drop-shadow-xs: 0 1px 1px #0000000d;
+  --drop-shadow-sm: 0 1px 2px #00000026;
+  --drop-shadow-md: 0 3px 3px #0000001f;
+  --drop-shadow-lg: 0 4px 4px #00000026;
+  --drop-shadow-xl: 0 9px 7px #0000001a;
+  --drop-shadow-2xl: 0 25px 25px #00000026;
+  
+  /* Transitions */
+  --ease-in: cubic-bezier(.4,0,1,1);
+  --ease-out: cubic-bezier(0,0,.2,1);
+  --ease-in-out: cubic-bezier(.4,0,.2,1);
+  --default-transition-duration: .15s;
+  --default-transition-timing-function: cubic-bezier(.4,0,.2,1);
+  
+  /* Animations */
+  --animate-spin: spin 1s linear infinite;
+  --animate-pulse: pulse 2s cubic-bezier(.4,0,.6,1)infinite;
+  --animate-bounce: bounce 1s infinite;
+  
+  /* Blur */
+  --blur-xs: 4px;
+  --blur-sm: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --blur-2xl: 40px;
+  --blur-3xl: 64px;
+  
+  /* Aspect ratio */
+  --aspect-video: 16/9;
+  
+  /* Typography system */
+  --text-heading-2: 1.5rem;
+  --text-heading-2--line-height: 1.75rem;
+  --text-heading-2--letter-spacing: -.015625rem;
+  --text-heading-2--font-weight: 600;
+  --text-heading-3: 1.125rem;
+  --text-heading-3--line-height: 1.625rem;
+  --text-heading-3--letter-spacing: -.028125rem;
+  --text-heading-3--font-weight: 600;
+  --text-body-regular: 1rem;
+  --text-body-regular--line-height: 1.625rem;
+  --text-body-regular--letter-spacing: -.025rem;
+  --text-body-regular--font-weight: 400;
+  --text-body-small-regular: .875rem;
+  --text-body-small-regular--line-height: 1.125rem;
+  --text-body-small-regular--letter-spacing: -.01875rem;
+  --text-body-small-regular--font-weight: 400;
+  --text-body-small-emphasized: .875rem;
+  --text-body-small-emphasized--line-height: 1.125rem;
+  --text-body-small-emphasized--letter-spacing: -.01875rem;
+  --text-body-small-emphasized--font-weight: 600;
+  --text-footnote-regular: .8125rem;
+  --text-footnote-regular--line-height: 1.125rem;
+  --text-footnote-regular--letter-spacing: -.005rem;
+  --text-footnote-regular--font-weight: 400;
+  --text-monospace: .9375rem;
+  --text-monospace--line-height: 1.375rem;
+  --text-monospace--letter-spacing: -.025rem;
+  --text-monospace--font-weight: 400;
+  --text-caption-regular: .75rem;
+  --text-caption-regular--line-height: 1rem;
+  --text-caption-regular--letter-spacing: -.00625rem;
+  --text-caption-regular--font-weight: 400;
+  
+  /* Touch targets */
+  --tap-padding-pointer: 32px;
+  --tap-padding-mobile: 44px;
+  --focus-outline-margin-default: 4px;
+}
+
+/* Light theme overrides */
+.app.app--light {
+  /* Close to ChatGPT light palette */
+  --bg: #f7f7f8;             /* app background */
+  --bg-elev: #ffffff;        /* surfaces (sidebar, composer) */
+  --bg-elev-2: #f2f3f5;      /* hover */
+  --text: #111827;           /* primary text */
+  --muted: #6b7280;          /* secondary text */
+  --accent: #7c5cff;         /* upgrade button */
+  --border: #e5e7eb;         /* subtle borders */
+  --green: #059669;
+  --scrollbar-thumb: #d5d8de;
+  --scrollbar-thumb-hover: #c7ccd5;
+  --scrollbar-track: transparent;
+  /* Footer overlay gradient (light) */
+  --overlay-start: rgba(247,247,248,.9);
+  --overlay-end: rgba(247,247,248,1);
+}
+

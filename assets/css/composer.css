@@ -1,0 +1,20 @@
+/* Composer - default state (sticky at bottom when not home) */
+.composer { position: sticky; bottom: 0; padding: var(--spacing-3xl) var(--spacing-2xl); background: linear-gradient(180deg, transparent, var(--overlay-start) 20%, var(--overlay-end) 60%); margin-top: auto; }
+.composer__inner { max-width: var(--chat-max-width); margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--spacing-sm); background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-6xl); padding: var(--spacing-lg); }
+.composer__addon { background: transparent; border: 0; color: var(--muted); font-size: var(--text-lg); padding: var(--spacing-xs); cursor: pointer; }
+.composer__input { width: 100%; resize: none; background: transparent; color: var(--text); border: 0; outline: none; font: inherit; font-size: var(--text-base); padding: var(--spacing-sm); }
+.composer__actions { display: flex; align-items: center; gap: var(--spacing-sm); }
+.composer__hint { max-width: var(--chat-max-width); margin: var(--spacing-xs) auto 0; color: var(--muted); font-size: var(--text-xs); text-align: center; }
+
+.app.is-home .composer { 
+  position: relative; 
+  width: 100%; 
+  max-width: var(--chat-max-width); 
+  padding: 0 var(--spacing-2xl); 
+  background: transparent; 
+  margin: 0;
+  margin-top: 0 !important;
+}
+.app.is-home .composer__inner { background: var(--bg-elev); border: 1px solid var(--border); }
+.app.is-home .composer__hint { display: none; }
+

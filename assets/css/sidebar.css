@@ -1,0 +1,237 @@
+/* Sidebar */
+.sidebar {
+  background: var(--bg-elev);
+  border-right: 1px solid var(--border);
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* header, scroll area, footer */
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-xl) 0;
+  height: 100dvh;
+  overflow: hidden; /* contain internal scroller */
+  width: clamp(var(--container-xs), 25vw, var(--container-sm));
+  margin: 0;
+  transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              gap 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar__scroll { 
+  overflow: auto; 
+  display: grid; 
+  gap: var(--spacing-xl); 
+  padding-right: var(--spacing-1);
+  transition: gap 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              padding-top 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar__header { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  min-height: var(--spacing-10xl); /* Cố định chiều cao tối thiểu */
+  height: var(--spacing-10xl); /* Cố định chiều cao */
+  transition: justify-content 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar__brand { 
+  display: grid; 
+  grid-template-columns: var(--spacing-4xl) 1fr; 
+  align-items: center; 
+  column-gap: var(--spacing-sm); 
+  color: var(--text);
+  min-height: var(--spacing-10xl); /* Cố định chiều cao tối thiểu */
+  height: var(--spacing-10xl); /* Cố định chiều cao */
+  position: relative; /* Để text có thể dùng position: absolute */
+  padding: 0 var(--spacing-lg); /* Căn chỉnh với nav items */
+  transition: grid-template-columns 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              padding 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar__brand img {
+  width: var(--spacing-4xl);
+  height: var(--spacing-4xl);
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.brand__title { font-weight: 600; font-size: var(--text-sm); }
+.sidebar .nav__item span + span,
+.sidebar .section__title,
+.sidebar .user__meta,
+.sidebar .btn--outline {
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              width 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              margin 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              position 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              height 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+.brand__subtitle { font-size: var(--text-xs); color: var(--muted); }
+.icon { 
+  opacity: .9; 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-5xl);
+  height: var(--spacing-5xl);
+  font-size: var(--text-lg);
+  line-height: 1;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn { border: 0; padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--radius-2xl); cursor: pointer; font-size: var(--text-sm); }
+.btn--upgrade { background: var(--accent); color: white; font-weight: 600; }
+.btn--outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+.sidebar__nav { display: grid; gap: var(--spacing-xs); }
+.sidebar__nav { position: sticky; top: 0; background: var(--bg-elev); padding-bottom: var(--spacing-xs); z-index: 1; }
+.nav__item { 
+  display: grid; 
+  grid-template-columns: var(--spacing-5xl) 1fr; 
+  align-items: center; 
+  column-gap: var(--spacing-md); 
+  padding: var(--spacing-md) var(--spacing-lg); 
+  border-radius: var(--radius-2xl); 
+  color: var(--text); 
+  text-decoration: none; 
+  font-size: var(--text-sm);
+  transition: grid-template-columns 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              padding 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              background 200ms ease,
+              transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav__item:hover { background: var(--bg-elev-2); }
+.nav__item.is-active {
+  background: var(--bg-elev-2);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border) 50%, transparent);
+}
+.nav__item.is-active .icon {
+  opacity: 1;
+}
+
+.sidebar__section { display: grid; gap: var(--spacing-sm); }
+.section__title { color: var(--muted); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; padding: var(--spacing-xs) var(--spacing-1); }
+.sidebar__section + .sidebar__section { border-top: 1px solid var(--border); padding-top: var(--spacing-sm); }
+.chat__link { color: var(--muted); text-decoration: none; padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-sm); }
+.chat__link:hover { background: var(--bg-elev-2); color: var(--text); }
+
+.sidebar__footer { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-sm); padding-top: var(--spacing-sm); border-top: 1px solid var(--border); }
+.user { display: grid; grid-template-columns: var(--spacing-6xl) 1fr; align-items: center; column-gap: var(--spacing-md); }
+.avatar { width: var(--spacing-6xl); height: var(--spacing-6xl); border-radius: 50%; background: var(--bg-elev-2); display: grid; place-items: center; font-size: var(--text-xs); color: var(--muted); border: 1px solid var(--border); }
+.user__name { font-size: var(--text-sm); }
+.user__plan { font-size: var(--text-xs); color: var(--muted); }
+
+/* Collapsed sidebar state */
+.sidebar--collapsed {
+  width: var(--spacing-10xl);
+  padding: var(--spacing-lg) var(--spacing-sm);
+  gap: var(--spacing-sm); /* Giảm gap giữa header, scroll area và footer */
+}
+.sidebar--collapsed .sidebar__scroll {
+  gap: var(--spacing-sm); /* Giảm gap giữa các items trong scroll area */
+  padding-top: 0; /* Đảm bảo không có padding top thêm */
+}
+.sidebar--collapsed .sidebar__nav {
+  padding-bottom: var(--spacing-1); /* Giảm padding bottom của nav khi collapsed */
+}
+
+.sidebar--collapsed .brand__title,
+.sidebar--collapsed .nav__item span + span,
+.sidebar--collapsed .section__title,
+.sidebar--collapsed .chat__link,
+.sidebar--collapsed .user__meta {
+  position: absolute; /* Không chiếm không gian trong layout */
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              width 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              height 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              position 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Only hide outline button in the footer when collapsed, not header buttons */
+.sidebar--collapsed .sidebar__footer .btn--outline {
+  opacity: 0;
+  width: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sidebar--collapsed .sidebar__header { 
+  justify-content: center;
+  padding-bottom: 0; /* Giảm khoảng cách dưới header */
+  margin-bottom: 0;
+  min-height: var(--spacing-10xl); /* Giữ nguyên chiều cao */
+  height: var(--spacing-10xl); /* Giữ nguyên chiều cao */
+}
+.sidebar--collapsed .nav__item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: none;
+  padding: var(--spacing-md) 0; /* không đẩy icon lệch tâm ngang */
+}
+.sidebar--collapsed .nav__item .icon { 
+  margin: 0 auto;
+  transform: translateX(0); /* Đảm bảo icon ở giữa */
+}
+.sidebar--collapsed .sidebar__brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: none;
+  width: 100%;
+  min-height: var(--spacing-10xl); /* Giữ nguyên chiều cao */
+  height: var(--spacing-10xl); /* Giữ nguyên chiều cao */
+  padding: 0; /* Loại bỏ padding khi collapsed để căn giữa hoàn hảo */
+}
+.sidebar--collapsed .sidebar__brand img {
+  margin: 0;
+  transform: translateX(0); /* Đảm bảo logo ở giữa */
+}
+.sidebar--collapsed .user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: none;
+  width: 100%;
+  padding: 0; /* Loại bỏ padding khi collapsed để căn giữa hoàn hảo, giống sidebar__brand */
+}
+.sidebar--collapsed .user .avatar {
+  margin: 0;
+  transform: translateX(0); /* Đảm bảo avatar ở giữa, giống sidebar__brand img */
+}
+/* Keep footer layout stable; do not alter header layout on collapse */
+.sidebar--collapsed .sidebar__footer { 
+  justify-content: center; 
+  align-items: center;
+  gap: 0; /* Loại bỏ gap khi collapsed để avatar căn giữa hoàn hảo */
+  padding-left: 0; /* Loại bỏ padding ngang */
+  padding-right: 0; /* Loại bỏ padding ngang */
+}
+.sidebar--collapsed .sidebar__chats {
+  display: none;
+}
+
+/* Overlay cho mobile sidebar */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-overlay.is-active {
+  display: block;
+  opacity: 1;
+}
+

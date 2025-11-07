@@ -167,21 +167,150 @@
   
   window.addEventListener('resize', updateSidebarOverlay);
   
-  // Navigation
+  // Navigation - SPA style
   function goHomeState() {
     body.classList.add('is-home');
     if (pageContent) pageContent.innerHTML = '';
+    
+    // Hiện empty state
+    const emptyState = document.querySelector('.empty');
+    if (emptyState) {
+      emptyState.style.display = '';
+    }
+    
     if (composerInput) composerInput.focus();
     const mainContent = document.querySelector('.main__content');
     if (mainContent && typeof mainContent.scrollTo === 'function') {
       mainContent.scrollTo({ top: 0, behavior: 'instant' });
     }
+    // Update URL
+    window.history.pushState({}, '', '/');
+    updateActiveLinks();
+  }
+  
+  // Load page content bằng AJAX
+  async function loadPageContent(url) {
+    if (!pageContent) return;
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to load page');
+      
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      
+      // Extract content từ .page-content
+      const newContent = doc.querySelector('.page-content');
+      if (newContent) {
+        pageContent.innerHTML = newContent.innerHTML;
+      } else {
+        // Fallback: extract từ body
+        const bodyContent = doc.body.querySelector('.page-content');
+        if (bodyContent) {
+          pageContent.innerHTML = bodyContent.innerHTML;
+        }
+      }
+      
+      // Update title
+      const newTitle = doc.querySelector('title');
+      if (newTitle) {
+        document.title = newTitle.textContent;
+      }
+      
+      // Update body classes
+      const newBody = doc.body;
+      const isHome = newBody.classList.contains('is-home');
+      body.classList.toggle('is-home', isHome);
+      
+      // Ẩn/hiện empty state
+      const emptyState = document.querySelector('.empty');
+      if (emptyState) {
+        if (isHome || !pageContent.innerHTML.trim()) {
+          emptyState.style.display = '';
+        } else {
+          emptyState.style.display = 'none';
+        }
+      }
+      
+      // Focus vào composer input nếu là home
+      if (isHome && composerInput) {
+        composerInput.focus();
+      }
+      
+      // Scroll to top
+      const mainContent = document.querySelector('.main__content');
+      if (mainContent && typeof mainContent.scrollTo === 'function') {
+        mainContent.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      
+      // Update URL
+      window.history.pushState({}, '', url);
+      
+      // Update active links
+      updateActiveLinks();
+      
+      // Xóa scripts cũ của trang trước (trừ main.js)
+      const existingScripts = document.querySelectorAll('script[src]:not([src*="main.js"])');
+      existingScripts.forEach(function(script) {
+        script.remove();
+      });
+      
+      // Load scripts động nếu có
+      const scripts = doc.querySelectorAll('script[src]');
+      scripts.forEach(function(script) {
+        const src = script.getAttribute('src');
+        if (src && !src.includes('main.js')) {
+          const newScript = document.createElement('script');
+          newScript.src = src;
+          newScript.defer = script.hasAttribute('defer');
+          document.body.appendChild(newScript);
+        }
+      });
+      
+      // Transform post content nếu cần
+      transformPostContent();
+      
+      return true;
+    } catch (error) {
+      console.error('Error loading page:', error);
+      // Fallback: navigate bình thường
+      window.location.href = url;
+      return false;
+    }
+  }
+  
+  // Update active states cho links
+  function updateActiveLinks() {
+    const currentPath = location.pathname.replace(/\/+$/, '');
+    
+    // Remove all active states
+    document.querySelectorAll('.nav__item.is-active, .chat__link.is-active').forEach(function(link) {
+      link.classList.remove('is-active');
+    });
+    
+    // Set active cho matching links
+    document.querySelectorAll('.nav__item[href], .chat__link[href]').forEach(function(link) {
+      const href = (link.getAttribute('href') || '').replace(location.origin, '').replace(/\/+$/, '');
+      if (href === currentPath || (currentPath === '' && href === '/')) {
+        link.classList.add('is-active');
+      }
+    });
   }
   
   if (newChatBtn) {
     newChatBtn.addEventListener('click', function(e) {
       e.preventDefault();
       goHomeState();
+      
+      // Xử lý collapse sidebar sau khi load content (nếu mobile và sidebar expand)
+      const isMobile = window.innerWidth <= 640;
+      if (isMobile && sidebar && !sidebar.classList.contains('sidebar--collapsed')) {
+        // Delay một chút để content load xong
+        setTimeout(function() {
+          collapseSidebarWithAnimation();
+        }, 50);
+      }
     });
   }
   
@@ -214,26 +343,139 @@
     }, true);
   }
   
-  // Active link highlighting và auto-collapse sidebar trên mobile
+  // Transform post content into chat bubbles
+  function transformPostContent() {
+    if (!pageContent || body.classList.contains('is-home')) return;
+    
+    const h2s = pageContent.querySelectorAll('h2');
+    if (!h2s.length) return;
+    
+    // Kiểm tra xem đã transform chưa
+    if (pageContent.querySelector('.chat-thread')) return;
+    
+    const thread = document.createElement('div');
+    thread.className = 'chat-thread';
+    
+    const createMessage = (msgClass) => {
+      const div = document.createElement('div');
+      div.className = 'message ' + msgClass;
+      return div;
+    };
+    
+    // Handle content before first H2
+    const firstH2 = h2s[0];
+    let cursor = pageContent.firstChild;
+    if (cursor && cursor !== firstH2) {
+      const preBot = createMessage('message--bot');
+      while (cursor && cursor !== firstH2) {
+        const next = cursor.nextSibling;
+        preBot.appendChild(cursor);
+        cursor = next;
+      }
+      if (preBot.childNodes.length) thread.appendChild(preBot);
+    }
+    
+    // Handle each H2 and following content
+    for (let i = 0; i < h2s.length; i++) {
+      const h2 = h2s[i];
+      const afterH2 = h2.nextSibling;
+      
+      const userMsg = createMessage('message--user');
+      userMsg.appendChild(h2);
+      thread.appendChild(userMsg);
+      
+      const botMsg = createMessage('message--bot');
+      const stopAt = h2s[i + 1] || null;
+      let node = afterH2;
+      while (node && node !== stopAt) {
+        const next = node.nextSibling;
+        botMsg.appendChild(node);
+        node = next;
+      }
+      if (botMsg.childNodes.length) thread.appendChild(botMsg);
+    }
+    
+    pageContent.innerHTML = '';
+    pageContent.appendChild(thread);
+    
+    // Enhance code blocks with copy button
+    const allCodeBlocks = pageContent.querySelectorAll('pre > code');
+    allCodeBlocks.forEach(function(code) {
+      const pre = code.parentElement;
+      if (pre.parentElement && pre.parentElement.classList.contains('codeblock')) return;
+      
+      // Create wrapper
+      const wrap = document.createElement('div');
+      wrap.className = 'codeblock';
+      
+      const btn = document.createElement('button');
+      btn.className = 'codeblock__btn';
+      btn.type = 'button';
+      btn.innerHTML = '❏';
+      btn.setAttribute('aria-label', 'Copy code');
+      
+      pre.parentElement.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      wrap.appendChild(btn);
+      
+      // Copy functionality
+      btn.addEventListener('click', function() {
+        const text = code.innerText;
+        const done = () => {
+          btn.innerHTML = '✓';
+          setTimeout(() => btn.innerHTML = '📋', 1200);
+        };
+        
+        const fallbackCopy = () => {
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            done();
+          } catch(e) {}
+        };
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      });
+    });
+  }
+  
+  // Initialize transform cho trang hiện tại
+  if (pageContent && !body.classList.contains('is-home')) {
+    transformPostContent();
+  }
+  
+  // Active link highlighting và SPA navigation
   try {
     // Xử lý chat links
     const chatLinks = document.querySelectorAll('.chat__link');
     if (chatLinks.length) {
-      const currentPath = location.pathname.replace(/\/+$/, '');
       chatLinks.forEach(function(link) {
-        const href = (link.getAttribute('href') || '').replace(location.origin, '').replace(/\/+$/, '');
-        if (href === currentPath) link.classList.add('is-active');
-        
-        // Trên mobile, tự động collapse sidebar khi click vào chat link
-        link.addEventListener('click', function() {
-          const isMobile = window.innerWidth <= 640;
-          if (isMobile && sidebar) {
-            if (sidebar.classList.contains('sidebar--collapsed')) {
-              // Đã collapsed rồi thì không làm gì
-              return;
-            } else {
-              // Đang mở thì collapse với animation
-              collapseSidebarWithAnimation();
+        link.addEventListener('click', async function(e) {
+          const href = link.getAttribute('href');
+          if (!href || href === '#' || href.startsWith('#')) return;
+          
+          e.preventDefault();
+          
+          // Load content bằng AJAX
+          const url = new URL(href, location.origin).href;
+          const success = await loadPageContent(url);
+          
+          if (success) {
+            // Xử lý collapse sidebar sau khi load content (nếu mobile và sidebar expand)
+            const isMobile = window.innerWidth <= 640;
+            if (isMobile && sidebar && !sidebar.classList.contains('sidebar--collapsed')) {
+              // Delay một chút để content load xong
+              setTimeout(function() {
+                collapseSidebarWithAnimation();
+              }, 50);
             }
           }
         });
@@ -244,124 +486,113 @@
     const categoryLinks = document.querySelectorAll('.sidebar__section .nav__item[href^="/categories/"]');
     if (categoryLinks.length) {
       categoryLinks.forEach(function(link) {
-        // Trên mobile, tự động collapse sidebar khi click vào category link
-        link.addEventListener('click', function() {
-          const isMobile = window.innerWidth <= 640;
-          if (isMobile && sidebar) {
-            if (sidebar.classList.contains('sidebar--collapsed')) {
-              // Đã collapsed rồi thì không làm gì
-              return;
-            } else {
-              // Đang mở thì collapse với animation
-              collapseSidebarWithAnimation();
+        link.addEventListener('click', async function(e) {
+          const href = link.getAttribute('href');
+          if (!href || href === '#' || href.startsWith('#')) return;
+          
+          e.preventDefault();
+          
+          // Load content bằng AJAX
+          const url = new URL(href, location.origin).href;
+          const success = await loadPageContent(url);
+          
+          if (success) {
+            // Xử lý collapse sidebar sau khi load content (nếu mobile và sidebar expand)
+            const isMobile = window.innerWidth <= 640;
+            if (isMobile && sidebar && !sidebar.classList.contains('sidebar--collapsed')) {
+              // Delay một chút để content load xong
+              setTimeout(function() {
+                collapseSidebarWithAnimation();
+              }, 50);
             }
           }
         });
       });
     }
-  } catch(e) {}
-  
-  // Transform post content into chat bubbles
-  if (pageContent && !body.classList.contains('is-home')) {
-    const h2s = pageContent.querySelectorAll('h2');
-    if (h2s.length) {
-      const thread = document.createElement('div');
-      thread.className = 'chat-thread';
-      
-      const createMessage = (msgClass) => {
-        const div = document.createElement('div');
-        div.className = 'message ' + msgClass;
-        return div;
-      };
-      
-      // Handle content before first H2
-      const firstH2 = h2s[0];
-      let cursor = pageContent.firstChild;
-      if (cursor && cursor !== firstH2) {
-        const preBot = createMessage('message--bot');
-        while (cursor && cursor !== firstH2) {
-          const next = cursor.nextSibling;
-          preBot.appendChild(cursor);
-          cursor = next;
-        }
-        if (preBot.childNodes.length) thread.appendChild(preBot);
-      }
-      
-      // Handle each H2 and following content
-      for (let i = 0; i < h2s.length; i++) {
-        const h2 = h2s[i];
-        const afterH2 = h2.nextSibling;
+    
+    // Xử lý searchNav
+    const searchNav = document.getElementById('searchNav');
+    if (searchNav) {
+      searchNav.addEventListener('click', async function(e) {
+        const href = searchNav.getAttribute('href');
+        if (!href || href === '#' || href.startsWith('#')) return;
         
-        const userMsg = createMessage('message--user');
-        userMsg.appendChild(h2);
-        thread.appendChild(userMsg);
+        e.preventDefault();
         
-        const botMsg = createMessage('message--bot');
-        const stopAt = h2s[i + 1] || null;
-        let node = afterH2;
-        while (node && node !== stopAt) {
-          const next = node.nextSibling;
-          botMsg.appendChild(node);
-          node = next;
-        }
-        if (botMsg.childNodes.length) thread.appendChild(botMsg);
-      }
-      
-      pageContent.innerHTML = '';
-      pageContent.appendChild(thread);
-      
-      // Enhance code blocks with copy button
-      const allCodeBlocks = pageContent.querySelectorAll('pre > code');
-      allCodeBlocks.forEach(function(code) {
-        const pre = code.parentElement;
-        if (pre.parentElement && pre.parentElement.classList.contains('codeblock')) return;
+        // Load content bằng AJAX
+        const url = new URL(href, location.origin).href;
+        const success = await loadPageContent(url);
         
-        // Create wrapper
-        const wrap = document.createElement('div');
-        wrap.className = 'codeblock';
-        
-        const btn = document.createElement('button');
-        btn.className = 'codeblock__btn';
-        btn.type = 'button';
-        btn.innerHTML = '❏';
-        btn.setAttribute('aria-label', 'Copy code');
-        
-        pre.parentElement.insertBefore(wrap, pre);
-        wrap.appendChild(pre);
-        wrap.appendChild(btn);
-        
-        // Copy functionality
-        btn.addEventListener('click', function() {
-          const text = code.innerText;
-          const done = () => {
-            btn.innerHTML = '✓';
-            setTimeout(() => btn.innerHTML = '📋', 1200);
-          };
-          
-          const fallbackCopy = () => {
-            try {
-              const ta = document.createElement('textarea');
-              ta.value = text;
-              document.body.appendChild(ta);
-              ta.select();
-              document.execCommand('copy');
-              document.body.removeChild(ta);
-              done();
-            } catch(e) {}
-          };
-          
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(done).catch(fallbackCopy);
-          } else {
-            fallbackCopy();
+        if (success) {
+          // Xử lý collapse sidebar sau khi load content (nếu mobile và sidebar expand)
+          const isMobile = window.innerWidth <= 640;
+          if (isMobile && sidebar && !sidebar.classList.contains('sidebar--collapsed')) {
+            // Delay một chút để content load xong
+            setTimeout(function() {
+              collapseSidebarWithAnimation();
+            }, 50);
           }
-        });
+        }
       });
     }
+  } catch(e) {
+    console.error('Error setting up navigation:', e);
   }
+  
+  // Xử lý click vào post links trong main content (category pages, search results)
+  // Dùng event delegation để xử lý cả links được tạo động
+  if (pageContent) {
+    pageContent.addEventListener('click', async function(e) {
+      // Tìm link gần nhất (có thể là chính element hoặc parent)
+      const link = e.target.closest('a');
+      if (!link) return;
+      
+      const href = link.getAttribute('href');
+      if (!href || href === '#' || href.startsWith('#')) return;
+      
+      // Chỉ xử lý các link post (không phải external links)
+      const isPostLink = link.classList.contains('post-link') || 
+                         link.classList.contains('search-result') ||
+                         (href.startsWith('/') && !href.startsWith('//'));
+      
+      if (!isPostLink) return;
+      
+      e.preventDefault();
+      
+      // Load content bằng AJAX
+      const url = new URL(href, location.origin).href;
+      const success = await loadPageContent(url);
+      
+      if (success) {
+        // Xử lý collapse sidebar sau khi load content
+        const isMobile = window.innerWidth <= 640;
+        
+        if (isMobile) {
+          // Trên mobile: chỉ collapse nếu sidebar đang expand (không collapsed)
+          if (sidebar && !sidebar.classList.contains('sidebar--collapsed')) {
+            setTimeout(function() {
+              collapseSidebarWithAnimation();
+            }, 50);
+          }
+        } else {
+          // Trên desktop: nếu sidebar đã collapsed thì không làm gì cả
+          // Chỉ collapse nếu sidebar đang expand (nhưng thường không cần trên desktop)
+          // Không làm gì trên desktop khi sidebar đã collapsed
+        }
+      }
+    });
+  }
+  
+  // Xử lý browser back/forward
+  window.addEventListener('popstate', function() {
+    loadPageContent(location.href);
+  });
   
   // Initialize
   loadTheme();
   loadSidebarState();
+  
+  // Update active links khi load trang
+  updateActiveLinks();
 })();
 

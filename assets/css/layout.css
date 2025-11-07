@@ -1,0 +1,16 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(var(--container-xs), 25vw) 1fr;
+  height: 100dvh;
+  transition: grid-template-columns 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.layout.layout--sidebar-collapsed {
+  grid-template-columns: var(--spacing-10xl) 1fr;
+}
+
