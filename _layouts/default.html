@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ '/assets/css/chatgpt.css' | relative_url }}" />
+    {% if page.custom_css %}
+    <link rel="stylesheet" href="{{ page.custom_css | relative_url }}" />
+    {% endif %}
   </head>
   <body class="app app--dark{% if page.url == '/' or page.permalink == '/' %} is-home{% endif %}">
     <!-- Overlay for mobile sidebar -->
