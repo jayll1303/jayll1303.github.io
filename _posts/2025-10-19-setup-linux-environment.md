@@ -7,13 +7,13 @@ tags: [linux,git,python, aio]
 author: "JayLL"
 ---
 
-## TL;DR (all in one - AIO)
+## Give me all in one script for setting up linux envinronment/wsl
 
 All in one script:
 
 ```bash
 sudo apt update
-apt-get install git
+sudo apt-get install git
 sudo apt install gh
 gh auth login
 sudo apt-get install wget
@@ -37,19 +37,19 @@ curl -SL https://github.com/docker/compose/releases/download/v2.40.1/docker-comp
 sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 ```
 
-## [Git & Github](https://git-scm.com/install/linux.html)
+## How to install [Git & Github](https://git-scm.com/install/linux.html)
 
 ``` bash
 sudo apt update
 # install git
-apt-get install git
+sudo apt-get install git
 # install gh
 sudo apt install gh
 # login
 gh auth login
 ```
 
-## [Python](https://www.anaconda.com/docs/getting-started/miniconda/install#linux-terminal-installer)
+## I want to install Conda/[Python](https://www.anaconda.com/docs/getting-started/miniconda/install#linux-terminal-installer)
 
 ```bash
 # install miniconda (for python environment management)
@@ -58,7 +58,7 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash ~/Miniconda3-latest-Linux-x86_64.sh
 ```
 
-## [Docker](https://docs.docker.com/engine/install/ubuntu/)
+## How to install [Docker](https://docs.docker.com/engine/install/ubuntu/)?
 
 🫵[Docker on Debian](https://docs.docker.com/engine/install/debian/)
 
@@ -89,7 +89,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-## [Docker Compose](https://docs.docker.com/compose/install/linux/)
+## Install [Docker Compose](https://docs.docker.com/compose/install/linux/)?
 
 ### Install using the repository
 
@@ -105,4 +105,12 @@ DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 mkdir -p $DOCKER_CONFIG/cli-plugins
 curl -SL https://github.com/docker/compose/releases/download/v2.40.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
 sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+```
+
+🫵 On AWS Linux
+
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
 ```

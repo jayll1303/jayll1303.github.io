@@ -2,7 +2,7 @@
 layout: post
 title: "Useful Windows Tips/tricks"
 date: 2025-11-04 01:09:22 +0000
-categories: [Windows, office information]
+categories: [Windows]
 tags: [windows, office information, pdf, png, jpg, images]
 author: "JayLL"
 ---
