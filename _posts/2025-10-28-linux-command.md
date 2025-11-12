@@ -7,18 +7,26 @@ tags: [Linux, linux, command]
 author: "JayLL"
 ---
 
-## Cat/tail/head
-
-
-### Show file content
+## I wanna show file content
 
 ```bash
 cat abc.txt
 ```
 
-### Show last 100 lines of a file
+## I wanna show last 100 lines of a file
 
 ```bash
 tail -100 abc.txt
 ```
 
+## I wanna know the size of a folder?
+
+```bash
+du -sh <path-to-folder>
+```
+
+## I want to check available disksize?
+
+```bash
+df -h
+```
