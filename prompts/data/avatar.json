@@ -1,14 +1,20 @@
 [
     {
-        "id": "avatar-001",
+        "id": "mordern-city-sidewalk-at-night",
         "title": "Modern city sidewalk at night",
-        "promptFile": "prompts/avatar-001.txt",
+        "promptFile": "prompts/mordern-city-sidewalk-at-night.txt",
         "imageUrl": "images/optimized/mordern-city-sidewalk-at-night.webp"
     },
     {
-        "id": "avatar-002",
+        "id": "sit-on-rusty-jeep",
         "title": "Sit on rusty jeep in the forest",
-        "promptFile": "prompts/avatar-002.txt",
+        "promptFile": "prompts/sit-on-rusty-jeep.txt",
         "imageUrl": "images/optimized/sit-on-rusty-jeep.webp"
+    },
+    {
+        "id": "brown-jacket-outdoor",
+        "title": "Brown jacket outdoor",
+        "promptFile": "prompts/brown-jacket-outdoor.txt",
+        "imageUrl": "images/optimized/brown-jacket-outdoor.webp"
     }
 ]

@@ -1,14 +1,14 @@
 [
     {
-        "id": "couples-001",
+        "id": "couple-heart-shaped-hole-in-snow",
         "title": "Heart-shaped hole in snow",
-        "promptFile": "prompts/couples-001.txt",
+        "promptFile": "prompts/couple-heart-shaped-hole-in-snow.txt",
         "imageUrl": "images/optimized/couple-heart-shaped-hole-in-snow.webp"
     },
     {
-        "id": "couples-002",
+        "id": "couple-snow-angels-in-heart",
         "title": "Couple Making Snow Angels in Heart",
-        "promptFile": "prompts/couples-002.txt",
+        "promptFile": "prompts/couple-snow-angels-in-heart.txt",
         "imageUrl": "images/optimized/couple-snow-angels-in-heart.webp"
     }
 ]
