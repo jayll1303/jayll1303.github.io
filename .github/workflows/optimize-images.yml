@@ -38,7 +38,7 @@ jobs:
             echo "Processing: $filename"
             
             # Convert to WebP with resize (max 800px width) and quality 80
-            sharp -i "$file" -o "prompts/images/optimized/${name}.webp" -- resize 800 null --webp quality=80
+            sharp --input "$file" --output "prompts/images/optimized/${name}.webp" resize 800 --withoutEnlargement -- webp -q 80
             
             echo "✓ Created: prompts/images/optimized/${name}.webp"
           done

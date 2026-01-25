@@ -3,6 +3,12 @@
         "id": "couples-001",
         "title": "Heart-shaped hole in snow",
         "prompt": "Keep the faces in the reference image. A smiling young couple looks down through a heart-shaped hole carved in fresh snow, wearing warm winter clothing. This romantic portrait captures a joyful moment outdoors, perfect for winter-themed content and celebrating love.",
-        "imageUrl": "images/optimized/couple-heart-shaped-hole-in-snow.png"
+        "imageUrl": "images/optimized/couple-heart-shaped-hole-in-snow.webp"
+    },
+    {
+        "id": "couples-002",
+        "title": "Couple Making Snow Angels in Heart",
+        "prompt": "Keep the faces in the reference image. An overhead shot captures a happy couple lying in fresh white snow, creating snow angels within a large heart shape carved into the snow. The man, wearing a red jacket, and the woman, in a beige coat, smile up at the camera, their joined hands at the bottom of the heart, symbolizing winter romance and shared joy.",
+        "imageUrl": "images/optimized/couple-snow-angels-in-heart.webp"
     }
 ]
