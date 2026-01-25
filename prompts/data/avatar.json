@@ -22,5 +22,11 @@
         "title": "Urban Night Streetwear Editorial",
         "promptFile": "prompts/urban-night-streetwear-editorial.txt",
         "imageUrl": "images/optimized/urban-night-streetwear-editorial.webp"
+    },
+    {
+        "id": "maverick-desert-swagger",
+        "title": "The Maverick’s Desert Swagger",
+        "promptFile": "prompts/maverick-desert-swagger.txt",
+        "imageUrl": "images/optimized/maverick-desert-swagger.webp"
     }
 ]
