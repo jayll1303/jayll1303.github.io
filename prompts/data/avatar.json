@@ -28,5 +28,11 @@
         "title": "The Maverick’s Desert Swagger",
         "promptFile": "prompts/maverick-desert-swagger.txt",
         "imageUrl": "images/optimized/maverick-desert-swagger.webp"
+    },
+    {
+        "id": "grey-blazer-portrait",
+        "title": "Professional Portrait",
+        "promptFile": "prompts/grey-blazer-portrait.txt",
+        "imageUrl": "images/optimized/grey-blazer-portrait.webp"
     }
 ]
