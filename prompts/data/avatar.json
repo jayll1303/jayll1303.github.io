@@ -2,13 +2,13 @@
     {
         "id": "avatar-001",
         "title": "Modern city sidewalk at night",
-        "prompt": "A cyberpunk style avatar portrait, neon lighting, futuristic headset, glowing eyes, dark background with holographic elements, detailed face, portrait photography, 4k",
+        "promptFile": "prompts/avatar-001.txt",
         "imageUrl": "images/optimized/mordern-city-sidewalk-at-night.webp"
     },
     {
         "id": "avatar-002",
         "title": "Sit on rusty jeep in the forest",
-        "prompt": "Keep the faces in the reference image. A stylish man wearing orage jacket with the sunglasses sits confidently on a rustic, rusty jeep amidst a dense, lush forest. The cinematic portrait captures a moody and adventurous atmosphere, with soft, natural light highlighting the weathered textures of the vehicle and the serene natural surroundings.",
+        "promptFile": "prompts/avatar-002.txt",
         "imageUrl": "images/optimized/sit-on-rusty-jeep.webp"
     }
 ]

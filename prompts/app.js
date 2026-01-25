@@ -62,6 +62,9 @@ async function loadAllPrompts() {
             }
         });
 
+        // Load prompt content from separate files if promptFile is specified
+        await loadPromptContents();
+
         if (allPrompts.length === 0) {
             // Fallback to sample data if no files loaded
             allPrompts = getSamplePrompts();
@@ -77,6 +80,30 @@ async function loadAllPrompts() {
     } finally {
         loading.classList.remove('visible');
     }
+}
+
+// Load prompt contents from separate files
+async function loadPromptContents() {
+    const loadPromises = allPrompts.map(async (item) => {
+        // If promptFile is specified, load content from that file
+        if (item.promptFile) {
+            try {
+                const response = await fetch(`data/${item.promptFile}`);
+                if (response.ok) {
+                    item.prompt = await response.text();
+                } else {
+                    console.warn(`Could not load prompt file: ${item.promptFile}`);
+                    item.prompt = item.prompt || '';
+                }
+            } catch (error) {
+                console.warn(`Error loading ${item.promptFile}:`, error.message);
+                item.prompt = item.prompt || '';
+            }
+        }
+        return item;
+    });
+
+    await Promise.all(loadPromises);
 }
 
 async function loadPromptCollection(tag) {
