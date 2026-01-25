@@ -1,0 +1,20 @@
+[
+    {
+        "id": "avatar-001",
+        "title": "Cyberpunk Portrait",
+        "prompt": "A cyberpunk style avatar portrait, neon lighting, futuristic headset, glowing eyes, dark background with holographic elements, detailed face, portrait photography, 4k",
+        "imageUrl": "https://picsum.photos/seed/avatar1/400/400"
+    },
+    {
+        "id": "avatar-002",
+        "title": "Fantasy Elf Warrior",
+        "prompt": "A fantasy elf warrior portrait, pointed ears, silver hair, intricate armor, forest background, magical aura, detailed eyes, character concept art, digital painting",
+        "imageUrl": "https://picsum.photos/seed/avatar2/400/400"
+    },
+    {
+        "id": "avatar-003",
+        "title": "Minimalist Professional",
+        "prompt": "A minimalist professional avatar, clean geometric background, soft studio lighting, confident expression, business casual attire, modern corporate style, high quality portrait",
+        "imageUrl": "https://picsum.photos/seed/avatar3/400/400"
+    }
+]

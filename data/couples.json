@@ -1,0 +1,20 @@
+[
+    {
+        "id": "couples-001",
+        "title": "Romantic Sunset Walk",
+        "prompt": "A romantic couple walking hand in hand along a sunset beach, golden hour lighting, waves gently lapping at their feet, silhouettes against orange and pink sky, cinematic composition, dreamy atmosphere, 8k resolution",
+        "imageUrl": "https://picsum.photos/seed/couple1/400/400"
+    },
+    {
+        "id": "couples-002",
+        "title": "Coffee Date Morning",
+        "prompt": "A cozy couple sharing coffee at a sunlit café window, warm morning light streaming through, intimate moment, soft focus background, lifestyle photography, candid and natural",
+        "imageUrl": "https://picsum.photos/seed/couple2/400/400"
+    },
+    {
+        "id": "couples-003",
+        "title": "Dancing in the Rain",
+        "prompt": "A couple dancing in gentle rain on a city street at night, street lamps creating bokeh, romantic atmosphere, embracing each other, cinematic lighting, dramatic composition",
+        "imageUrl": "https://picsum.photos/seed/couple3/400/400"
+    }
+]
