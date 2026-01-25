@@ -33,10 +33,10 @@ async function optimizeImage(inputPath, outputPath) {
         const savings = ((1 - outputStats.size / inputStats.size) * 100).toFixed(1);
 
         console.log(`✓ ${path.basename(inputPath)} → ${path.basename(outputPath)} (${savings}% smaller)`);
-        return true;
+        return { success: true, inputPath };
     } catch (error) {
         console.error(`✗ Error processing ${inputPath}:`, error.message);
-        return false;
+        return { success: false, inputPath: null };
     }
 }
 
@@ -64,17 +64,35 @@ async function main() {
     console.log(`📷 Found ${imageFiles.length} image(s) to process...\n`);
 
     let successCount = 0;
+    const filesToDelete = [];
 
     for (const file of imageFiles) {
         const inputPath = path.join(INPUT_DIR, file);
         const outputName = path.basename(file, path.extname(file)) + '.webp';
         const outputPath = path.join(OUTPUT_DIR, outputName);
 
-        const success = await optimizeImage(inputPath, outputPath);
-        if (success) successCount++;
+        const result = await optimizeImage(inputPath, outputPath);
+        if (result.success) {
+            successCount++;
+            filesToDelete.push(result.inputPath);
+        }
     }
 
     console.log(`\n✅ Optimized ${successCount}/${imageFiles.length} images`);
+
+    // Delete original files after successful optimization
+    if (filesToDelete.length > 0) {
+        console.log(`\n🗑️ Deleting ${filesToDelete.length} original file(s)...`);
+        for (const filePath of filesToDelete) {
+            try {
+                fs.unlinkSync(filePath);
+                console.log(`  ✓ Deleted ${path.basename(filePath)}`);
+            } catch (error) {
+                console.error(`  ✗ Failed to delete ${path.basename(filePath)}:`, error.message);
+            }
+        }
+        console.log(`\n🧹 Cleanup complete!`);
+    }
 }
 
 main().catch(console.error);

@@ -28,17 +28,17 @@ jobs:
       - name: Optimize images
         run: node .github/scripts/optimize-images.js
 
-      - name: Commit optimized images
+      - name: Commit optimized images and cleanup
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Check if there are changes
-          if [ -n "$(git status prompts/images/optimized --porcelain)" ]; then
-            git add prompts/images/optimized/
-            git commit -m "🖼️ Auto-optimize images [skip ci]"
+          # Check if there are changes (optimized or deleted files)
+          if [ -n "$(git status prompts/images --porcelain)" ]; then
+            git add prompts/images/
+            git commit -m "🖼️ Auto-optimize images & cleanup originals [skip ci]"
             git push
-            echo "✅ Pushed optimized images"
+            echo "✅ Pushed optimized images and removed originals"
           else
             echo "ℹ️ No new images to optimize"
           fi
