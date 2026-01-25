@@ -1,0 +1,59 @@
+name: Optimize Images
+
+on:
+  push:
+    paths:
+      - 'prompts/images/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install sharp-cli
+        run: npm install -g sharp-cli
+
+      - name: Create optimized directory
+        run: mkdir -p prompts/images/optimized
+
+      - name: Optimize images
+        run: |
+          # Find all images in prompts/images (excluding optimized folder)
+          find prompts/images -maxdepth 1 \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.webp" \) -type f | while read file; do
+            filename=$(basename "$file")
+            name="${filename%.*}"
+            
+            echo "Processing: $filename"
+            
+            # Convert to WebP with resize (max 800px width) and quality 80
+            sharp -i "$file" -o "prompts/images/optimized/${name}.webp" -- resize 800 null --webp quality=80
+            
+            echo "✓ Created: prompts/images/optimized/${name}.webp"
+          done
+
+      - name: Commit optimized images
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Check if there are changes
+          if [ -n "$(git status prompts/images/optimized --porcelain)" ]; then
+            git add prompts/images/optimized/
+            git commit -m "🖼️ Auto-optimize images [skip ci]"
+            git push
+            echo "✅ Pushed optimized images"
+          else
+            echo "ℹ️ No new images to optimize"
+          fi
