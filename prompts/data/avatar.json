@@ -30,6 +30,30 @@
         "imageUrl": "images/optimized/maverick-desert-swagger.webp"
     },
     {
+        "id": "mountain-view",
+        "title": "Shot at the top of the mountain",
+        "promptFile": "prompts/mountain-view.txt",
+        "imageUrl": "images/optimized/mountain-view.webp"
+    },
+    {
+        "id": "clear-vs-blurry",
+        "title": "Clear vs. Blurry View with Glasses",
+        "promptFile": "prompts/clear-vs-blurry.txt",
+        "imageUrl": "images/optimized/clear-vs-blurry.webp"
+    },
+    {
+        "id": "monochrome-portrait",
+        "title": "Monochrome Portrait",
+        "promptFile": "prompts/monochrome-portrait.txt",
+        "imageUrl": "images/optimized/monochrome-portrait.webp"
+    },
+    {
+        "id": "eiffel-pigeons",
+        "title": "Shot at Eiffel Tower with Pigeons",
+        "promptFile": "prompts/eiffel-pigeons.txt",
+        "imageUrl": "images/optimized/eiffel-pigeons.webp"
+    },
+    {
         "id": "grey-blazer-portrait",
         "title": "Professional Portrait",
         "promptFile": "prompts/grey-blazer-portrait.txt",

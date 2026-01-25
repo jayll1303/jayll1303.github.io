@@ -1,0 +1,53 @@
+Keep the faces in the reference image.
+{
+  "type": "image_generation",
+  "style": "cinematic_fashion_editorial",
+  "aspect_ratio": "3:4",
+  "resolution": "8K",
+  "camera": {
+    "model": "Leica SL2",
+    "lens": "35mm",
+    "angle": "low-angle shot",
+    "depth_of_field": "shallow",
+    "focus": "sharp on subject, softly blurred background"
+  },
+  "subject": {
+    "gender": "male",
+    "pose": "standing confidently on rocky terrain",
+    "expression": "calm, composed, editorial look",
+    "outfit": {
+      "jacket": "dark grey puffer jacket",
+      "pants": "baggy denim jeans",
+      "shoes": "beige Timberland boots",
+      "accessories": "CP Company cap"
+    }
+  },
+  "environment": {
+    "location": "Swiss Alps",
+    "weather": "misty, cool alpine air",
+    "season": "late autumn",
+    "terrain": "rocky mountain ground with subtle moisture"
+  },
+  "lighting": {
+    "type": "soft diffused natural light",
+    "direction": "overcast top light",
+    "mood": "cinematic and atmospheric",
+    "shadows": "soft, realistic falloff"
+  },
+  "visual_style": {
+    "color_tone": "muted autumn palette",
+    "film_grain": "subtle cinematic grain",
+    "contrast": "natural, slightly moody",
+    "texture_detail": "hyper-detailed clothing fabric and terrain"
+  },
+  "aesthetic": {
+    "vibe": "luxury outdoor fashion editorial",
+    "realism": "photorealistic",
+    "atmosphere": "cold alpine air with light fog"
+  },
+  "render_quality": {
+    "clarity": "ultra-sharp",
+    "dynamic_range": "high",
+    "realism_level": "DSLR professional capture"
+  }
+}

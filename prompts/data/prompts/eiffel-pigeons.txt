@@ -1,0 +1,6 @@
+{
+  "prompt": "Keep the faces in the reference image. Photorealistic cinematic candid portrait, morning outdoors near the Eiffel Tower in Paris. Dynamic diagonal tracking shot with the camera tilted 25 degrees, front-side low angle. A stylish person wearing a light beige trench coat over a relaxed turtleneck sweater, paired with black fitted pants and black knee-high boots. They hold a warm coffee cup casually in one hand. Sunlight forms a soft rim-light silhouette along the edges of their body. A flock of pigeons flies across the foreground with slight motion blur. Blurred foreground elements such as a Parisian iron fence and leafy tree branches frame the scene. The Eiffel Tower stands partially visible in the background. Cinematic aesthetic with moody tones, Parisian film still vibe.",
+  "style": "cinematic, photorealistic, Paris morning, film still",
+  "composition": "dynamic diagonal, 25-degree tilt, low angle",
+  "environment": "Eiffel Tower backdrop, pigeons, soft morning light"
+}
