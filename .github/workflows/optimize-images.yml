@@ -22,26 +22,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install sharp-cli
-        run: npm install -g sharp-cli
-
-      - name: Create optimized directory
-        run: mkdir -p prompts/images/optimized
+      - name: Install sharp
+        run: npm install sharp
 
       - name: Optimize images
-        run: |
-          # Find all images in prompts/images (excluding optimized folder)
-          find prompts/images -maxdepth 1 \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.webp" \) -type f | while read file; do
-            filename=$(basename "$file")
-            name="${filename%.*}"
-            
-            echo "Processing: $filename"
-            
-            # Convert to WebP with resize (max 800px width) and quality 80
-            sharp --input "$file" --output "prompts/images/optimized/${name}.webp" resize 800 --withoutEnlargement -- webp -q 80
-            
-            echo "✓ Created: prompts/images/optimized/${name}.webp"
-          done
+        run: node .github/scripts/optimize-images.js
 
       - name: Commit optimized images
         run: |
