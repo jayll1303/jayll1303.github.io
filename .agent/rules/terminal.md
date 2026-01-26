@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Terminal Portfolio Rules & Features
 
 ## Overview

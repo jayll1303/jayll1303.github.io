@@ -1,120 +1,119 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="jayLL AI Collection - Discover and copy image prompts for Nano Banana and GPT Images">
+    <meta name="description" content="JayLL Prompts - AI Image Prompt Collection">
     <title>JayLL Prompts</title>
+
+    <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../terminal.css">
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖼️</text></svg>">
 </head>
 
 <body>
-    <!-- Animated Background -->
-    <div class="bg-gradient"></div>
-
-    <!-- Header with Search -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <a href="/" class="logo-link"
-                    style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
-                    <span class="logo-icon">✦</span>
-                    <span class="logo-text">JayLL</span>
-                </a>
-                <span class="path-separator" style="color: var(--text-muted); margin: 0 8px;">/</span>
-                <span class="current-path" style="color: var(--text-secondary);">prompts</span>
-            </div>
-            <div class="search-container">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+    <!-- Terminal Header -->
+    <header class="terminal-header">
+        <div class="header-left">
+            <a href="/" class="logo" style="text-decoration: none;">JayLL</a>
+            <div class="header-divider"></div>
+            <div class="current-path" id="current-path">
+                <svg class="path-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.3-4.3"></path>
+                    <folder-icon></folder-icon>
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                    </path>
                 </svg>
-                <input type="text" id="searchInput" class="search-input" placeholder="" autocomplete="off">
-                <button id="clearSearch" class="clear-btn" aria-label="Clear search">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 6 6 18"></path>
-                        <path d="m6 6 12 12"></path>
-                    </svg>
-                </button>
+                <span>~/prompts</span>
             </div>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-                <!-- Sun icon (shown in dark mode) -->
-                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M12 2v2"></path>
-                    <path d="M12 20v2"></path>
-                    <path d="m4.93 4.93 1.41 1.41"></path>
-                    <path d="m17.66 17.66 1.41 1.41"></path>
-                    <path d="M2 12h2"></path>
-                    <path d="M20 12h2"></path>
-                    <path d="m6.34 17.66-1.41 1.41"></path>
-                    <path d="m19.07 4.93-1.41 1.41"></path>
-                </svg>
-                <!-- Moon icon (shown in light mode) -->
-                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-                </svg>
-            </button>
+        </div>
+        <div class="header-right">
+            <button class="window-btn btn-minimize" aria-label="Minimize" tabindex="-1"></button>
+            <button class="window-btn btn-maximize" aria-label="Maximize" tabindex="-1"></button>
+            <button class="window-btn btn-close" aria-label="Close" tabindex="-1"
+                onclick="window.location.href='/'"></button>
         </div>
     </header>
 
-    <!-- Main Gallery -->
-    <main class="main">
-        <!-- Loading State -->
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Loading prompts...</p>
-        </div>
+    <!-- Terminal Body -->
+    <main class="terminal-body">
+        <div class="terminal-output" id="terminal-output">
 
-        <div class="gallery" id="gallery">
-            <!-- Cards injected by JS -->
-        </div>
+            <!-- Gallery Header Info -->
+            <div class="output-line">
+                <div class="output-command">
+                    <span class="output-prompt">❯</span>
+                    <span class="output-text">ls -la ./collection --format=grid</span>
+                </div>
+            </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" id="emptyState">
-            <div class="empty-icon">🔍</div>
-            <p class="empty-text">No prompts found</p>
-            <p class="empty-hint">Try a different search term</p>
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Loading assets...</p>
+            </div>
+
+            <!-- Main Gallery -->
+            <div class="gallery" id="gallery">
+                <!-- Cards injected by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">⚠️</div>
+                <p class="empty-text">No matches found</p>
+                <p class="empty-hint">Try adjusting your filter</p>
+            </div>
         </div>
     </main>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span class="toast-text">Prompt copied!</span>
+    <!-- Command Input (Fixed at bottom) -->
+    <div class="input-container">
+        <div class="input-line">
+            <span class="input-prompt">❯</span>
+            <input type="text" id="command-input" class="command-input" placeholder="Type 'home' to go back..."
+                autocomplete="off" spellcheck="false" aria-label="Command input">
+        </div>
+
+        <!-- Autocomplete Dropdown -->
+        <div class="autocomplete dropdown" id="autocomplete">
+            <!-- Suggestions will be injected by JS -->
+        </div>
     </div>
 
-    <!-- Footer with keyboard shortcut -->
-    <footer
-        style="position: fixed; bottom: 0; left: 0; right: 0; height: 40px; background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; z-index: 100;">
-        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted);">
-            <span
-                style="display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 22px; padding: 0 8px; background: rgba(128,128,128,0.15); border: 1px solid rgba(128,128,128,0.2); border-radius: 4px; font-size: 11px; font-weight: 600;">ESC</span>
-            <span>back to home</span>
+    <!-- Terminal Footer -->
+    <footer class="terminal-footer">
+        <div class="shortcut">
+            <span class="shortcut-key">Click</span>
+            <span class="shortcut-text">copy</span>
+        </div>
+        <div class="shortcut">
+            <span class="shortcut-key">/</span>
+            <span class="shortcut-text">filter</span>
+        </div>
+        <div class="shortcut">
+            <span class="shortcut-key">ESC</span>
+            <span class="shortcut-text">clear</span>
         </div>
     </footer>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-bracket">[</span>
+        <span class="toast-text">System: Copied to clipboard</span>
+        <span class="toast-bracket">]</span>
+    </div>
+
     <script src="app.js"></script>
-    <script>
-        // ESC key navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && document.activeElement.tagName !== 'INPUT') {
-                window.location.href = '/';
-            }
-        });
-    </script>
 </body>
 
 </html>
