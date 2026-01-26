@@ -10,8 +10,12 @@ let allPrompts = [];
 let filteredPrompts = [];
 let commandHistory = [];
 let historyIndex = -1;
-let selectedIndex = -1;
+let selectedIndex = -1; // Autocomplete index
 let filteredCommands = [];
+
+// Interact Mode State
+let isInteractMode = false;
+let focusedCardIndex = -1;
 
 // ============================================
 // DOM Elements
@@ -32,6 +36,10 @@ const COMMANDS = {
         description: 'return to home',
         action: () => window.location.href = '/'
     },
+    interact: {
+        description: 'keyboard navigation mode',
+        action: enableInteractMode
+    },
     help: {
         description: 'show available commands',
         action: showHelp
@@ -44,12 +52,23 @@ const COMMANDS = {
 document.addEventListener('DOMContentLoaded', async () => {
     commandInput.focus();
     setupCommandListeners();
+    setupInteractListeners(); // New Interact Mode Listeners
     await loadAllPrompts();
 
     // Global click to close autocomplete
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.input-container')) {
             hideAutocomplete();
+        }
+    });
+
+    // Handle clicks outside of gallery to exit interact mode if needed?
+    // Maybe better to just rely on ESC or clicking input
+    document.addEventListener('click', (e) => {
+        if (isInteractMode && !e.target.closest('.card')) {
+            // Optional: exit interact mode if clicking empty space?
+            // disableInteractMode(); 
+            // kept simple for now
         }
     });
 });
@@ -126,14 +145,14 @@ function getSamplePrompts() {
         {
             id: 'sample-001',
             title: 'System Crash',
-            prompt: 'A futuristic terminal interface glitching out, red error messages cascading down a black screen, matrix digital rain effect, cyberpunk aesthetic, high contrast, detailed',
+            prompt: 'A futuristic terminal interface glitching out',
             tag: 'glitch',
             imageUrl: 'https://picsum.photos/seed/glitch1/400/225'
         },
         {
             id: 'sample-002',
             title: 'Neon Cityscape',
-            prompt: 'Cyberpunk city at night, wet streets reflecting neon signs, flying cars, towering skyscrapers, rain, cinematic lighting, photorealistic, 8k',
+            prompt: 'Cyberpunk city at night',
             tag: 'cyberpunk',
             imageUrl: 'https://picsum.photos/200/300'
         }
@@ -149,9 +168,11 @@ function renderGallery(items) {
 
     emptyState.classList.remove('visible');
 
-    gallery.innerHTML = items.map(item => `
+    gallery.innerHTML = items.map((item, index) => `
         <article 
             class="card" 
+            id="card-${index}"
+            data-index="${index}"
             data-prompt="${encodeURIComponent(item.prompt)}"
             tabindex="0" 
             role="button" 
@@ -177,8 +198,9 @@ function renderGallery(items) {
 
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', handleCardClick);
+        // Note: keydown on card is handled globally in Interact Mode or here for standard tab nav
         card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if ((e.key === 'Enter' || e.key === ' ') && !isInteractMode) {
                 e.preventDefault();
                 handleCardClick({ currentTarget: card });
             }
@@ -189,25 +211,43 @@ function renderGallery(items) {
 function filterPrompts(query) {
     const cleanQuery = query.startsWith('/') ? query.slice(1).trim() : query;
 
-    if (!cleanQuery || cleanQuery.length === 0) {
-        filteredPrompts = [...allPrompts];
-        renderGallery(filteredPrompts);
-        return;
+    // Check if query ends with " interact"
+    let shouldEnterInteract = false;
+    let actualQuery = cleanQuery;
+
+    if (cleanQuery.endsWith(' interact')) {
+        shouldEnterInteract = true;
+        actualQuery = cleanQuery.replace(' interact', '').trim();
     }
 
-    filteredPrompts = allPrompts.filter(item =>
-        item.title.toLowerCase().includes(cleanQuery) ||
-        item.prompt.toLowerCase().includes(cleanQuery) ||
-        item.tag.toLowerCase().includes(cleanQuery)
-    );
+    if (!actualQuery || actualQuery.length === 0) {
+        filteredPrompts = [...allPrompts];
+    } else {
+        filteredPrompts = allPrompts.filter(item =>
+            item.title.toLowerCase().includes(actualQuery) ||
+            item.prompt.toLowerCase().includes(actualQuery) ||
+            item.tag.toLowerCase().includes(actualQuery)
+        );
+    }
 
     renderGallery(filteredPrompts);
+
+    if (shouldEnterInteract) {
+        // Must delay slightly to ensure rendering is done
+        setTimeout(enableInteractMode, 50);
+    }
 }
 
 // Click-to-Copy Handler
 async function handleCardClick(e) {
     const card = e.currentTarget;
     const promptText = decodeURIComponent(card.dataset.prompt);
+
+    // Visual feedback
+    card.style.borderColor = 'var(--accent-yellow)';
+    setTimeout(() => {
+        card.style.borderColor = '';
+    }, 200);
 
     try {
         await navigator.clipboard.writeText(promptText);
@@ -235,7 +275,13 @@ function setupCommandListeners() {
 
     // Global Shortcuts
     document.addEventListener('keydown', (e) => {
+        // ESCAPE LOGIC
         if (e.key === 'Escape') {
+            if (isInteractMode) {
+                disableInteractMode();
+                return;
+            }
+
             if (document.activeElement === commandInput) {
                 if (commandInput.value !== '') {
                     commandInput.value = '';
@@ -247,17 +293,28 @@ function setupCommandListeners() {
             }
         }
 
-        if (e.key === '/' && document.activeElement !== commandInput) {
+        // SLASH SHORTCUT
+        if (e.key === '/' && document.activeElement !== commandInput && !isInteractMode) {
             e.preventDefault();
             commandInput.focus();
             commandInput.value = '/';
             filterPrompts('');
         }
+
+        // TOGGLE INTERACT MODE (Ctrl + I)
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'i') {
+            e.preventDefault();
+            if (isInteractMode) {
+                disableInteractMode();
+            } else {
+                enableInteractMode();
+            }
+        }
     });
 }
 
 function handleInput(e) {
-    const value = e.target.value; // Keep original case for filter
+    const value = e.target.value;
     const lowerValue = value.toLowerCase();
 
     // 1. FILTER MODE (Starts with /)
@@ -274,7 +331,7 @@ function handleInput(e) {
         return;
     }
 
-    // 3. AUTOCOMPLETE MODE (Normal typing)
+    // 3. AUTOCOMPLETE MODE
     filteredCommands = Object.entries(COMMANDS)
         .filter(([cmd]) => cmd.startsWith(lowerValue))
         .map(([cmd, data]) => ({ cmd, ...data }));
@@ -318,13 +375,130 @@ function handleKeyDown(e) {
             e.preventDefault();
             const val = commandInput.value.trim();
             if (val.startsWith('/')) {
-                // Filter is live, just keep it focus
+                // If ending with " interact", it's handled in filterPrompts
+                // But we should check here too just in case input event didn't catch the last char
+                if (val.endsWith(' interact')) {
+                    filterPrompts(val.slice(1)); // re-run filter to catch interact trigger
+                }
             } else {
                 executeCommand(val);
             }
             break;
     }
 }
+
+// ============================================
+// Interact Mode Logic (Keyboard Navigation)
+// ============================================
+
+function enableInteractMode() {
+    if (filteredPrompts.length === 0) {
+        showSystemMessage('No items to interact with');
+        return;
+    }
+
+    isInteractMode = true;
+    focusedCardIndex = 0;
+
+    // Blur input so arrows don't move cursor
+    commandInput.blur();
+
+    // Add visual indicator
+    updateFocusVisuals();
+    showSystemMessage('Interact Mode: Use Arrows to move, Enter to copy, ESC to exit');
+}
+
+function disableInteractMode() {
+    isInteractMode = false;
+    focusedCardIndex = -1;
+
+    // Remove focus class from all
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('focused'));
+
+    commandInput.focus();
+    showSystemMessage('Interact Mode exited');
+}
+
+function setupInteractListeners() {
+    document.addEventListener('keydown', (e) => {
+        if (!isInteractMode) return;
+
+        const cards = document.querySelectorAll('.card');
+        if (cards.length === 0) return;
+
+        // Calculate grid columns for Up/Down navigation
+        // We can estimate columns by checking offsetLeft of first two items
+        let columns = 1;
+        if (cards.length > 1) {
+            if (cards[1].offsetTop === cards[0].offsetTop) {
+                // Determine how many fit in one row
+                for (let i = 1; i < cards.length; i++) {
+                    if (cards[i].offsetTop > cards[0].offsetTop) {
+                        columns = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        switch (e.key) {
+            case 'ArrowRight':
+                e.preventDefault();
+                focusedCardIndex = Math.min(focusedCardIndex + 1, cards.length - 1);
+                updateFocusVisuals();
+                break;
+
+            case 'ArrowLeft':
+                e.preventDefault();
+                focusedCardIndex = Math.max(focusedCardIndex - 1, 0);
+                updateFocusVisuals();
+                break;
+
+            case 'ArrowDown':
+                e.preventDefault();
+                focusedCardIndex = Math.min(focusedCardIndex + columns, cards.length - 1);
+                updateFocusVisuals();
+                break;
+
+            case 'ArrowUp':
+                e.preventDefault();
+                focusedCardIndex = Math.max(focusedCardIndex - columns, 0);
+                updateFocusVisuals();
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                if (focusedCardIndex >= 0 && cards[focusedCardIndex]) {
+                    // Trigger click functionality directly
+                    // We can reuse handleCardClick but we need to pass a fake event
+                    const card = cards[focusedCardIndex];
+                    const prompt = decodeURIComponent(card.dataset.prompt);
+                    // Copy logic duplicated for simplicity without event object issues
+                    navigator.clipboard.writeText(prompt).then(() => {
+                        showSystemMessage('Copied to clipboard');
+                        // Flash effect
+                        card.style.borderColor = 'var(--accent-yellow)';
+                        setTimeout(() => card.style.borderColor = '', 200);
+                    });
+                }
+                break;
+        }
+    });
+}
+
+function updateFocusVisuals() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((c, i) => {
+        if (i === focusedCardIndex) {
+            c.classList.add('focused');
+            // Ensure visible in scroll view
+            c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            c.classList.remove('focused');
+        }
+    });
+}
+
 
 // ============================================
 // Autocomplete UI
@@ -343,8 +517,6 @@ function positionAutocomplete() {
     const inputRect = commandInput.getBoundingClientRect();
     const spaceBelow = window.innerHeight - inputRect.bottom;
     autocomplete.classList.remove('dropdown', 'dropup');
-
-    // Default to dropup for bottom input
     autocomplete.classList.add('dropup');
 }
 
@@ -365,7 +537,6 @@ function selectAutocompleteItem(cmd) {
     executeCommand(cmd);
 }
 
-// Make globally available
 window.selectAutocompleteItem = selectAutocompleteItem;
 
 
@@ -384,17 +555,16 @@ function executeCommand(cmd) {
 }
 
 function showHelp() {
-    // Show help in a modal overlay or temporary toast? 
-    // Since we don't have a command output log in gallery mode, 
-    // let's use a creative overlay toast.
-
     const helpText = Object.entries(COMMANDS)
-        .map(([cmd, data]) => `<div style="display:flex; justify-content:space-between; width:200px"><span>${cmd}</span> <span style="opacity:0.6">${data.description}</span></div>`)
+        .map(([cmd, data]) => `<div style="display:flex; justify-content:space-between; width:250px"><span>${cmd}</span> <span style="opacity:0.6">${data.description}</span></div>`)
         .join('');
 
-    const slashHelp = `<div style="display:flex; justify-content:space-between; width:200px; margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1)"><span>/query</span> <span style="opacity:0.6">filter prompts</span></div>`;
+    const slashHelp = `<div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1)">
+        <div style="display:flex; justify-content:space-between; width:250px"><span>/query</span> <span style="opacity:0.6">filter prompts</span></div>
+        <div style="display:flex; justify-content:space-between; width:250px"><span>Ctrl + I</span> <span style="opacity:0.6">toggle interact</span></div>
+    </div>`;
 
-    showSystemMessageHTML(`<div style="text-align:left; font-family:monospace; font-size:12px;">${helpText}${slashHelp}</div>`, 5000);
+    showSystemMessageHTML(`<div style="text-align:left; font-family:monospace; font-size:12px;">${helpText}${slashHelp}</div>`, 8000);
 }
 
 // ============================================
