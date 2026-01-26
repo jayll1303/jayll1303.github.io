@@ -222,12 +222,14 @@ function filterPrompts(query) {
 
     if (!actualQuery || actualQuery.length === 0) {
         filteredPrompts = [...allPrompts];
+        updateHeaderTip(false);
     } else {
         filteredPrompts = allPrompts.filter(item =>
             item.title.toLowerCase().includes(actualQuery) ||
             item.prompt.toLowerCase().includes(actualQuery) ||
             item.tag.toLowerCase().includes(actualQuery)
         );
+        updateHeaderTip(true);
     }
 
     renderGallery(filteredPrompts);
@@ -592,4 +594,19 @@ function showSystemMessageHTML(html, duration = 2500) {
     toastTimeout = setTimeout(() => {
         toast.classList.remove('visible');
     }, duration);
+}
+
+function updateHeaderTip(show) {
+    const tipContainer = document.querySelector('.output-text');
+    if (!tipContainer) return;
+
+    if (show) {
+        // Safe query display
+        const query = commandInput.value.replace('/', '');
+        const safeQuery = query.replace(/[<>]/g, '');
+
+        tipContainer.innerHTML = `ls -la ./collection | grep <span class="highlight-query">"${safeQuery}"</span> <span class="tip-separator">TIP:</span> <span class="interact-tip">Try pressing <span class="key-combo">Ctrl + I</span> to interact!</span>`;
+    } else {
+        tipContainer.innerHTML = 'ls -la ./collection --format=grid';
+    }
 }
