@@ -293,9 +293,8 @@ function appendCustomOutput(html) {
 }
 
 function scrollToBottom() {
-    const body = document.querySelector('.terminal-body');
-    body.scrollTo({
-        top: body.scrollHeight,
+    terminalOutput.scrollTo({
+        top: terminalOutput.scrollHeight,
         behavior: 'smooth'
     });
 }

@@ -6,16 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="JayLL Terminal - Interactive portfolio and command line interface">
     <title>JayLL Terminal</title>
-    
+
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+
     <!-- Styles -->
     <link rel="stylesheet" href="terminal.css">
-    
+
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
 </head>
 
 <body>
@@ -25,7 +26,8 @@
             <span class="logo">JayLL</span>
             <div class="header-divider"></div>
             <div class="current-path" id="current-path">
-                <svg class="path-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="path-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
@@ -44,28 +46,21 @@
         <div class="terminal-output" id="terminal-output">
             <!-- Output will be injected by JS -->
         </div>
-
-        <!-- Command Input -->
-        <div class="input-container">
-            <div class="input-line">
-                <span class="input-prompt">❯</span>
-                <input 
-                    type="text" 
-                    id="command-input" 
-                    class="command-input" 
-                    placeholder="Type a command..."
-                    autocomplete="off"
-                    spellcheck="false"
-                    aria-label="Command input"
-                >
-            </div>
-            
-            <!-- Autocomplete Dropdown -->
-            <div class="autocomplete dropdown" id="autocomplete">
-                <!-- Suggestions will be injected by JS -->
-            </div>
-        </div>
     </main>
+
+    <!-- Command Input (Fixed at bottom) -->
+    <div class="input-container">
+        <div class="input-line">
+            <span class="input-prompt">❯</span>
+            <input type="text" id="command-input" class="command-input" placeholder="Type a command..."
+                autocomplete="off" spellcheck="false" aria-label="Command input">
+        </div>
+
+        <!-- Autocomplete Dropdown -->
+        <div class="autocomplete dropdown" id="autocomplete">
+            <!-- Suggestions will be injected by JS -->
+        </div>
+    </div>
 
     <!-- Terminal Footer -->
     <footer class="terminal-footer">
