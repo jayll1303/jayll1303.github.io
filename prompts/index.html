@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="jayLL AI Collection - Discover and copy image prompts for Nano Banana and GPT Images">
-    <title>jayLL AI Collection</title>
+    <title>JayLL Prompts</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,8 +21,13 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <span class="logo-icon">✦</span>
-                <span class="logo-text">Prompt Collection</span>
+                <a href="/" class="logo-link"
+                    style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                    <span class="logo-icon">✦</span>
+                    <span class="logo-text">JayLL</span>
+                </a>
+                <span class="path-separator" style="color: var(--text-muted); margin: 0 8px;">/</span>
+                <span class="current-path" style="color: var(--text-secondary);">prompts</span>
             </div>
             <div class="search-container">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -91,7 +96,25 @@
         <span class="toast-text">Prompt copied!</span>
     </div>
 
+    <!-- Footer with keyboard shortcut -->
+    <footer
+        style="position: fixed; bottom: 0; left: 0; right: 0; height: 40px; background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; z-index: 100;">
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted);">
+            <span
+                style="display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 22px; padding: 0 8px; background: rgba(128,128,128,0.15); border: 1px solid rgba(128,128,128,0.2); border-radius: 4px; font-size: 11px; font-weight: 600;">ESC</span>
+            <span>back to home</span>
+        </div>
+    </footer>
+
     <script src="app.js"></script>
+    <script>
+        // ESC key navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.activeElement.tagName !== 'INPUT') {
+                window.location.href = '/';
+            }
+        });
+    </script>
 </body>
 
 </html>
