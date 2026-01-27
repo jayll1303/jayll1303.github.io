@@ -2,10 +2,11 @@
 trigger: model_decision
 ---
 
-# jayLL AI Collection - Terminal UI Specification
+# JayLL AI Collection - Terminal UI Specification
 
-> **Last Updated**: 2026-01-26
+> **Last Updated**: 2026-01-27
 > **Design Style**: Retro Terminal / Command Line Interface (CLI)
+> **Platform**: Desktop Web (Responsive)
 
 ---
 
@@ -15,82 +16,84 @@ trigger: model_decision
 |----------|-------------|
 | **Style** | **Terminal / CLI** |
 | **Keywords** | Monospace, High Contrast, DOS-like, Scanlines, ASCII, Block Cursor, Raw Data |
-| **Effects** | Solid borders (`1px solid`), No gradients, No blur, Blinking cursors, Typewriter effects |
+| **Effects** | Solid borders (`1px solid`), No gradients, Blinking cursors, OLED Black Backgrounds |
 
 ---
 
 ## 2. Color System
 
-Inherits fully from the main **Terminal Theme** (`src/index.css`).
+Inherits fully from the main **Terminal Theme** (`terminal.css`).
 
-### Dark Mode (Default)
+### Dark Mode (OLED)
 | Element | Appearance |
 |---------|------------|
-| **Background** | Deep dark (Black/Navy) |
-| **Text** | Neon Teal / Cyan (`--accent-dark`) |
-| **Borders** | Solid 1px matching text color |
-| **Highlight** | Inverted colors (Text color bg, Black text) |
-
-### Light Mode
-| Element | Appearance |
-|---------|------------|
-| **Background** | Pale / White (`--bg-gradient-1-light`) |
-| **Text** | Dark Rose / Brown (`--text-primary-light`) |
-| **Borders** | Solid 1px (`--accent-light`) |
+| **Background** | Deep Black (`#020617`) |
+| **Text** | White / Light Grey (`#f8fafc`) |
+| **Accents** | Green (`#4ade80`), Cyan (`#22d3ee`), Yellow (`#facc15`), Red (`#f87171`) |
+| **Borders** | Subtle Grey (`#334155`) or Accent Green on Focus |
 
 ---
 
-## 3. Typography
+## 3. Component Specifications
 
-| Property | Value |
-|----------|-------|
-| **Font Family** | `'Consolas', 'Monaco', 'Courier New', monospace` (Inherited) |
-| **Headings** | Uppercase, bracketed e.g., `[ PROMPT_COLLECTION ]` |
-| **Body** | Standard monospace, fixed tracking |
-
----
-
-## 4. Component Specifications
-
-### Header (Command Bar)
-- **Style**: Sticky top bar, looks like a menu bar or status line.
+### Header (Window Bar)
+- **Style**: Standard terminal window title bar.
 - **Elements**: 
-  - `[ HOME ]` (Link)
-  - `> SEARCH: _` (Input field acting as command prompt)
-  - `[ THEME ]` (Toggle)
+  - `JayLL` Logo (Link to Home).
+  - Path Indicator: `~/prompts`.
+  - Window Controls: Minimize, Maximize, Close.
 
-### Search Input
-- **Appearance**: No border radius, solid underline or transparent.
-- **Prefix**: `find --query` or simple `>` prompt.
-- **Cursor**: Blinking block `█`.
+### Command Input (Footer Area)
+- **Style**: Persistent command line at page bottom.
+- **Prompt**: `❯` character.
+- **Features**:
+  - **Auto-focus**: Typing `/` triggers focus.
+  - **Autocomplete**: Suggestions for commands (`home`, `help`, `interact`).
+  - **Filter**: Typing text real-time filters the gallery.
+  - **Dynamic Tips**: Shows "Try pressing Ctrl + I" when filtering.
 
 ### Prompt Card (Gallery Item)
-- **Border**: Solid 1px line. `border-radius: 0`.
-- **Image**: Dithered effect (optional) or raw.
-- **Title**: Displayed primarily as a filename, e.g., `cyberpunk_city.png`.
-- **Hover State**:
-  - Border color changes / glows.
-  - "Metadata" overlay appears (like file stats actions).
-  - Cursor changes to pointer.
-- **Copy Action**:
-  - Interaction: Click anywhere or on a specific `[ COPY ]` "button" (text).
-  - Feedback: "Terminal" log message or status bar update (e.g., `>> COPIED TO CLIPBOARD`).
-
-### Toast Notification
-- **Style**: Console log message appearing at the bottom or top.
-- **Animation**: Typewriter print out.
+- **Style**: "Cyber Module" look.
+- **States**:
+  - **Default**: Semi-transparent, subtle border.
+  - **Hover**: Accent Green border, glow effect, overlay with details.
+  - **Focused**: Same as hover (for keyboard navigation).
+- **Interaction**:
+  - **Click**: Copies prompt text.
+  - **Enter**: Copies prompt (in Interact Mode).
 
 ---
 
-## 5. UX Requirements
+## 4. Key Features & Workflow
 
-### User Flow
-1. **Navigation**: User types `prompts` in Home -> Navigates to Prompts Route.
-2. **Discovery**: Gallery presents items as "Files".
-3. **Filtering**: Typing in search acts like `grep` filtering the list in real-time.
-4. **Action**: Hovering an image shows "File Details" (The prompt). Clicking copies it.
+### Navigation
+- **Home**: `home` command or Click Header Logo.
+- **Back**: `home` command (ESC clears input only).
 
-### Design Principles
-- **Consistency**: Must feel exactly like an extension of `Home.jsx`.
-- **Raw**: Avoid "web" aesthetics (shadows, rounded corners).
-- **Efficiency**: Fast, text-heavy feel (even though it's an image gallery).
+### Search & Filtering
+- **Syntax**: `query` or `/query`.
+- **Feedback**: Dynamic header updates to show `grep` command simulation.
+
+### Interact Mode (Keyboard Navigation)
+A specialized mode for keyboard-only users.
+- **Toggle**: `interact` command or **`Ctrl + I`** hotkey.
+- **Controls**:
+  - `Arrow Keys`: Move focus between cards.
+  - `Enter`: Copy selected prompt.
+  - `ESC` / `Ctrl + I`: Exit mode.
+
+### Shortcuts
+| Key | Action |
+|-----|--------|
+| **`/`** | Focus Input (Filter Mode) |
+| **`ESC`** | Clear Input / Exit Interact Mode |
+| **`Ctrl + I`** | Toggle Interact Mode |
+
+---
+
+## 5. Directory Structure
+User data follows a strict schema for compatibility.
+- `prompts/data/index.json`: List of collections.
+- `prompts/data/{tag}.json`: Prompt items (`id`, `title`, `promptFile`, `imageUrl`).
+- `prompts/data/prompts/`: Text files containing raw prompts.
+- `prompts/images/`: Optimized image assets.
