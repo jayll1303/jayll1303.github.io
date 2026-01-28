@@ -507,5 +507,43 @@ function navigateTo(path) {
     }
 }
 
+// ============================================
+// Elapsed Time Counter
+// ============================================
+function initElapsedTimeCounter() {
+    const startDate = new Date('2022-09-01T00:00:00');
+    const elapsedValueEl = document.getElementById('elapsed-value');
+
+    if (!elapsedValueEl) return;
+
+    function updateElapsedTime() {
+        const now = new Date();
+        const diffMs = now - startDate;
+
+        // Calculate components
+        const totalSeconds = Math.floor(diffMs / 1000);
+        const totalMinutes = Math.floor(totalSeconds / 60);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const totalDays = Math.floor(totalHours / 24);
+
+        const years = Math.floor(totalDays / 365);
+        const days = totalDays % 365;
+        const hours = totalHours % 24;
+        const minutes = totalMinutes % 60;
+        const seconds = totalSeconds % 60;
+
+        // Format: Xy Xd HH:MM:SS
+        const formattedTime = `${years}y ${days}d ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        elapsedValueEl.textContent = formattedTime;
+    }
+
+    // Update immediately and then every second
+    updateElapsedTime();
+    setInterval(updateElapsedTime, 1000);
+}
+
+// Initialize elapsed time counter
+document.addEventListener('DOMContentLoaded', initElapsedTimeCounter);
+
 // Make functions globally available for onclick handlers
 window.selectAutocompleteItem = selectAutocompleteItem;

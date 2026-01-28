@@ -438,11 +438,36 @@ body {
     border-top: 1px solid var(--border-subtle);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 24px;
     padding: 0 var(--terminal-padding);
     flex-shrink: 0;
     user-select: none;
+}
+
+.elapsed-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.elapsed-icon {
+    font-size: 14px;
+}
+
+.elapsed-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent-cyan);
+    white-space: nowrap;
+}
+
+.footer-shortcuts {
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
 .shortcut {
@@ -505,6 +530,10 @@ body {
         padding: 8px var(--terminal-padding);
     }
 
+    .footer-shortcuts {
+        gap: 12px;
+    }
+
     .shortcut {
         font-size: 11px;
     }
@@ -528,7 +557,15 @@ body {
     }
 
     .terminal-footer {
-        justify-content: flex-start;
+        justify-content: center;
+    }
+
+    .footer-shortcuts {
+        display: none;
+    }
+
+    .elapsed-value {
+        font-size: 11px;
     }
 
     .ascii-art {
