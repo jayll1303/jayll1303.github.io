@@ -70,7 +70,7 @@ Resume content is **decoupled** from HTML to allow easy updates.
 | Command | Description |
 |---------|-------------|
 | **`home`** | Return to main homepage |
-| **`print`** | Open system print dialog (PDF) |
+| **`print`** | Download PDF version (`resume.pdf`) |
 | **`help`** | Show available commands |
 
 ---

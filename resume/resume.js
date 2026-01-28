@@ -30,8 +30,16 @@ const COMMANDS = {
         action: () => window.location.href = '/'
     },
     print: {
-        description: 'print resume (pdf)',
-        action: () => window.print()
+        description: 'download resume (pdf)',
+        action: () => {
+            const link = document.createElement('a');
+            link.href = 'resume.pdf';
+            link.download = 'Pham_Phu_Ngoc_Trai_Resume.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            appendOutput('Downloading resume PDF...', 'success');
+        }
     },
     help: {
         description: 'show available commands',
