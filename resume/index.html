@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JayLL - Resume & Professional Experience">
+    <title>JayLL Resume</title>
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../terminal.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+</head>
+
+<body>
+    <!-- Terminal Header -->
+    <header class="terminal-header">
+        <div class="header-left">
+            <a href="/" class="logo" style="text-decoration: none;">JayLL</a>
+            <div class="header-divider"></div>
+            <div class="current-path" id="current-path">
+                <svg class="path-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>~/resume.json</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="window-btn btn-minimize" aria-label="Minimize" tabindex="-1"></button>
+            <button class="window-btn btn-maximize" aria-label="Maximize" tabindex="-1"></button>
+            <button class="window-btn btn-close" aria-label="Close" tabindex="-1"
+                onclick="window.location.href='/'"></button>
+        </div>
+    </header>
+
+    <!-- Terminal Body -->
+    <main class="terminal-body">
+        <div class="terminal-output" id="terminal-output">
+            <!-- Loading State -->
+            <div class="output-line" id="loading-line">
+                <div class="output-command">
+                    <span class="output-prompt">❯</span>
+                    <span class="output-text">cat ./resume.json | render-markdown</span>
+                </div>
+                <div class="output-result">Loading resume data...</div>
+            </div>
+
+            <!-- Resume Content Container -->
+            <div id="resume-content">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+
+        <!-- Hint Overlay -->
+        <div class="controls-hint">
+            Scroll: <span class="key-badge">↑</span> <span class="key-badge">↓</span> |
+            Top: <span class="key-badge">Home</span> |
+            Bottom: <span class="key-badge">End</span>
+        </div>
+    </main>
+
+    <!-- Command Input (Fixed at bottom) -->
+    <div class="input-container">
+        <div class="input-line">
+            <span class="input-prompt">❯</span>
+            <input type="text" id="command-input" class="command-input"
+                placeholder="Type 'home' to go back, or 'print' to download..." autocomplete="off" spellcheck="false"
+                aria-label="Command input">
+        </div>
+
+        <!-- Autocomplete Dropdown -->
+        <div class="autocomplete dropdown" id="autocomplete">
+            <!-- Suggestions will be injected by JS -->
+        </div>
+    </div>
+
+    <!-- Terminal Footer -->
+    <footer class="terminal-footer">
+        <div class="shortcut">
+            <span class="shortcut-key">PgUp</span>
+            <span class="shortcut-text">scroll up</span>
+        </div>
+        <div class="shortcut">
+            <span class="shortcut-key">PgDn</span>
+            <span class="shortcut-text">scroll down</span>
+        </div>
+        <div class="shortcut">
+            <span class="shortcut-key">Home</span>
+            <span class="shortcut-text">top</span>
+        </div>
+        <div class="shortcut">
+            <span class="shortcut-key">End</span>
+            <span class="shortcut-text">bottom</span>
+        </div>
+    </footer>
+
+    <!-- Page Transition -->
+    <div class="page-transition"></div>
+
+    <!-- Scripts -->
+    <script src="resume.js"></script>
+</body>
+
+</html>

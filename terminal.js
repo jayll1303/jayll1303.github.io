@@ -11,6 +11,10 @@ const COMMANDS = {
         description: 'Navigate to prompts gallery',
         action: () => navigateTo('/prompts/')
     },
+    resume: {
+        description: 'View professional resume',
+        action: () => navigateTo('/resume/')
+    },
     help: {
         description: 'Show available commands',
         action: showHelp

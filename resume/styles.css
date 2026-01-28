@@ -1,0 +1,188 @@
+/* Resume Specific Styles */
+.resume-container {
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-primary);
+    padding-bottom: 40px;
+    animation: fadeIn var(--transition-normal);
+}
+
+.resume-header {
+    border-bottom: 2px solid var(--border-active);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.resume-name {
+    font-family: var(--font-sans);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 8px;
+    text-shadow: var(--glow-green);
+}
+
+.resume-title {
+    font-size: 18px;
+    color: var(--accent-cyan);
+    margin-bottom: 12px;
+}
+
+.resume-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.resume-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.resume-link:hover {
+    color: var(--accent-yellow);
+}
+
+.resume-section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    color: var(--accent-purple);
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-icon {
+    font-size: 1.2em;
+}
+
+/* Experience Items */
+.timeline-item {
+    border-left: 2px solid var(--border-subtle);
+    padding-left: 20px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.job-role {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.job-company {
+    color: var(--accent-yellow);
+}
+
+.job-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.job-summary {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Skills Grid */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.skill-tag {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.skill-tag:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    transform: translateY(-2px);
+}
+
+/* Education */
+.edu-item {
+    margin-bottom: 16px;
+    background: var(--bg-tertiary);
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+}
+
+.edu-school {
+    color: var(--accent-yellow);
+    font-weight: 600;
+}
+
+.edu-degree {
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+
+.controls-hint {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: var(--bg-tertiary);
+    padding: 8px 16px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.key-badge {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--text-primary);
+    font-size: 10px;
+    margin: 0 2px;
+}

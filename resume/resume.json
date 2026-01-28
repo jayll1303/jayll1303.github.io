@@ -1,0 +1,63 @@
+{
+  "basics": {
+    "name": "Pham Phu Ngoc Trai",
+    "label": "Senior AI Engineer | LLM & LangChain Specialist",
+    "email": "phamphungoctraivl@gmail.com",
+    "url": "https://github.com/jayllfpt",
+    "summary": "Senior AI Engineer with strong expertise in Large Language Models, LangChain, and production-grade AI chatbot systems. Experienced in designing scalable, cloud-native LLM solutions, multi-agent architectures, and document AI pipelines across enterprise domains."
+  },
+  "skills": [
+    "Python, C++",
+    "Large Language Models (LLMs)",
+    "LangChain & RAG Systems",
+    "Prompt Engineering & Multi-Agent Systems",
+    "PyTorch, Transformers, Hugging Face",
+    "Document AI (OCR, YOLO, MRZ, Invoice Understanding)",
+    "REST APIs (FastAPI, Flask)",
+    "Docker & CI/CD (GitHub Actions)",
+    "Cloud Platforms (AWS, GCP, Azure)",
+    "Semantic Search & Information Retrieval"
+  ],
+  "experience": [
+    {
+      "company": "FPT Software",
+      "position": "Senior AI Engineer",
+      "startDate": "2022-01",
+      "endDate": "2025-04",
+      "summary": "Led architecture and end-to-end development of enterprise AI chatbot systems using LangChain and LLMs. Built production-ready RAG pipelines, tool-calling agents, and document AI solutions. Collaborated across Product, Data, and DevOps teams, mentored junior engineers, and delivered scalable AI systems on AWS and GCP."
+    }
+  ],
+  "education": [
+    {
+      "institution": "FPT University",
+      "area": "Artificial Intelligence",
+      "studyType": "Bachelor",
+      "startDate": "2020",
+      "endDate": "2024",
+      "score": "GPA 8.2/10 (100% Scholarship)"
+    }
+  ],
+  "projects": [
+    {
+      "name": "LLM-Driven Calendar Chatbot",
+      "description": "Enterprise multi-agent chatbot system for automated calendar scheduling and task management using LangChain and LLMs, deployed on Google Cloud Platform with CI/CD, monitoring, and secure OAuth2 integrations.",
+      "url": "https://github.com/jayllfpt"
+    },
+    {
+      "name": "Resume Ranking - JobFit",
+      "description": "LLM-powered resume parsing and ranking system that extracts structured data from CVs, applies multi-step tool chaining, and integrates with HR workflows via RESTful APIs.",
+      "url": "https://github.com/vectornguyen76/resume-ranking"
+    },
+    {
+      "name": "Table2HTML",
+      "description": "Reusable Python package for automated table extraction and conversion to HTML, adopted by internal teams and external clients.",
+      "url": "https://pypi.org/project/table2html/"
+    }
+  ],
+  "certificates": [
+    "Microsoft Certified: Azure Fundamentals (2024)",
+    "NVIDIA Getting Started with AI on Jetson Nano (2024)",
+    "Coursera Big Data Certificate (2023)",
+    "IBM Full Stack Software Developer Certificate (2023)"
+  ]
+}
