@@ -54,6 +54,42 @@
         "imageUrl": "images/optimized/eiffel-pigeons.webp"
     },
     {
+        "id": "money-heist",
+        "title": "Money Heist style",
+        "promptFile": "prompts/money-heist.txt",
+        "imageUrl": "images/optimized/money-heist.webp"
+    },
+    {
+        "id": "cyborg",
+        "title": "Cyborg style",
+        "promptFile": "prompts/cyborg.txt",
+        "imageUrl": "images/optimized/cyborg.webp"
+    },
+    {
+        "id": "sitting-at-stone-steps",
+        "title": "Sitting at stone steps",
+        "promptFile": "prompts/sitting-at-stone-steps.txt",
+        "imageUrl": "images/optimized/sitting-at-stone-steps.webp"
+    },
+    {
+        "id": "shot-with-the-robot",
+        "title": "Sitting on the robot's shouder",
+        "promptFile": "prompts/shot-with-the-robot.txt",
+        "imageUrl": "images/optimized/shot-with-the-robot.webp"
+    },
+    {
+        "id": "cinematic-autumn-portrait",
+        "title": "Cinematic autumn portrait",
+        "promptFile": "prompts/cinematic-autumn-portrait.txt",
+        "imageUrl": "images/optimized/cinematic-autumn-portrait.webp"
+    },
+    {
+        "id": "dog-chasing",
+        "title": "A ruff ride",
+        "promptFile": "prompts/dog-chasing.txt",
+        "imageUrl": "images/optimized/dog-chasing.webp"
+    },
+    {
         "id": "grey-blazer-portrait",
         "title": "Professional Portrait",
         "promptFile": "prompts/grey-blazer-portrait.txt",
