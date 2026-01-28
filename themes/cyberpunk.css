@@ -1,0 +1,30 @@
+/* ============================================
+   JayLL Terminal - Cyberpunk Theme
+   ============================================ */
+:root {
+    /* Background Colors */
+    --bg-primary: #0b0d17;
+    --bg-secondary: #121526;
+    --bg-tertiary: #1b1e3b;
+    --bg-input: #121526;
+
+    /* Text Colors */
+    --text-primary: #00f3ff;
+    --text-secondary: #fe00fe;
+    --text-muted: #652d90;
+    --text-dim: #321648;
+
+    /* Accent Colors */
+    --accent-green: #00f3ff;
+    --accent-green-dim: rgba(0, 243, 255, 0.15);
+    --accent-cyan: #fe00fe;
+    --accent-yellow: #fcee0a;
+    --accent-red: #ff003c;
+    --accent-purple: #9d00ff;
+
+    /* Effects */
+    --glow-green: 0 0 10px rgba(0, 243, 255, 0.5);
+    --glow-strong: 0 0 20px rgba(254, 0, 254, 0.6);
+    --border-subtle: rgba(0, 243, 255, 0.2);
+    --border-active: rgba(254, 0, 254, 0.8);
+}

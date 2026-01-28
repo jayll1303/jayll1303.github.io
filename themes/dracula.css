@@ -1,0 +1,30 @@
+/* ============================================
+   JayLL Terminal - Dracula Theme
+   ============================================ */
+:root {
+    /* Background Colors */
+    --bg-primary: #282a36;
+    --bg-secondary: #44475a;
+    --bg-tertiary: #6272a4;
+    --bg-input: #44475a;
+
+    /* Text Colors */
+    --text-primary: #f8f8f2;
+    --text-secondary: #bd93f9;
+    --text-muted: #6272a4;
+    --text-dim: #44475a;
+
+    /* Accent Colors */
+    --accent-green: #50fa7b;
+    --accent-green-dim: rgba(80, 250, 123, 0.15);
+    --accent-cyan: #8be9fd;
+    --accent-yellow: #f1fa8c;
+    --accent-red: #ff5555;
+    --accent-purple: #bd93f9;
+
+    /* Effects */
+    --glow-green: 0 0 10px rgba(189, 147, 249, 0.3);
+    --glow-strong: 0 0 20px rgba(189, 147, 249, 0.4);
+    --border-subtle: rgba(98, 114, 164, 0.3);
+    --border-active: rgba(189, 147, 249, 0.5);
+}

@@ -34,6 +34,35 @@ const COMMANDS = {
             appendOutput('Opening GitHub...', 'success');
         }
     },
+    theme: {
+        description: 'Change terminal theme (default, amber, dracula, cyberpunk)',
+        action: (args) => changeTheme(args)
+    },
+    neofetch: {
+        description: 'Display system information',
+        action: showNeofetch
+    },
+    sudo: {
+        description: 'Execute a command as another user',
+        action: () => appendOutput('Permission denied: You are not root.', 'error'),
+        hidden: true
+    },
+    'rm -rf': {
+        description: 'Remove files',
+        action: () => {
+            appendOutput('⚠️ SAFETY PROTOCOL ENGAGED.', 'error');
+            setTimeout(() => appendOutput('Just kidding. But seriously, don\'t do that.', 'result'), 800);
+        },
+        hidden: true
+    },
+    whoami: {
+        description: 'Print effective userid',
+        action: () => appendOutput('visitor@jayll.io', 'success')
+    },
+    ls: {
+        description: 'List directory contents',
+        action: () => appendOutput('index.html  style.css  terminal.js  resume/  prompts/', 'result')
+    },
     home: {
         description: 'Go to home page',
         action: () => {
@@ -65,6 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
     showWelcome();
     setupEventListeners();
     commandInput.focus();
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('terminal-theme');
+    if (savedTheme) {
+        document.body.setAttribute('data-theme', savedTheme);
+        const themeLink = document.getElementById('theme-style');
+        if (themeLink) themeLink.href = `themes/${savedTheme}.css`;
+    }
 });
 
 // Focus input when clicking anywhere on terminal body
@@ -104,7 +141,7 @@ function handleInput(e) {
 
     // Filter commands
     filteredCommands = Object.entries(COMMANDS)
-        .filter(([cmd]) => cmd.startsWith(value))
+        .filter(([cmd, data]) => cmd.startsWith(value) && !data.hidden)
         .map(([cmd, data]) => ({ cmd, ...data }));
 
     if (filteredCommands.length > 0) {
@@ -239,9 +276,13 @@ function executeCommand() {
     appendCommandLine(input);
 
     // Execute command
-    const command = COMMANDS[input];
+    const args = input.split(' ');
+    const cmdName = args[0];
+    const cmdArgs = args.slice(1);
+
+    const command = COMMANDS[cmdName];
     if (command) {
-        command.action();
+        command.action(cmdArgs);
     } else {
         appendOutput(`Command not found: ${input}. Type 'help' to see available commands.`, 'error');
     }
@@ -336,7 +377,9 @@ function showHelp() {
     const helpHtml = `
         <div class="output-result">
             <div class="help-table">
-                ${Object.entries(COMMANDS).map(([cmd, data]) => `
+                ${Object.entries(COMMANDS)
+            .filter(([_, data]) => !data.hidden)
+            .map(([cmd, data]) => `
                     <div class="help-row">
                         <span class="help-command">${cmd}</span>
                         <span class="help-desc">${data.description}</span>
@@ -379,6 +422,67 @@ function showAbout() {
     const lastLine = terminalOutput.querySelector('.output-line:last-child');
     if (lastLine) {
         lastLine.innerHTML += aboutHtml;
+    }
+}
+
+function showNeofetch() {
+    const art = `
+       .---.
+      /     \\   
+      \\.   ./   
+      /     \\   
+      '-----'   
+     J A Y L L  `;
+
+    const info = `
+<div style="display: flex; gap: 20px; align-items: center;">
+    <pre style="color: var(--accent-green); font-weight: bold; margin: 0; line-height: 1.2;">${art}</pre>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div><span style="color: var(--accent-green)">visitor</span>@<span style="color: var(--accent-green)">jayll.io</span></div>
+        <div>--------------------</div>
+        <div><span style="color: var(--accent-yellow)">OS</span>: GitHub Pages (Web)</div>
+        <div><span style="color: var(--accent-yellow)">Host</span>: Browser Engine</div>
+        <div><span style="color: var(--accent-yellow)">Uptime</span>: Forever</div>
+        <div><span style="color: var(--accent-yellow)">Shell</span>: JS-Term v1.0</div>
+        <div><span style="color: var(--accent-yellow)">Theme</span>: ${localStorage.getItem('terminal-theme') || 'default'}</div>
+        <div style="margin-top: 4px;">
+            <span style="background:black; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:red; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:green; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:yellow; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:blue; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:magenta; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:cyan; width:12px; height:12px; display:inline-block; margin-right:4px;"></span>
+            <span style="background:white; width:12px; height:12px; display:inline-block;"></span>
+        </div>
+    </div>
+</div>`;
+
+    appendCustomOutput(info);
+}
+
+function changeTheme(args) {
+    if (!args || args.length === 0) {
+        appendOutput('Usage: theme [default|amber|dracula|cyberpunk]', 'result');
+        return;
+    }
+
+    const theme = args[0].toLowerCase();
+    const validThemes = ['default', 'amber', 'dracula', 'cyberpunk'];
+
+    if (validThemes.includes(theme)) {
+        const themeLink = document.getElementById('theme-style');
+        if (themeLink) {
+            themeLink.href = `themes/${theme}.css`;
+            appendOutput(`Theme changed to: ${theme}`, 'success');
+
+            // Save preference
+            localStorage.setItem('terminal-theme', theme);
+        } else {
+            appendOutput('Error: Theme stylesheet not found.', 'error');
+        }
+    } else {
+        appendOutput(`Invalid theme. Available: ${validThemes.join(', ')}`, 'error');
     }
 }
 

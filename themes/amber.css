@@ -1,0 +1,30 @@
+/* ============================================
+   JayLL Terminal - Retro Amber Theme
+   ============================================ */
+:root {
+    /* Background Colors */
+    --bg-primary: #1c110a;
+    --bg-secondary: #27160c;
+    --bg-tertiary: #3a2213;
+    --bg-input: #27160c;
+
+    /* Text Colors */
+    --text-primary: #ffb000;
+    --text-secondary: #ffcc66;
+    --text-muted: #996e14;
+    --text-dim: #664405;
+
+    /* Accent Colors */
+    --accent-green: #ffb000;
+    --accent-green-dim: rgba(255, 176, 0, 0.15);
+    --accent-cyan: #ff9900;
+    --accent-yellow: #ffcc00;
+    --accent-red: #cc3300;
+    --accent-purple: #ffb000;
+
+    /* Effects */
+    --glow-green: 0 0 10px rgba(255, 176, 0, 0.3);
+    --glow-strong: 0 0 20px rgba(255, 176, 0, 0.4);
+    --border-subtle: rgba(255, 176, 0, 0.2);
+    --border-active: rgba(255, 176, 0, 0.5);
+}

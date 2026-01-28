@@ -43,6 +43,10 @@ const COMMANDS = {
     help: {
         description: 'show available commands',
         action: showHelp
+    },
+    theme: {
+        description: 'change terminal theme',
+        action: (args) => changeTheme(args)
     }
 };
 
@@ -51,8 +55,17 @@ const COMMANDS = {
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
     commandInput.focus();
+    commandInput.focus();
     setupCommandListeners();
     setupInteractListeners(); // New Interact Mode Listeners
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('terminal-theme');
+    if (savedTheme) {
+        const themeLink = document.getElementById('theme-style');
+        if (themeLink) themeLink.href = `../themes/${savedTheme}.css`;
+    }
+
     await loadAllPrompts();
 
     // Global click to close autocomplete
@@ -545,14 +558,41 @@ window.selectAutocompleteItem = selectAutocompleteItem;
 // ============================================
 // Command Execution
 // ============================================
-function executeCommand(cmd) {
-    const lowerCmd = cmd.toLowerCase();
+function executeCommand(fullCmd) {
+    const args = fullCmd.trim().split(' ');
+    const cmdName = args[0].toLowerCase();
+    const cmdArgs = args.slice(1);
 
-    if (COMMANDS[lowerCmd]) {
-        COMMANDS[lowerCmd].action();
+    if (COMMANDS[cmdName]) {
+        COMMANDS[cmdName].action(cmdArgs);
         commandInput.value = '';
     } else {
         showSystemMessage(`Command not found. Try 'help' or '/keyword'`);
+    }
+}
+
+function changeTheme(args) {
+    if (!args || args.length === 0) {
+        showSystemMessage('Usage: theme [default|amber|dracula|cyberpunk]');
+        return;
+    }
+
+    const theme = args[0].toLowerCase();
+    const validThemes = ['default', 'amber', 'dracula', 'cyberpunk'];
+
+    if (validThemes.includes(theme)) {
+        const themeLink = document.getElementById('theme-style');
+        if (themeLink) {
+            themeLink.href = `../themes/${theme}.css`;
+            showSystemMessage(`Theme changed to: ${theme}`);
+
+            // Save preference
+            localStorage.setItem('terminal-theme', theme);
+        } else {
+            showSystemMessage('Error: Theme stylesheet not found');
+        }
+    } else {
+        showSystemMessage(`Invalid theme. Available: ${validThemes.join(', ')}`);
     }
 }
 

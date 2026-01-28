@@ -48,13 +48,13 @@ const COMMANDS = {
     clear: {
         description: 'clear terminal output',
         action: () => {
-            // Don't clear resume, just user commands? 
-            // Actually standard clear clears everything. 
-            // Let's just scroll to bottom or do nothing to preserve resume.
-            // Or maybe reload the resume?
             renderResume(resumeData);
             appendOutput('Screen cleared (Resume re-rendered)', 'success');
         }
+    },
+    theme: {
+        description: 'change terminal theme',
+        action: (args) => changeTheme(args)
     }
 };
 
@@ -64,6 +64,14 @@ const COMMANDS = {
 document.addEventListener('DOMContentLoaded', async () => {
     commandInput.focus();
     setupEventListeners();
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('terminal-theme');
+    if (savedTheme) {
+        const themeLink = document.getElementById('theme-style');
+        if (themeLink) themeLink.href = `../themes/${savedTheme}.css`;
+    }
+
     await loadResume();
 });
 
@@ -331,8 +339,13 @@ function executeCommand() {
     // Show executed command
     appendCommandLine(input);
 
-    if (COMMANDS[input]) {
-        COMMANDS[input].action();
+    // Execute command
+    const args = input.split(' ');
+    const cmdName = args[0];
+    const cmdArgs = args.slice(1);
+
+    if (COMMANDS[cmdName]) {
+        COMMANDS[cmdName].action(cmdArgs);
     } else {
         appendOutput(`Command not found: ${input}`, 'error');
     }
@@ -398,4 +411,29 @@ function escapeHtml(text) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function changeTheme(args) {
+    if (!args || args.length === 0) {
+        appendOutput('Usage: theme [default|amber|dracula|cyberpunk]', 'result');
+        return;
+    }
+
+    const theme = args[0].toLowerCase();
+    const validThemes = ['default', 'amber', 'dracula', 'cyberpunk'];
+
+    if (validThemes.includes(theme)) {
+        const themeLink = document.getElementById('theme-style');
+        if (themeLink) {
+            themeLink.href = `../themes/${theme}.css`;
+            appendOutput(`Theme changed to: ${theme}`, 'success');
+
+            // Save preference
+            localStorage.setItem('terminal-theme', theme);
+        } else {
+            appendOutput('Error: Theme stylesheet not found.', 'error');
+        }
+    } else {
+        appendOutput(`Invalid theme. Available: ${validThemes.join(', ')}`, 'error');
+    }
 }
