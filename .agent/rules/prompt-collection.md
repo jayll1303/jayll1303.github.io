@@ -52,11 +52,21 @@ Inherits fully from the main **Terminal Theme** (`terminal.css`).
   - **Filter**: Typing text real-time filters the gallery.
   - **Dynamic Tips**: Shows "Try pressing Ctrl + I" when filtering.
 
+### Gallery Layout (Masonry)
+- **Style**: CSS `column-count` masonry layout (Windows Phone widgets style).
+- **Responsive Breakpoints**:
+  - ≥1400px: 5 columns
+  - ≥1100px: 4 columns
+  - ≥768px: 3 columns
+  - ≥480px: 2 columns
+  - <480px: 1 column
+- **Image Sizing**: Dynamic aspect ratio based on original image dimensions.
+
 ### Prompt Card (Gallery Item)
 - **Style**: "Cyber Module" look.
 - **States**:
   - **Default**: Semi-transparent, subtle border.
-  - **Hover**: Accent Green border, glow effect, overlay with details.
+  - **Hover**: Accent Green border, glow effect, **zoom scale(1.03)**, overlay with details.
   - **Focused**: Same as hover (for keyboard navigation).
 - **Interaction**:
   - **Click**: Copies prompt text.
