@@ -9,6 +9,9 @@
 /* CSS Variables - Terminal Design System */
 /* CSS Variables - Terminal Design System */
 :root {
+    /* Dynamic Viewport Height (updated by JS for mobile keyboard) */
+    --app-height: 100vh;
+
     /* Spacing */
     --header-height: 48px;
     --footer-height: 40px;
@@ -42,8 +45,8 @@ body {
     font-family: var(--font-mono);
     background: var(--bg-primary);
     color: var(--text-primary);
-    height: 100%;
-    max-height: 100vh;
+    height: var(--app-height);
+    max-height: var(--app-height);
     overflow: hidden;
     line-height: 1.6;
     display: flex;

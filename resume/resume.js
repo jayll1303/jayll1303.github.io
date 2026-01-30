@@ -59,9 +59,20 @@ const COMMANDS = {
 };
 
 // ============================================
+// Mobile Viewport Height Handler
+// ============================================
+function setAppHeight() {
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    document.documentElement.style.setProperty('--app-height', `${vh}px`);
+}
+
+// ============================================
 // Initialize
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
+    // Set initial viewport height
+    setAppHeight();
+
     commandInput.focus();
     setupEventListeners();
 
@@ -70,6 +81,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (savedTheme) {
         const themeLink = document.getElementById('theme-style');
         if (themeLink) themeLink.href = `../themes/${savedTheme}.css`;
+    }
+
+    // Handle viewport resize (mobile keyboard)
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setAppHeight);
+        window.visualViewport.addEventListener('scroll', setAppHeight);
+    } else {
+        window.addEventListener('resize', setAppHeight);
     }
 
     await loadResume();
