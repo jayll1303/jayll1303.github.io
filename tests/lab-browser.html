@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>AI Lab interaction tests</title>
+<style>body{background:#102023;color:#c8eadf;font:16px monospace;padding:24px}canvas{width:640px;height:360px}li{margin:12px 0}.failed{color:#ffac9f}</style>
+<h1>AI Lab interaction tests</h1>
+<p id="result">Running…</p><ol id="checks"></ol><canvas id="scene"></canvas>
+<script type="module">
+  import { createLab } from '../src/lab/world.js';
+  const checks = document.querySelector('#checks');
+  let failures = 0;
+  const check = (name, condition) => {
+    const row = document.createElement('li');
+    row.textContent = `${condition ? 'PASS' : 'FAIL'}: ${name}`;
+    if (!condition) { failures++; row.className = 'failed'; }
+    checks.append(row);
+  };
+  const wait = duration => new Promise(resolve => setTimeout(resolve, duration));
+  const key = (type, code) => window.dispatchEvent(new KeyboardEvent(type, { code, bubbles: true }));
+  let world;
+  try {
+    world = await createLab({ canvas: document.querySelector('#scene') });
+    world.enter();
+    world.setQuality('low');
+    const start = world.getStatus();
+    key('keydown', 'KeyW');
+    await wait(1100);
+    key('keyup', 'KeyW');
+    const moved = world.getStatus();
+    check('W moves character forward', moved.player.z < start.player.z - 0.5);
+    check('Core proximity activates a real station', moved.nearby === 'core');
+    world.pause(true);
+    key('keydown', 'KeyW');
+    await wait(350);
+    key('keyup', 'KeyW');
+    check('Open-panel pause prevents movement', world.getStatus().player.z === moved.player.z);
+    world.pause(false);
+    key('keydown', 'KeyW');
+    await wait(1800);
+    key('keyup', 'KeyW');
+    const blocked = world.getStatus();
+    check('Collision blocks walking through the AI Core', blocked.player.z > 1.8 && blocked.player.z < 2.6);
+    check('Follow camera stays at a finite safe distance', Number.isFinite(blocked.cameraDistance) && blocked.cameraDistance > 0);
+    world.returnToEntrance();
+    const entrance = world.getStatus();
+    check('Exit restores overview mode and spawn position', !entrance.entered && entrance.player.x === 1 && entrance.player.z === 6);
+    world.enter();
+    key('keydown', 'KeyA');
+    await wait(1900);
+    key('keyup', 'KeyA');
+    check('Movement resumes after re-entering the lab', world.getStatus().player.x < -1);
+    world.setReducedMotion(true);
+    world.pause(true);
+    world.dispose();
+    document.querySelector('#result').textContent = failures ? `${failures} tests failed` : 'All 7 interaction tests passed';
+  } catch (error) {
+    document.querySelector('#result').textContent = `Test error: ${error.message}`;
+    world?.dispose();
+  }
+</script>
+</html>
