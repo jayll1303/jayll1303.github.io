@@ -1,99 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="JayLL Terminal - Interactive portfolio and command line interface">
-    <title>JayLL Terminal</title>
-
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Styles -->
-    <link id="theme-style" rel="stylesheet" href="themes/default.css">
-    <link rel="stylesheet" href="terminal.css">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0c1417" />
+  <meta name="description" content="Explore JayLL's AI Research Lab. An interactive portfolio of AI agents, document intelligence, and generative experiments by Pham Phu Ngoc Trai." />
+  <title>JayLL — AI Research Lab</title>
+  <link rel="icon" type="image/svg+xml" href="/lab-mark.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
-
 <body>
-    <!-- Terminal Header -->
-    <header class="terminal-header">
-        <div class="header-left">
-            <span class="logo">JayLL</span>
-            <div class="header-divider"></div>
-            <div class="current-path" id="current-path">
-                <svg class="path-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-                <span>~/home</span>
-            </div>
-        </div>
-        <div class="header-right">
-            <button class="window-btn btn-minimize" aria-label="Minimize" tabindex="-1"></button>
-            <button class="window-btn btn-maximize" aria-label="Maximize" tabindex="-1"></button>
-            <button class="window-btn btn-close" aria-label="Close" tabindex="-1"></button>
-        </div>
+  <a class="skip-link" href="#main">Skip to portfolio</a>
+  <canvas id="lab-canvas" aria-label="Interactive three-dimensional research laboratory"></canvas>
+  <div class="scene-shade" aria-hidden="true"></div>
+  <div class="app-shell">
+    <header class="site-header">
+      <a href="#" class="brand" aria-label="JayLL home"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="M18 2 33 10.5v15L18 34 3 25.5v-15Z" stroke="currentColor"/><path d="m18 9 9 5v10l-9 5-9-5V14Z" stroke="currentColor"/><path d="M18 9v20M9 14l18 10M27 14 9 24" stroke="currentColor"/></svg><span>JAYLL<span class="brand-sub">AI & SOFTWARE ENGINEERING</span></span></a>
+      <nav aria-label="Main navigation"><button data-open="projects">Projects <span>03</span></button><button data-open="profile">About me</button><a href="/resume/" class="resume-nav">Résumé <span>↗</span></a></nav>
+      <button id="settings-button" class="icon-button" aria-label="Experience settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg></button>
     </header>
-
-    <!-- Terminal Body -->
-    <main class="terminal-body">
-        <div class="terminal-output" id="terminal-output">
-            <!-- Output will be injected by JS -->
-        </div>
+    <main id="main">
+      <section id="welcome" class="welcome">
+        <p class="eyebrow"><span class="status-dot"></span> A PERSONAL SPACE FOR EXPLORATION</p>
+        <h1>AI RESEARCH<br /><span>LAB.</span><sup>©26</sup></h1>
+        <p class="intro">Ideas become systems.<br />Step inside the place where I build them.</p>
+        <div class="welcome-actions"><button id="enter-lab" class="primary-button">Enter the lab <span>↗</span></button><button data-open="projects" class="text-button">Explore the work <span>→</span></button></div>
+        <p id="load-status" class="load-status" role="status"><span class="status-dot"></span> Preparing the laboratory</p>
+        <p class="mobile-note">Best explored on a desktop. All projects are available here.</p>
+      </section>
+      <aside class="scene-caption" id="scene-caption"><span class="caption-line"></span><div><span class="eyebrow">THE HEART OF THE LAB</span><p>Intelligence, in motion.</p><small>Agents · Documents · Generative AI</small></div></aside>
+      <section id="explore-hud" class="explore-hud" hidden aria-label="Exploration controls"><p class="eyebrow"><span class="status-dot"></span> EXPLORING THE LAB</p><h2 id="current-zone">AI Core / Reception</h2><button id="exit-lab" class="text-button">← Back to entrance</button></section>
+      <button id="interact" class="interact" hidden><kbd>E</kbd><span id="interact-label">Inspect workstation</span><span>↗</span></button>
+      <div id="controls-hint" class="controls-hint" hidden><span><kbd>W A S D</kbd> move</span><span><kbd>drag</kbd> look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span></div>
     </main>
-
-    <!-- Command Input (Fixed at bottom) -->
-    <div class="input-container">
-        <div class="input-line">
-            <span class="input-prompt">❯</span>
-            <input type="text" id="command-input" class="command-input" placeholder="Type a command..."
-                autocomplete="off" spellcheck="false" aria-label="Command input">
-        </div>
-
-        <!-- Autocomplete Dropdown -->
-        <div class="autocomplete dropdown" id="autocomplete">
-            <!-- Suggestions will be injected by JS -->
-        </div>
-    </div>
-
-    <!-- Terminal Footer -->
-    <footer class="terminal-footer">
-        <div class="elapsed-time" id="elapsed-time">
-            <span class="elapsed-icon">⏱</span>
-            <span class="elapsed-value" id="elapsed-value">0y 0d 00:00:00</span>
-        </div>
-        <div class="footer-shortcuts">
-            <div class="shortcut">
-                <span class="shortcut-key">↑↓</span>
-                <span class="shortcut-text">navigate</span>
-            </div>
-            <div class="shortcut">
-                <span class="shortcut-key">Tab</span>
-                <span class="shortcut-text">complete</span>
-            </div>
-            <div class="shortcut">
-                <span class="shortcut-key">Enter</span>
-                <span class="shortcut-text">execute</span>
-            </div>
-            <div class="shortcut">
-                <span class="shortcut-key">ESC</span>
-                <span class="shortcut-text">clear</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Page Transition Overlay -->
-    <div class="page-transition"></div>
-
-    <!-- Scripts -->
-    <script src="terminal.js"></script>
+    <footer class="site-footer"><div class="footer-top"><span class="eyebrow">EXPLORE THE RESEARCH</span><span class="footer-description">Built with curiosity. Open for discovery.</span></div><div class="zone-navigation"><button data-open="calendar"><span class="zone-number">01 / SYSTEMS</span><strong>Agent Systems</strong><span class="zone-arrow">↗</span></button><button data-open="documents"><span class="zone-number">02 / INTELLIGENCE</span><strong>Document AI</strong><span class="zone-arrow">↗</span></button><button data-open="gallery"><span class="zone-number">03 / EXPERIMENTS</span><strong>Generative Gallery</strong><span class="zone-arrow">↗</span></button><button data-open="profile" class="profile-zone"><span class="zone-number">THE RESEARCHER</span><strong>Behind the work</strong><span class="zone-arrow">↗</span></button></div><div class="footer-meta"><span>PHAM PHU NGOC TRAI <span class="meta-slash">/</span> SENIOR AI ENGINEER</span><button id="sound-button" aria-pressed="false">◌ Sound off</button><a href="/legacy/">Open legacy terminal ↗</a></div></footer>
+  </div>
+  <dialog id="portfolio-dialog" aria-labelledby="panel-title"><div class="panel-top"><button id="panel-back" class="text-button" hidden>← All projects</button><span class="eyebrow" id="panel-section">RESEARCH ARCHIVE</span><button id="close-panel" class="close-button" aria-label="Close panel">✕</button></div><div id="panel-content"></div></dialog>
+  <div id="toast" role="status" hidden></div>
+  <noscript><div class="no-script">JavaScript is needed to explore the lab. <a href="/resume/resume.pdf">Download résumé</a>.</div></noscript>
+  <script type="module" src="/src/main.js"></script>
 </body>
-
 </html>
