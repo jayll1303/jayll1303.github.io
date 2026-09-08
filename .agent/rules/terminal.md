@@ -5,7 +5,7 @@ trigger: model_decision
 # Terminal Portfolio Rules & Features
 
 ## Overview
-The application is a Terminal-themed portfolio `index.html` (and `terminal.js`) that acts as the main entry point. It simulates a command-line interface for navigation and interaction.
+The original Terminal-themed portfolio now lives at `legacy/index.html` and uses the root `terminal.js`. The main entry point is the AI Research Lab; see `ai-research-lab.md`. The legacy terminal simulates a command-line interface for navigation and interaction.
 
 ## Core Mechanics
 

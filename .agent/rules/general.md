@@ -2,7 +2,7 @@
 trigger: always_on
 ---
 
-Techstack use: HTML + CSS + JS
+Techstack use: HTML + CSS + JS, Vite build, Three.js for the AI Research Lab homepage
 Hosting: Github pages (github.io)
 Skills: UI UX
 Develop platform: Windows
@@ -13,6 +13,6 @@ Develop platform: Windows
 
 - When you update the logic, UI/UX, flow, or features on any pages, make update its rules.
 Rule list:
-1. Home page: .agent\rules\terminal.md
+1. Home page: .agent\rules\ai-research-lab.md (legacy terminal: .agent\rules\terminal.md)
 2. Prompt Collection: .agent\rules\prompt-collection.md
 3. Resume page: .agent\rules\resume.md
