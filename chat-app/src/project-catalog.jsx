@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { categories, projects, skills } from './portfolio-data';
 import UiIcon from './ui-icon';
+import './project-icons.css';
 
-const categoryMarks = {
-  Products: '◆',
-  'Current work': '⌘',
-  'Voice AI': '◉',
-  'Document AI': '▤',
-  Agents: '✧',
-  Research: '◈'
-};
+const iconFiles = import.meta.glob(['./project-icons/*.svg', './project-icons/*.png'], { eager: true, query: '?url', import: 'default' });
 
 function ProjectRow({ project, onOpen }) {
+  const icon = iconFiles[`./project-icons/${project.id}.svg`] || iconFiles[`./project-icons/${project.id}.png`];
   return <button className="catalog-row" type="button" onClick={() => onOpen({ kind: 'project', id: project.id })}>
-    <span className={`catalog-icon catalog-icon-${project.category.toLowerCase().replace(/\W+/g, '-')}`} aria-hidden="true">{categoryMarks[project.category]}</span>
+    <span className="catalog-icon catalog-project-icon" aria-hidden="true"><img src={icon} alt="" /></span>
     <span className="catalog-row-copy"><strong>{project.title}</strong><span>{project.summary}</span><small>{project.category} · {project.context}</small></span>
     <span className="catalog-row-arrow"><UiIcon name="open-link" size={16}/></span>
   </button>;

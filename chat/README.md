@@ -8,11 +8,12 @@ The preview at `/chat/` is the production build of the React/Vite source in [`ch
 | --- | --- |
 | New chat | Start at the portfolio welcome screen |
 | Search icon / Ctrl K | Open direct navigation or ask the local model |
+| Images | Jay's existing image gallery with filters, prompt details and copy controls |
+| Library | Achievement image collection; currently empty until images are supplied |
 | Projects | A searchable, filterable directory of 18 résumé projects and shipped products |
 | Skills tab | The skills listed in Jay's résumé, grouped by subject |
 | Recent this visit | Views opened in this browser session |
 | Conversation | Detail for a project, career stage or topic |
-| Library | Existing image prompt collection at `/prompts/` |
 | Composer | A small browser model selects relevant portfolio records; no server or API key |
 | CV control | Current experience details in the portfolio |
 | Share | Copy the selected view's URL |
@@ -25,6 +26,8 @@ From `chat-app/`, run `npm install` and `npm run build`. Vite writes the static 
 
 `npm test` checks the local fallback and record validation. The model is lazy loaded when a visitor asks a question. Transformers.js runs SmolLM2-135M-Instruct in a worker, using WebGPU where available and WASM otherwise. The quantized model requires a substantial first download (roughly 134–200 MB of weights, depending on device) and is cached by the browser. Its selected record IDs are checked against the curated data before the UI displays any project details. If the model cannot run, the UI labels the fallback search. The model is mainly trained for English; Vietnamese matching can be less reliable. No visitor question is sent to a portfolio backend, though the browser fetches model files from Hugging Face on first use.
 
-The chat layout follows the first user-provided dark screenshot: narrow black sidebar, centered conversation, compact answer content and a docked composer. The Projects directory adapts the later Plugins screenshot: top Projects/Skills tabs, wide search, scope and category filters, and two-column project rows. Featured and More projects use the existing portfolio data; Contact is the header action. Project rows open the existing detail view. Interface icons are a small, sanitized local SVG subset extracted from the later user-supplied ChatGPT HTML and its referenced icon sprite. The source HTML and full sprite are not shipped. Project category marks and the JayLL identity remain portfolio-specific.
+The chat layout follows the first user-provided dark screenshot: narrow black sidebar, centered conversation, compact answer content and a docked composer. The Projects directory adapts the later Plugins screenshot: top Projects/Skills tabs, wide search, scope and category filters, and two-column project rows. Featured and More projects use the existing portfolio data; Contact is the header action. Project rows open the existing detail view. Images displays the existing `/prompts/` collection in a ChatGPT-style grid. One existing record, Urban Night Streetwear Editorial, has an image but its prompt text file is missing, so its detail view reports that the prompt is unavailable. Library has an empty achievement image manifest in `chat-app/src/achievements-library.jsx` for images Jay will add later. The sidebar lists Projects only once.
+
+Interface icons are a small, sanitized local SVG subset extracted from the user-supplied ChatGPT HTML and its referenced icon sprite. The source HTML and full sprite are not shipped. Project icons are bundled locally; their [sources and provenance](../docs/project-icon-sources.md) are recorded separately. The JayLL identity remains portfolio-specific.
 
 The React component tree and the data in `chat-app/src/portfolio-data.js` provide extension points for future interactive projects, including Three.js. No 3D runtime or mini game is loaded in this version.
