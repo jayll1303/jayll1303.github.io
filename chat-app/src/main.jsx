@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { achievements, categories, certificates, community, contact, education, experience, projects, skills } from './portfolio-data';
+import { achievements, certificates, community, contact, education, experience, projects, skills } from './portfolio-data';
 import { entriesForIds, rankEntries } from './portfolio-search';
+import ProjectCatalog from './project-catalog';
 import './style.css';
 
 const featured = projects.filter(project => project.featured);
 const topicLabels = {
-  home: 'New chat', projects: 'All projects', experience: 'Experience', about: 'Who is Jay?',
+  home: 'New chat', projects: 'All projects', skills: 'Skills', experience: 'Experience', about: 'Who is Jay?',
   approach: 'How I build AI systems', achievements: 'Education & achievements', library: 'Library', contact: 'Contact Jay'
 };
 const suggestions = [
@@ -17,6 +18,7 @@ const suggestions = [
 ];
 
 function viewKey(view) { return view.kind === 'project' ? `project/${view.id}` : view.kind; }
+function isCatalogView(view) { return view.kind === 'projects' || view.kind === 'skills'; }
 function viewFromHash() {
   const raw = decodeURIComponent(window.location.hash.slice(1));
   if (raw.startsWith('project/') && projects.some(project => project.id === raw.slice(8))) return {kind:'project',id:raw.slice(8)};
@@ -28,14 +30,6 @@ function titleFor(view) { return view.kind === 'project' ? projects.find(project
 function Icon({name}) {
   const icons = {new:'✎',search:'⌕',library:'▦',projects:'▤',experience:'◷',about:'◉',approach:'⌘',achievements:'✧',contact:'↗',menu:'☰'};
   return <span className="nav-icon" aria-hidden="true">{icons[name] || '✦'}</span>;
-}
-
-function ProjectCard({project, onOpen}) {
-  return <article className="project-card">
-    <div className="project-card-top"><span className="project-category">{project.category}</span><span className="project-arrow" aria-hidden="true">↗</span></div>
-    <h3>{project.title}</h3><p>{project.summary}</p>
-    <div className="project-card-bottom"><span>{project.context}</span><button type="button" onClick={() => onOpen({kind:'project',id:project.id})} aria-label={`Explore ${project.title}`}>Explore</button></div>
-  </article>;
 }
 
 function Followups({items,onOpen}) {
@@ -52,17 +46,6 @@ function ProjectDetail({project,onOpen}) {
     <section className="answer-section"><h3>Tools & technologies</h3><div className="facts">{project.stack.map(item => <span className="fact" key={item}>{item}</span>)}</div></section>
     {(project.link || project.links) && <div className="link-row">{project.link && <a href={project.link} target="_blank" rel="noopener noreferrer">{project.linkLabel} ↗</a>}{project.links?.map(link=><a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}
     <Followups onOpen={onOpen} items={[{label:'All projects',view:{kind:'projects'}},{label:'Experience',view:{kind:'experience'}},{label:'Contact Jay',view:{kind:'contact'}}]} />
-  </>;
-}
-
-function ProjectsAnswer({onOpen}) {
-  const [category,setCategory] = useState('All');
-  const shown = category === 'All' ? projects : projects.filter(project => project.category === category);
-  return <><div className="eyebrow">SELECTED WORK <span className="eyebrow-divider">/</span> {projects.length} PROJECTS</div>
-    <h2>Things I’ve built.</h2><p className="lead">A collection of enterprise AI systems, open source experiments and research from my work so far.</p>
-    <div className="category-tabs" aria-label="Filter projects">{categories.map(item => <button key={item} className={item === category ? 'selected' : ''} onClick={() => setCategory(item)} aria-pressed={item === category}>{item}</button>)}</div>
-    <div className="project-grid">{shown.map(project => <ProjectCard key={project.id} project={project} onOpen={onOpen} />)}</div>
-    <Followups onOpen={onOpen} items={[{label:'My experience',view:{kind:'experience'}},{label:'How I build',view:{kind:'approach'}}]} />
   </>;
 }
 
@@ -101,7 +84,6 @@ function AssistantAnswer({view,onOpen}) {
   if (view.kind === 'search-results') return <><div className="eyebrow">PORTFOLIO SEARCH</div><h2>Results for “{view.query}”</h2><div className="search-match-list">{view.matches.map(project => <button key={project.id} onClick={() => onOpen({kind:'project',id:project.id})}><span>{project.category}</span><strong>{project.title}</strong><small>{project.summary}</small></button>)}</div></>;
   if (view.kind === 'no-results') return <><div className="eyebrow">PORTFOLIO SEARCH</div><h2>I don’t have that here yet.</h2><p className="lead">I found no match for “{view.query}”. Try a project name, a technology, “experience” or “contact”.</p><Followups onOpen={onOpen} items={[{label:'All projects',view:{kind:'projects'}},{label:'About Jay',view:{kind:'about'}}]} /></>;
   if (view.kind === 'project') return <ProjectDetail project={projects.find(project => project.id === view.id)} onOpen={onOpen} />;
-  if (view.kind === 'projects') return <ProjectsAnswer onOpen={onOpen} />;
   if (view.kind === 'experience') return <ExperienceAnswer onOpen={onOpen} />;
   return <GeneralAnswer kind={view.kind} onOpen={onOpen} />;
 }
@@ -120,7 +102,7 @@ function SearchDialog({open,onClose,onOpen,onAsk}) {
 
 function App() {
   const [view,setView] = useState(viewFromHash);
-  const [messages,setMessages] = useState(() => viewFromHash().kind === 'home' ? [] : [{question:titleFor(viewFromHash()),view:viewFromHash()}]);
+  const [messages,setMessages] = useState(() => viewFromHash().kind === 'home' || isCatalogView(viewFromHash()) ? [] : [{question:titleFor(viewFromHash()),view:viewFromHash()}]);
   const [recent,setRecent] = useState([]);
   const [menuOpen,setMenuOpen] = useState(false);
   const [collapsed,setCollapsed] = useState(false);
@@ -137,7 +119,7 @@ function App() {
   function openView(next,{append=false,question}={}) {
     const label=question || titleFor(next) || 'Explore Jay’s work';
     setView(next);
-    setMessages(previous => append ? [...previous,{question:label,view:next}] : next.kind==='home' ? [] : [{question:label,view:next}]);
+    setMessages(previous => isCatalogView(next) || next.kind==='home' ? [] : append ? [...previous,{question:label,view:next}] : [{question:label,view:next}]);
     if (next.kind!=='home' && next.kind!=='no-results' && next.kind!=='search-results') setRecent(previous => [next,...previous.filter(item=>viewKey(item)!==viewKey(next))].slice(0,6));
     const hash=next.kind==='home' ? '' : next.kind==='project' ? `#project/${next.id}` : topicLabels[next.kind] ? `#${next.kind}` : '';
     history.pushState(null,'',`${location.pathname}${hash}`);
@@ -151,7 +133,7 @@ function App() {
       if(latest)box.scrollTop+=latest.getBoundingClientRect().top-box.getBoundingClientRect().top;
     });
   }
-  useEffect(() => {const sync=()=>{const next=viewFromHash();setView(next);setMessages(next.kind==='home'?[]:[{question:titleFor(next),view:next}]);};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)};},[]);
+  useEffect(() => {const sync=()=>{const next=viewFromHash();setView(next);setMessages(next.kind==='home'||isCatalogView(next)?[]:[{question:titleFor(next),view:next}]);};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)};},[]);
   useEffect(() => {document.title=`${view.kind==='home'?'Ask JayLL':titleFor(view)||'Ask JayLL'} · Portfolio`;},[view]);
   useEffect(() => {if(view.kind==='home'&&conversationRef.current)conversationRef.current.scrollTop=0;},[view.kind]);
   useEffect(() => {const key=event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchTrigger.current=document.activeElement;setSearchOpen(true);}if(event.key==='Escape')setMenuOpen(false);};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[]);
@@ -162,7 +144,7 @@ function App() {
   function askPortfolio(text) {
     const requestId=++nextRequestId.current;
     const fallback=()=>rankEntries(text);
-    openView({kind:'local-answer',query:text,requestId,status:'loading',progress:'Starting the local model…'}, {append:messages.length>0,question:text});
+    openView({kind:'local-answer',query:text,requestId,status:'loading',progress:'Starting the local model…'}, {append:messages.length>0&&!isCatalogView(view),question:text});
     const update=changes=>setMessages(previous=>previous.map(message=>message.view.requestId===requestId ? {...message,view:{...message.view,...changes}} : message));
     try {
       if (!modelWorker.current) {
@@ -190,8 +172,9 @@ function App() {
   }
   function submit(event){event.preventDefault();const text=prompt.trim();if(!text)return;askPortfolio(text);}
   async function share(){try{await navigator.clipboard.writeText(location.href);notify('Link copied to clipboard.');}catch{notify(`Copy this URL: ${location.href}`);}}
+  const catalogOpen=isCatalogView(view);
   const navButton=(label,next,icon)=> <button className={`nav-action ${viewKey(view)===viewKey(next)?'active':''}`} key={viewKey(next)} onClick={()=>openView(next)}><Icon name={icon}/><span>{label}</span></button>;
-  return <><a className="skip-link" href="#main" onClick={event=>{event.preventDefault();document.getElementById('main').focus();}}>Skip to conversation</a><div className={`app-shell ${collapsed?'collapsed':''} ${menuOpen?'menu-open':''}`}>
+  return <><a className="skip-link" href="#main" onClick={event=>{event.preventDefault();document.getElementById('main').focus();}}>Skip to content</a><div className={`app-shell ${collapsed?'collapsed':''} ${menuOpen?'menu-open':''}`}>
     <aside className="sidebar" id="sidebar" aria-label="Portfolio navigation">
       <div className="sidebar-top"><a className="brand" href="/chat/" onClick={event=>{event.preventDefault();openView({kind:'home'});}}>JayLL</a><button className="icon-button sidebar-search" onClick={()=>{searchTrigger.current=document.activeElement;setSearchOpen(true);setMenuOpen(false);}} aria-label="Search portfolio"><Icon name="search"/></button><button className="icon-button desktop-collapse" onClick={()=>setCollapsed(true)} aria-label="Collapse sidebar">◫</button><button className="icon-button mobile-close" onClick={()=>setMenuOpen(false)} aria-label="Close sidebar">×</button></div>
       <nav className="sidebar-nav" aria-label="Quick navigation"><button className="nav-action" onClick={()=>openView({kind:'home'})}><Icon name="new"/><span>New chat</span></button>{navButton('Images',{kind:'library'},'library')}{navButton('Experience',{kind:'experience'},'experience')}{navButton('Projects',{kind:'projects'},'projects')}{navButton('Explore',{kind:'about'},'about')}</nav>
@@ -200,9 +183,9 @@ function App() {
       <div className="sidebar-bottom"><button className="sidebar-file" onClick={()=>openView({kind:'experience'})}><span className="file-icon">▤</span><span><strong>Experience & CV details</strong><small>Updated from Jay’s résumé</small></span></button><div className="profile"><span className="avatar">J</span><span><strong>Pham Phu Ngoc Trai</strong><small>AI engineer & builder</small></span></div></div>
     </aside>
     {menuOpen&&<button className="scrim" aria-label="Close navigation" onClick={()=>setMenuOpen(false)} />}
-    <div className="main-shell"><header className="topbar"><div className="top-left"><button className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-expanded={menuOpen}>☰</button>{collapsed&&<button className="icon-button reopen" onClick={()=>setCollapsed(false)} aria-label="Open sidebar">☰</button>}<button className="model-button" onClick={()=>notify('Local portfolio model loads when you ask a question.')}>JayLL <span className="chevron">⌄</span></button></div><div className="top-right"><button className="icon-button more-button" onClick={()=>openView({kind:'contact'})} aria-label="Contact Jay" title="Contact Jay">···</button><button className="share-button" onClick={share} aria-label="Share this view" title="Share this view">↥ <span>Share</span></button></div></header>
-      <main id="main" className="main-content" tabIndex="-1"><div className="conversation" ref={conversationRef} aria-live="polite">{messages.length===0?<section className="welcome"><span className="welcome-glyph" aria-hidden="true">✳</span><h1>What would you like to know about Jay?</h1><p className="welcome-sub">Explore the work, the systems behind it, and the path that brought me here. Start anywhere.</p><div className="suggestions">{suggestions.map(item=><button key={item.title} className="suggestion" onClick={()=>openView(item.view)}><span className="s-icon" aria-hidden="true">{item.icon}</span><strong>{item.title}</strong><span>{item.description}</span></button>)}</div><p className="welcome-footnote">Currently at FE Credit · Building voice and retrieval systems</p></section>:<div className="thread">{messages.map((message,index)=><div className="message-pair" key={`${index}-${viewKey(message.view)}`}><div className="message user-message"><div className="user-bubble">{message.question}</div></div><article className="message assistant-message"><div className="assistant-head"><span className="assistant-logo" aria-hidden="true">✳</span><span>JayLL</span></div><AssistantAnswer view={message.view} onOpen={next=>openView(next,{append:true})}/></article></div>)}</div>}</div>
-        <div className="composer-zone"><form className="composer" onSubmit={submit}><div className="composer-tools"><button type="button" className="attach-button" onClick={()=>openView({kind:'experience'})} aria-label="Explore CV details" title="Explore CV details">＋</button></div><label className="sr-only" htmlFor="prompt">Ask about Jay’s portfolio</label><textarea id="prompt" ref={promptRef} rows="1" value={prompt} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();event.currentTarget.form.requestSubmit();}}} placeholder="Ask JayLL"/><button className="send-button" type="submit" aria-label="Ask portfolio" disabled={!prompt.trim()}>↑</button></form><p className="composer-note">Small local model downloads on first question. Answers point to portfolio records.</p></div>
+    <div className="main-shell"><header className={`topbar ${catalogOpen?'catalog-topbar':''}`}><div className="top-left"><button className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-expanded={menuOpen}>☰</button>{collapsed&&<button className="icon-button reopen" onClick={()=>setCollapsed(false)} aria-label="Open sidebar">☰</button>}{catalogOpen?<nav className="catalog-tabs" aria-label="Browse portfolio"><button className={view.kind==='projects'?'active':''} aria-current={view.kind==='projects'?'page':undefined} onClick={()=>openView({kind:'projects'})}>Projects</button><button className={view.kind==='skills'?'active':''} aria-current={view.kind==='skills'?'page':undefined} onClick={()=>openView({kind:'skills'})}>Skills</button></nav>:<button className="model-button" onClick={()=>notify('Local portfolio model loads when you ask a question.')}>JayLL <span className="chevron">⌄</span></button>}</div><div className="top-right">{catalogOpen?<button className="catalog-contact" onClick={()=>openView({kind:'contact'})}>Contact ↗</button>:<><button className="icon-button more-button" onClick={()=>openView({kind:'contact'})} aria-label="Contact Jay" title="Contact Jay">···</button><button className="share-button" onClick={share} aria-label="Share this view" title="Share this view">↥ <span>Share</span></button></>}</div></header>
+      <main id="main" className={`main-content ${catalogOpen?'catalog-main':''}`} tabIndex="-1">{catalogOpen?<div className="catalog-scroll"><ProjectCatalog key={view.kind} kind={view.kind} onOpen={openView}/></div>:<><div className="conversation" ref={conversationRef} aria-live="polite">{messages.length===0?<section className="welcome"><span className="welcome-glyph" aria-hidden="true">✳</span><h1>What would you like to know about Jay?</h1><p className="welcome-sub">Explore the work, the systems behind it, and the path that brought me here. Start anywhere.</p><div className="suggestions">{suggestions.map(item=><button key={item.title} className="suggestion" onClick={()=>openView(item.view)}><span className="s-icon" aria-hidden="true">{item.icon}</span><strong>{item.title}</strong><span>{item.description}</span></button>)}</div><p className="welcome-footnote">Currently at FE Credit · Building voice and retrieval systems</p></section>:<div className="thread">{messages.map((message,index)=><div className="message-pair" key={`${index}-${viewKey(message.view)}`}><div className="message user-message"><div className="user-bubble">{message.question}</div></div><article className="message assistant-message"><div className="assistant-head"><span className="assistant-logo" aria-hidden="true">✳</span><span>JayLL</span></div><AssistantAnswer view={message.view} onOpen={next=>openView(next,{append:true})}/></article></div>)}</div>}</div>
+        <div className="composer-zone"><form className="composer" onSubmit={submit}><div className="composer-tools"><button type="button" className="attach-button" onClick={()=>openView({kind:'experience'})} aria-label="Explore CV details" title="Explore CV details">＋</button></div><label className="sr-only" htmlFor="prompt">Ask about Jay’s portfolio</label><textarea id="prompt" ref={promptRef} rows="1" value={prompt} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();event.currentTarget.form.requestSubmit();}}} placeholder="Ask JayLL"/><button className="send-button" type="submit" aria-label="Ask portfolio" disabled={!prompt.trim()}>↑</button></form><p className="composer-note">Small local model downloads on first question. Answers point to portfolio records.</p></div></>}
       </main></div></div>
     <SearchDialog open={searchOpen} onClose={()=>setSearchOpen(false)} onOpen={openView} onAsk={askPortfolio}/>
     <div className={`toast ${toast?'show':''}`} role="status" aria-live="polite">{toast}</div>
