@@ -176,3 +176,4 @@ button.catalog-row:hover{background:#181818}
 .attach-button{display:grid;place-items:center}
 .catalog-search>.ui-icon{flex:0 0 16px}
 .catalog-row-arrow{display:grid;place-items:center}
+@media(min-width:761px){.gallery-topbar{height:0;min-height:0;flex-basis:0;padding:0;position:relative;z-index:2}.gallery-topbar .reopen{position:absolute;top:10px;left:12px}}
