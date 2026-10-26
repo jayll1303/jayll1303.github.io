@@ -62,12 +62,23 @@ function ExperienceAnswer({onOpen}) {
   </>;
 }
 
+function ContactAnswer({onOpen}) {
+  const accounts = [
+    {label:'Email', value:contact.email, href:`mailto:${contact.email}`},
+    {label:'LinkedIn', value:'linkedin.com/in/jayll13', href:contact.linkedin},
+    {label:'GitHub', value:'github.com/jayll1303', href:contact.github},
+    {label:'Facebook', value:'facebook.com/jayllFA', href:contact.facebook},
+    {label:'Zalo', value:'0903 027 947', href:contact.zalo}
+  ];
+  return <><div className="eyebrow">CONTACT</div><h2>Find me online.</h2><p className="lead">Choose the channel that works best for you.</p><div className="contact-links">{accounts.map(account => <a key={account.label} href={account.href} {...(account.label === 'Email' ? {} : {target:'_blank', rel:'noopener noreferrer'})}><span><strong>{account.label}</strong><small>{account.value}</small></span><UiIcon name="open-link" size={16}/></a>)}</div><Followups onOpen={onOpen} items={[{label:'Explore projects',view:{kind:'projects'}},{label:'My experience',view:{kind:'experience'}}]} /></>;
+}
+
 function GeneralAnswer({kind,onOpen}) {
   switch (kind) {
     case 'about': return <><div className="eyebrow">ABOUT JAY</div><h2>Hey, I’m Jay.</h2><p className="lead">I’m Pham Phu Ngoc Trai, an AI engineer based in Ho Chi Minh City.</p><p>I work across voice AI, knowledge retrieval, agents and document intelligence. My current role at FE Credit focuses on enterprise GraphRAG and voice automation. I also build open source and research projects, including VoxCPM-VN and Table2HTML.</p><Followups onOpen={onOpen} items={[{label:'See the work',view:{kind:'projects'}},{label:'My experience',view:{kind:'experience'}},{label:'Get in touch',view:{kind:'contact'}}]} /></>;
     case 'approach': return <><div className="eyebrow">HOW I BUILD</div><h2>Build the system around the model.</h2><p className="lead">The work in my résumé points to three recurring problems: getting useful context, connecting models to workflows, and making the result deployable.</p><div className="principle-grid"><div><span>01</span><h3>Context</h3><p>Graph retrieval, OCR and document pipelines make information usable.</p></div><div><span>02</span><h3>Action</h3><p>Agents, tool calls and business logic turn a response into a workflow.</p></div><div><span>03</span><h3>Delivery</h3><p>APIs, containers, cloud deployment and monitoring make the work usable beyond a demo.</p></div></div><Followups onOpen={onOpen} items={[{label:'GraphRAG project',view:{kind:'project',id:'graph-rag'}},{label:'Voice assistant',view:{kind:'project',id:'alice'}}]} /></>;
     case 'achievements': return <><div className="eyebrow">EDUCATION & ACHIEVEMENTS</div><h2>Curiosity, built into practice.</h2><div className="answer-panel"><h3>{education.school}</h3><p>{education.detail}</p></div><div className="timeline">{achievements.map(item => <div className="timeline-item compact" key={item}>{item}</div>)}</div><section className="answer-section"><h3>Technical skills</h3>{Object.entries(skills).map(([group,items])=><div className="skill-row" key={group}><strong>{group}</strong><div className="facts">{items.map(item=><span className="fact" key={item}>{item}</span>)}</div></div>)}</section><section className="answer-section"><h3>Certificates</h3><ul className="detail-list">{certificates.map(item=><li key={item}>{item}</li>)}</ul></section><Followups onOpen={onOpen} items={[{label:'Research work',view:{kind:'project',id:'antiquities'}},{label:'Experience',view:{kind:'experience'}}]} /></>;
-    case 'contact': return <><div className="eyebrow">CONTACT</div><h2>Tell me what you’re building.</h2><p className="lead">Send a short note about the problem, the workflow and what a useful result would look like.</p><div className="contact-card"><span>DIRECT LINE</span><a href={`mailto:${contact.email}`}>{contact.email} ↗</a><p>For code and open source work, find me on GitHub.</p><a className="secondary-link" href={contact.github} target="_blank" rel="noopener noreferrer">GitHub profile ↗</a></div><Followups onOpen={onOpen} items={[{label:'Explore projects',view:{kind:'projects'}},{label:'My experience',view:{kind:'experience'}}]} /></>;
+    case 'contact': return <ContactAnswer onOpen={onOpen} />;
     default: return null;
   }
 }

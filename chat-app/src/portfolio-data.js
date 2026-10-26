@@ -219,5 +219,11 @@ export const community = {
   place:'FPT University Scholarship Hunter Association',
   detail:'Mentored around 30 students in math and essay writing. The supplied résumé reports a 40% scholarship success rate in that group. Helped organize an event for grade 12 students.'
 };
-export const contact = {email:'jayll13.work@gmail.com',github:'https://github.com/jayll1303'};
+export const contact = {
+  email: 'jayll13.work@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/jayll13',
+  github: 'https://github.com/jayll1303',
+  facebook: 'https://www.facebook.com/jayllFA/',
+  zalo: 'https://zalo.me/0903027947'
+};
 export const categories = ['All', 'Products', 'Current work', 'Voice AI', 'Document AI', 'Agents', 'Research'];

@@ -177,3 +177,12 @@ button.catalog-row:hover{background:#181818}
 .catalog-search>.ui-icon{flex:0 0 16px}
 .catalog-row-arrow{display:grid;place-items:center}
 @media(min-width:761px){.gallery-topbar{height:0;min-height:0;flex-basis:0;padding:0;position:relative;z-index:2}.gallery-topbar .reopen{position:absolute;top:10px;left:12px}}
+.contact-links{margin:26px 0 30px;border-top:1px solid #2b2b2b}
+.contact-links a{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 3px;border-bottom:1px solid #2b2b2b;color:#ececec;text-decoration:none}
+.contact-links a:hover{background:#151515}
+.contact-links a:focus-visible{outline:2px solid #b7d7ff;outline-offset:2px}
+.contact-links a span{min-width:0}
+.contact-links strong,.contact-links small{display:block}
+.contact-links strong{font-size:14px;font-weight:650}
+.contact-links small{margin-top:2px;color:#a8a8a8;font-size:12px;overflow-wrap:anywhere}
+.contact-links .ui-icon{color:#9b9b9b}

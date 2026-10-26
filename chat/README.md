@@ -16,13 +16,14 @@ The preview at `/chat/` is the production build of the React/Vite source in [`ch
 | Conversation | Detail for a project, career stage or topic |
 | Composer | A small browser model selects relevant portfolio records; no server or API key |
 | CV control | Current experience details in the portfolio |
+| Contact | Email, LinkedIn, GitHub, Facebook and Zalo links |
 | Share | Copy the selected view's URL |
 
-The five-page PDF provided for this task was read locally and was not copied into the site. This build omits its phone number. Four newer products come from the public Windhawk, Chrome Web Store and Unikorn pages supplied by Jay. Public project links are present only where a URL was supplied or already in the existing portfolio. Outcome numbers for earlier work are attributed to the supplied résumé.
+The five-page PDF provided for this task was read locally and was not copied into the site. Jay later explicitly supplied the LinkedIn and Facebook profile URLs and confirmed the phone number used for the Zalo link. Four newer products come from the public Windhawk, Chrome Web Store and Unikorn pages supplied by Jay. Public project links are present only where a URL was supplied or already in the existing portfolio. Outcome numbers for earlier work are attributed to the supplied résumé.
 
 ## Build
 
-From `chat-app/`, run `npm install` and `npm run build`. Vite writes the static output here. Serve the repository root, then open `/chat/`. The rest of the site remains plain HTML/CSS/JavaScript.
+From `chat-app/`, run `npm install` and `npm run build`. Vite writes the static output here. Serve the repository root, then open `/chat/`. GitHub Pages serves the root of `main`, making the published portfolio available at `https://jayll1303.github.io/chat/`. The rest of the site remains plain HTML/CSS/JavaScript.
 
 `npm test` checks the local fallback and record validation. The model is lazy loaded when a visitor asks a question. Transformers.js runs SmolLM2-135M-Instruct in a worker, using WebGPU where available and WASM otherwise. The quantized model requires a substantial first download (roughly 134–200 MB of weights, depending on device) and is cached by the browser. Its selected record IDs are checked against the curated data before the UI displays any project details. If the model cannot run, the UI labels the fallback search. The model is mainly trained for English; Vietnamese matching can be less reliable. No visitor question is sent to a portfolio backend, though the browser fetches model files from Hugging Face on first use.
 

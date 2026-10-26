@@ -20,8 +20,8 @@ export const searchEntries = [
   },
   {
     id: 'contact', title: 'Contact Jay',
-    text: `contact email collaboration reach Jay ${contact.email}`,
-    view: { kind: 'contact' }, summary: 'Email and GitHub contact details.'
+    text: `contact email linkedin github facebook zalo collaboration reach Jay ${contact.email}`,
+    view: { kind: 'contact' }, summary: 'Email, LinkedIn, GitHub, Facebook and Zalo.'
   }
 ];
 
