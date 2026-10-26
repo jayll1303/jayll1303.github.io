@@ -150,6 +150,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .catalog-row{width:100%;min-width:0;min-height:85px;display:flex;align-items:flex-start;gap:11px;text-align:left;border:0;border-radius:10px;background:transparent;color:#e8e8e8;padding:11px 7px}
 button.catalog-row:hover{background:#181818}
 .catalog-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;background:#142941;border:1px solid #334a61;border-radius:8px;color:#69adff;font-size:20px;line-height:1;font-weight:700}
+.catalog-icon-products{background:#282216;border-color:#69532d;color:#f4c767;font-size:17px}
 .catalog-icon-voice-ai{background:#23152c;border-color:#51365f;color:#d297ff}
 .catalog-icon-document-ai{background:#132837;border-color:#34546a;color:#5cb6ec}
 .catalog-icon-agents{background:#17281f;border-color:#345c41;color:#76d696}

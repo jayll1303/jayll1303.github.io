@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { categories, projects, skills } from './portfolio-data';
 
 const categoryMarks = {
+  Products: '◆',
   'Current work': '⌘',
   'Voice AI': '◉',
   'Document AI': '▤',
@@ -42,7 +43,7 @@ export default function ProjectCatalog({ kind, onOpen }) {
   })).filter(group => group.items.length);
 
   return <div className="catalog-page">
-    <div className="catalog-intro"><h1>{isSkills ? 'Skills' : 'Projects'}</h1><p>{isSkills ? 'The tools behind the systems I build' : 'Explore the systems, experiments and research I’ve built'}</p></div>
+    <div className="catalog-intro"><h1>{isSkills ? 'Skills' : 'Projects'}</h1><p>{isSkills ? 'The tools behind the systems I build' : 'Explore the products, systems and research I’ve built'}</p></div>
     <label className="catalog-search"><span aria-hidden="true">⌕</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={isSkills ? 'Search skills' : 'Search projects'} aria-label={isSkills ? 'Search skills' : 'Search projects'} /></label>
     {isSkills ? <div className="catalog-skills">
       {skillGroups.length ? skillGroups.map(({ group, items }) => <section className="catalog-section" key={group} aria-label={group}><h2>{group} <span aria-hidden="true">›</span></h2><div className="catalog-grid">{items.map(item => <div className="catalog-row catalog-skill" key={item}><span className="catalog-icon catalog-icon-skill" aria-hidden="true">✦</span><span className="catalog-row-copy"><strong>{item}</strong><small>{group}</small></span></div>)}</div></section>) : <p className="catalog-empty" role="status">No skills match “{query}”.</p>}

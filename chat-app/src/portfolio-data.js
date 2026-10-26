@@ -1,5 +1,55 @@
-// Curated from the five-page résumé supplied by Jay. Keep facts and links reviewable here.
+// Curated from Jay's résumé and the public product pages he supplied. Keep facts and links reviewable here.
 export const projects = [
+  {
+    id: 'winv-panel-tweaks', title: 'Win+V Panel Tweaks', category: 'Products', period: '2026',
+    context: 'Windhawk · Windows 11 mod', featured: true,
+    summary: 'Resize the Windows clipboard and emoji panel, and hide tabs you do not use.',
+    details: [
+      'Lets people adjust the Win+V clipboard and Win+. emoji panel size.',
+      'Can hide the Emoji, GIF, Kaomoji, Symbols and Most recently used tabs while keeping Clipboard available.'
+    ],
+    stack: ['Windhawk', 'Windows 11'],
+    link: 'https://windhawk.net/mods/winv-panel-tweaks', linkLabel: 'View Windhawk mod'
+  },
+  {
+    id: 'coin-stock-monitor', title: 'Coin & Stock Monitor', category: 'Products', period: '2026',
+    context: 'Windhawk · Windows 11 mod', featured: true,
+    summary: 'Live stock and crypto prices on the Windows 11 taskbar.',
+    details: [
+      'Shows up to four symbols, with optional entry prices and signed percentage changes.',
+      'Supports a configurable JSON price API, refresh interval, colors and layout.'
+    ],
+    stack: ['Windhawk', 'Windows 11', 'JSON API'],
+    links: [
+      {label: 'View Windhawk mod', url: 'https://windhawk.net/mods/coin-stock-monitor'},
+      {label: 'View source', url: 'https://github.com/jayll1303/coin-stock-monitor'}
+    ]
+  },
+  {
+    id: 'pondie-tab', title: 'Pondie Tab · Cozy Frog Companion', category: 'Products', period: '2026',
+    context: 'Chrome extension · open source', featured: true,
+    summary: 'A cozy, interactive frog companion for each new browser tab.',
+    details: [
+      'Built cursor-following eyes, blinking, breathing and playful drag-and-poke interactions.',
+      'Added ambient colors, an editable greeting and clock options while keeping the extension local and tracking-free.'
+    ],
+    stack: ['TypeScript', 'HTML5 Canvas', 'Chrome extension'],
+    link: 'https://chromewebstore.google.com/detail/tabmaka-cozy-new-tab-pet/anomdkjhpfojkpoebfpiohlpeidhcaeb', linkLabel: 'View Chrome extension'
+  },
+  {
+    id: 'tiengnoi', title: 'TiengNoi', category: 'Products', period: '2026',
+    context: 'Web app · Vietnamese voice AI', featured: true,
+    summary: 'Vietnamese text-to-speech and voice cloning for content creators.',
+    details: [
+      'Lets users create or clone a voice, keep it in a reusable library and turn text into speech.',
+      'Supports adjustable reading speed and audio preview or download.'
+    ],
+    stack: ['Next.js', 'Text-to-speech', 'Voice cloning'],
+    links: [
+      {label: 'View product listing', url: 'https://unikorn.vn/p/tiengnoiaivoice'},
+      {label: 'Visit product', url: 'https://tiengnoi.online'}
+    ]
+  },
   {
     id: 'voxcpm-vn', title: 'VoxCPM-VN', category: 'Voice AI', period: 'Jan 2026 — present',
     context: 'Open source · demo completed', featured: true,
@@ -170,4 +220,4 @@ export const community = {
   detail:'Mentored around 30 students in math and essay writing. The supplied résumé reports a 40% scholarship success rate in that group. Helped organize an event for grade 12 students.'
 };
 export const contact = {email:'jayll13.work@gmail.com',github:'https://github.com/jayll1303'};
-export const categories = ['All', 'Current work', 'Voice AI', 'Document AI', 'Agents', 'Research'];
+export const categories = ['All', 'Products', 'Current work', 'Voice AI', 'Document AI', 'Agents', 'Research'];

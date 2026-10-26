@@ -8,7 +8,7 @@ The preview at `/chat/` is the production build of the React/Vite source in [`ch
 | --- | --- |
 | New chat | Start at the portfolio welcome screen |
 | Search icon / Ctrl K | Open direct navigation or ask the local model |
-| Projects | A searchable, filterable directory of the 14 projects summarized from Jay's supplied résumé |
+| Projects | A searchable, filterable directory of 18 résumé projects and shipped products |
 | Skills tab | The skills listed in Jay's résumé, grouped by subject |
 | Recent this visit | Views opened in this browser session |
 | Conversation | Detail for a project, career stage or topic |
@@ -17,7 +17,7 @@ The preview at `/chat/` is the production build of the React/Vite source in [`ch
 | CV control | Current experience details in the portfolio |
 | Share | Copy the selected view's URL |
 
-The five-page PDF provided for this task was read locally and was not copied into the site. This build omits its phone number. Public project links are present only where a URL was available or already in the existing portfolio. Outcome numbers are attributed to the supplied résumé.
+The five-page PDF provided for this task was read locally and was not copied into the site. This build omits its phone number. Four newer products come from the public Windhawk, Chrome Web Store and Unikorn pages supplied by Jay. Public project links are present only where a URL was supplied or already in the existing portfolio. Outcome numbers for earlier work are attributed to the supplied résumé.
 
 ## Build
 
