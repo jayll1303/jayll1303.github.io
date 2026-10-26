@@ -166,3 +166,13 @@ button.catalog-row:hover{background:#181818}
 .catalog-skill{min-height:60px}
 @media(max-width:760px){.catalog-topbar{padding:0 12px}.catalog-tabs{gap:2px}.catalog-tabs button{padding:8px 10px}.catalog-contact{padding:9px 13px}.catalog-page{width:calc(100% - 36px);padding-top:22px}.catalog-grid{grid-template-columns:1fr;gap:1px}.catalog-section{margin-top:30px}.catalog-filters{margin-top:24px}.catalog-row{min-height:74px}}
 @media(max-width:420px){.catalog-category-label{font-size:0;gap:0}.catalog-category-label select{max-width:128px}.catalog-intro h1{font-size:21px}}
+
+/* Locally bundled subset of the SVG icon set referenced by the supplied ChatGPT HTML. */
+.ui-icon{display:block;flex:none;color:inherit}
+.nav-icon{display:grid;place-items:center;width:20px;flex:0 0 20px}
+.model-button,.catalog-contact{display:inline-flex;align-items:center;gap:5px}
+.chevron{display:inline-flex;align-items:center;margin-left:0}
+.suggestion .s-icon{height:20px}
+.attach-button{display:grid;place-items:center}
+.catalog-search>.ui-icon{flex:0 0 16px}
+.catalog-row-arrow{display:grid;place-items:center}

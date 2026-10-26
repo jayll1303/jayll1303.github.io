@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { categories, projects, skills } from './portfolio-data';
+import UiIcon from './ui-icon';
 
 const categoryMarks = {
   Products: '◆',
@@ -14,7 +15,7 @@ function ProjectRow({ project, onOpen }) {
   return <button className="catalog-row" type="button" onClick={() => onOpen({ kind: 'project', id: project.id })}>
     <span className={`catalog-icon catalog-icon-${project.category.toLowerCase().replace(/\W+/g, '-')}`} aria-hidden="true">{categoryMarks[project.category]}</span>
     <span className="catalog-row-copy"><strong>{project.title}</strong><span>{project.summary}</span><small>{project.category} · {project.context}</small></span>
-    <span className="catalog-row-arrow" aria-hidden="true">↗</span>
+    <span className="catalog-row-arrow"><UiIcon name="open-link" size={16}/></span>
   </button>;
 }
 
@@ -44,7 +45,7 @@ export default function ProjectCatalog({ kind, onOpen }) {
 
   return <div className="catalog-page">
     <div className="catalog-intro"><h1>{isSkills ? 'Skills' : 'Projects'}</h1><p>{isSkills ? 'The tools behind the systems I build' : 'Explore the products, systems and research I’ve built'}</p></div>
-    <label className="catalog-search"><span aria-hidden="true">⌕</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={isSkills ? 'Search skills' : 'Search projects'} aria-label={isSkills ? 'Search skills' : 'Search projects'} /></label>
+    <label className="catalog-search"><UiIcon name="search" size={16}/><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={isSkills ? 'Search skills' : 'Search projects'} aria-label={isSkills ? 'Search skills' : 'Search projects'} /></label>
     {isSkills ? <div className="catalog-skills">
       {skillGroups.length ? skillGroups.map(({ group, items }) => <section className="catalog-section" key={group} aria-label={group}><h2>{group} <span aria-hidden="true">›</span></h2><div className="catalog-grid">{items.map(item => <div className="catalog-row catalog-skill" key={item}><span className="catalog-icon catalog-icon-skill" aria-hidden="true">✦</span><span className="catalog-row-copy"><strong>{item}</strong><small>{group}</small></span></div>)}</div></section>) : <p className="catalog-empty" role="status">No skills match “{query}”.</p>}
     </div> : <>
