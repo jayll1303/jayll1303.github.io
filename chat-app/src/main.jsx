@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { achievements, categories, certificates, community, contact, education, experience, projects, skills } from './portfolio-data';
+import { entriesForIds, rankEntries } from './portfolio-search';
 import './style.css';
 
 const featured = projects.filter(project => project.featured);
@@ -87,6 +88,16 @@ function GeneralAnswer({kind,onOpen}) {
 }
 
 function AssistantAnswer({view,onOpen}) {
+  if (view.kind === 'local-answer') {
+    const vietnamese=/[à-ỹđ]/i.test(view.query);
+    return <>
+    <div className="eyebrow">{view.mode === 'fallback' ? 'PORTFOLIO SEARCH' : 'LOCAL MODEL · ON YOUR DEVICE'}</div>
+    {view.status === 'loading' ? <p className="lead" role="status">{view.progress || 'Starting the local model…'}</p> : <>
+      {view.mode === 'fallback' && <p className="search-notice">{vietnamese ? 'Model trên máy này chưa chạy được. Đây là kết quả tìm trong nội dung portfolio.' : 'The local model could not run here. Showing matches from portfolio text instead.'}</p>}
+      {view.entries?.length ? <><h2>{vietnamese ? 'Mình tìm thấy các mục liên quan.' : 'Here’s what I found.'}</h2><p className="lead">{vietnamese ? 'Chọn một mục để xem chi tiết và liên kết nguồn có sẵn.' : 'These portfolio records may answer your question. Open one for the full context and source links.'}</p><div className="search-match-list">{view.entries.map(entry => <button key={entry.id} onClick={() => onOpen(entry.view)}><span>{entry.id === 'experience' || entry.id === 'contact' || entry.id === 'achievements' ? 'Portfolio' : 'Project'}</span><strong>{entry.title}</strong><small>{entry.summary}</small></button>)}</div></> : <><h2>{vietnamese ? 'Portfolio hiện chưa có thông tin này.' : 'I don’t have that information here yet.'}</h2><p className="lead">{vietnamese ? 'Thử hỏi về dự án, voice AI, GraphRAG, xử lý tài liệu, kinh nghiệm hoặc liên hệ.' : 'Try asking about projects, voice AI, GraphRAG, document AI, experience or contact.'}</p></>}
+    </>}
+  </>;
+  }
   if (view.kind === 'search-results') return <><div className="eyebrow">PORTFOLIO SEARCH</div><h2>Results for “{view.query}”</h2><div className="search-match-list">{view.matches.map(project => <button key={project.id} onClick={() => onOpen({kind:'project',id:project.id})}><span>{project.category}</span><strong>{project.title}</strong><small>{project.summary}</small></button>)}</div></>;
   if (view.kind === 'no-results') return <><div className="eyebrow">PORTFOLIO SEARCH</div><h2>I don’t have that here yet.</h2><p className="lead">I found no match for “{view.query}”. Try a project name, a technology, “experience” or “contact”.</p><Followups onOpen={onOpen} items={[{label:'All projects',view:{kind:'projects'}},{label:'About Jay',view:{kind:'about'}}]} /></>;
   if (view.kind === 'project') return <ProjectDetail project={projects.find(project => project.id === view.id)} onOpen={onOpen} />;
@@ -95,7 +106,7 @@ function AssistantAnswer({view,onOpen}) {
   return <GeneralAnswer kind={view.kind} onOpen={onOpen} />;
 }
 
-function SearchDialog({open,onClose,onOpen}) {
+function SearchDialog({open,onClose,onOpen,onAsk}) {
   const ref = useRef(null);
   const [query,setQuery] = useState('');
   useEffect(() => {if (!open) {setQuery('');return;}const dialog=ref.current;dialog.showModal();dialog.querySelector('input').focus();return () => {if (dialog.open) dialog.close();};},[open]);
@@ -104,29 +115,7 @@ function SearchDialog({open,onClose,onOpen}) {
     ...projects.map(project => ({key:project.id,label:project.title,detail:`${project.category} · ${project.summary}`,searchText:project.stack.join(' '),view:{kind:'project',id:project.id}}))
   ];
   const results=entries.filter(entry => `${entry.label} ${entry.detail} ${entry.searchText||''}`.toLowerCase().includes(query.toLowerCase())).slice(0,12);
-  return <dialog ref={ref} className="search-dialog" onClose={onClose}><div className="search-head"><Icon name="search" /><input aria-label="Search portfolio" placeholder="Search projects, skills, experience…" value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => {if(event.key==='Enter'&&results[0]){event.preventDefault();onOpen(results[0].view);onClose();}}} /><button onClick={onClose} aria-label="Close search">Esc</button></div><div className="search-results">{results.length ? results.map(entry => <button key={entry.key} onClick={() => {onOpen(entry.view);onClose();}}><strong>{entry.label}</strong><small>{entry.detail}</small></button>) : <p>No matches. Try a project name or technology.</p>}</div></dialog>;
-}
-
-function classifyQuery(text) {
-  const query=text.trim().toLowerCase();
-  const lookup=[
-    [/contact|email|liên hệ|hợp tác|thuê/, 'contact'],
-    [/experience|kinh nghiệm|worked|career|fpt|fe credit|quá trình/, 'experience'],
-    [/education|university|scholarship|award|học|giải thưởng/, 'achievements'],
-    [/library|prompt|image|ảnh/, 'library'],
-    [/approach|cách làm|how.*build|architecture|kiến trúc|workflow/, 'approach'],
-    [/about|who|giới thiệu|bạn là ai/, 'about'],
-    [/project|dự án|work|portfolio|sản phẩm/, 'projects']
-  ];
-  const direct=projects.find(project => query.includes(project.title.toLowerCase()) || query.includes(project.id.replaceAll('-',' ')));
-  if(direct)return {kind:'project',id:direct.id};
-  const exact=lookup.find(([pattern]) => pattern.test(query));
-  if(exact)return {kind:exact[1]};
-  const words=query.split(/\s+/).filter(word=>word.length>2);
-  const matches=projects.filter(project => words.some(word => `${project.title} ${project.category} ${project.summary} ${project.stack.join(' ')}`.toLowerCase().includes(word)));
-  if(matches.length===1)return {kind:'project',id:matches[0].id};
-  if(matches.length>1)return {kind:'search-results',query:text,matches};
-  return {kind:'no-results',query:text};
+  return <dialog ref={ref} className="search-dialog" onClose={onClose}><div className="search-head"><Icon name="search" /><input aria-label="Search portfolio" placeholder="Search projects, skills, experience…" value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => {if(event.key==='Enter'&&query.trim()){event.preventDefault();onAsk(query.trim());onClose();}}} /><button onClick={onClose} aria-label="Close search">Esc</button></div><div className="search-results">{query.trim()&&<button className="ask-model-result" onClick={()=>{onAsk(query.trim());onClose();}}><strong>Ask local model: “{query.trim()}”</strong><small>Find relevant work using a small browser model</small></button>}{results.length ? results.map(entry => <button key={entry.key} onClick={() => {onOpen(entry.view);onClose();}}><strong>{entry.label}</strong><small>{entry.detail}</small></button>) : <p>No direct matches. Ask the local model instead.</p>}</div></dialog>;
 }
 
 function App() {
@@ -142,6 +131,8 @@ function App() {
   const promptRef=useRef(null);
   const searchTrigger=useRef(null);
   const toastTimer=useRef(null);
+  const modelWorker=useRef(null);
+  const nextRequestId=useRef(0);
 
   function openView(next,{append=false,question}={}) {
     const label=question || titleFor(next) || 'Explore Jay’s work';
@@ -166,25 +157,54 @@ function App() {
   useEffect(() => {const key=event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchTrigger.current=document.activeElement;setSearchOpen(true);}if(event.key==='Escape')setMenuOpen(false);};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[]);
   useEffect(() => {if(!searchOpen&&searchTrigger.current?.focus){searchTrigger.current.focus();searchTrigger.current=null;}},[searchOpen]);
   useEffect(() => {return()=>clearTimeout(toastTimer.current);},[]);
+  useEffect(() => () => modelWorker.current?.terminate(), []);
   function notify(message){setToast(message);clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),3500);}
-  function submit(event){event.preventDefault();const text=prompt.trim();if(!text)return;openView(classifyQuery(text),{append:messages.length>0,question:text});}
+  function askPortfolio(text) {
+    const requestId=++nextRequestId.current;
+    const fallback=()=>rankEntries(text);
+    openView({kind:'local-answer',query:text,requestId,status:'loading',progress:'Starting the local model…'}, {append:messages.length>0,question:text});
+    const update=changes=>setMessages(previous=>previous.map(message=>message.view.requestId===requestId ? {...message,view:{...message.view,...changes}} : message));
+    try {
+      if (!modelWorker.current) {
+        modelWorker.current=new Worker(new URL('./local-model-worker.js',import.meta.url),{type:'module'});
+        modelWorker.current.onmessage=({data})=>{
+          if (data.type==='progress') updateForRequest(data.requestId,{progress:data.message});
+          if (data.type==='result') updateForRequest(data.requestId,{status:'done',mode:'model',entries:entriesForIds(data.ids)});
+          if (data.type==='error') updateForRequest(data.requestId,{status:'done',mode:'fallback',entries:rankEntries(requestQuestions.current.get(data.requestId)||'')});
+        };
+        modelWorker.current.onerror=()=>{
+          for (const [id,question] of requestQuestions.current) updateForRequest(id,{status:'done',mode:'fallback',entries:rankEntries(question)});
+          modelWorker.current?.terminate();modelWorker.current=null;
+        };
+      }
+      requestQuestions.current.set(requestId,text);
+      modelWorker.current.postMessage({requestId,question:text});
+    } catch {
+      update({status:'done',mode:'fallback',entries:fallback()});
+    }
+  }
+  const requestQuestions=useRef(new Map());
+  function updateForRequest(requestId,changes) {
+    setMessages(previous=>previous.map(message=>message.view.requestId===requestId ? {...message,view:{...message.view,...changes}} : message));
+    if(changes.status==='done')requestQuestions.current.delete(requestId);
+  }
+  function submit(event){event.preventDefault();const text=prompt.trim();if(!text)return;askPortfolio(text);}
   async function share(){try{await navigator.clipboard.writeText(location.href);notify('Link copied to clipboard.');}catch{notify(`Copy this URL: ${location.href}`);}}
   const navButton=(label,next,icon)=> <button className={`nav-action ${viewKey(view)===viewKey(next)?'active':''}`} key={viewKey(next)} onClick={()=>openView(next)}><Icon name={icon}/><span>{label}</span></button>;
   return <><a className="skip-link" href="#main" onClick={event=>{event.preventDefault();document.getElementById('main').focus();}}>Skip to conversation</a><div className={`app-shell ${collapsed?'collapsed':''} ${menuOpen?'menu-open':''}`}>
     <aside className="sidebar" id="sidebar" aria-label="Portfolio navigation">
-      <div className="sidebar-top"><a className="brand" href="/chat/" onClick={event=>{event.preventDefault();openView({kind:'home'});}}><span className="brand-symbol">✳</span><span>JayLL</span><span className="brand-label">portfolio</span></a><button className="icon-button desktop-collapse" onClick={()=>setCollapsed(true)} aria-label="Collapse sidebar">☷</button><button className="icon-button mobile-close" onClick={()=>setMenuOpen(false)} aria-label="Close sidebar">×</button></div>
-      <nav className="sidebar-nav" aria-label="Quick navigation"><button className="nav-action" onClick={()=>openView({kind:'home'})}><Icon name="new"/><span>New chat</span></button><button className="nav-action" onClick={()=>{searchTrigger.current=document.activeElement;setSearchOpen(true);setMenuOpen(false);}}><Icon name="search"/><span>Search chats</span><kbd>Ctrl K</kbd></button>{navButton('Library',{kind:'library'},'library')}</nav>
-      <div className="sidebar-scroll"><div className="nav-group"><p className="nav-heading">PROJECTS</p>{navButton('All projects',{kind:'projects'},'projects')}{featured.map(project => <button className={`nav-topic ${view.kind==='project'&&view.id===project.id?'active':''}`} key={project.id} onClick={()=>openView({kind:'project',id:project.id})}>{project.title}</button>)}</div>
-        <div className="nav-group"><p className="nav-heading">EXPLORE JAY</p>{[['Who is Jay?','about'],['Experience','experience'],['How I build','approach'],['Education & achievements','achievements'],['Contact','contact']].map(([label,kind]) => <button className={`nav-topic ${view.kind===kind?'active':''}`} key={kind} onClick={()=>openView({kind})}>{label}</button>)}</div>
-        {recent.length>0&&<div className="nav-group recent"><p className="nav-heading">RECENT THIS VISIT</p>{recent.map(item=><button className="nav-topic" key={viewKey(item)} onClick={()=>openView(item)}>{titleFor(item)}</button>)}</div>}</div>
+      <div className="sidebar-top"><a className="brand" href="/chat/" onClick={event=>{event.preventDefault();openView({kind:'home'});}}>JayLL</a><button className="icon-button sidebar-search" onClick={()=>{searchTrigger.current=document.activeElement;setSearchOpen(true);setMenuOpen(false);}} aria-label="Search portfolio"><Icon name="search"/></button><button className="icon-button desktop-collapse" onClick={()=>setCollapsed(true)} aria-label="Collapse sidebar">◫</button><button className="icon-button mobile-close" onClick={()=>setMenuOpen(false)} aria-label="Close sidebar">×</button></div>
+      <nav className="sidebar-nav" aria-label="Quick navigation"><button className="nav-action" onClick={()=>openView({kind:'home'})}><Icon name="new"/><span>New chat</span></button>{navButton('Images',{kind:'library'},'library')}{navButton('Experience',{kind:'experience'},'experience')}{navButton('Projects',{kind:'projects'},'projects')}{navButton('Explore',{kind:'about'},'about')}</nav>
+      <div className="sidebar-scroll"><div className="nav-group"><p className="nav-heading">Projects</p>{navButton('All projects',{kind:'projects'},'projects')}{featured.slice(0,2).map(project => <button className={`nav-topic ${view.kind==='project'&&view.id===project.id?'active':''}`} key={project.id} onClick={()=>openView({kind:'project',id:project.id})}>{project.title}</button>)}</div>
+        <div className="nav-group recent"><p className="nav-heading">Recents</p>{recent.length>0 ? recent.map(item=><button className="nav-topic" key={viewKey(item)} onClick={()=>openView(item)}>{titleFor(item)}</button>) : <p className="empty-recent">No recent chats</p>}</div></div>
       <div className="sidebar-bottom"><button className="sidebar-file" onClick={()=>openView({kind:'experience'})}><span className="file-icon">▤</span><span><strong>Experience & CV details</strong><small>Updated from Jay’s résumé</small></span></button><div className="profile"><span className="avatar">J</span><span><strong>Pham Phu Ngoc Trai</strong><small>AI engineer & builder</small></span></div></div>
     </aside>
     {menuOpen&&<button className="scrim" aria-label="Close navigation" onClick={()=>setMenuOpen(false)} />}
-    <div className="main-shell"><header className="topbar"><div className="top-left"><button className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-expanded={menuOpen}>☰</button>{collapsed&&<button className="icon-button reopen" onClick={()=>setCollapsed(false)} aria-label="Open sidebar">☰</button>}<button className="model-button" onClick={()=>notify('Explore the portfolio through curated content and search.')}>JayLL <span className="chevron">⌄</span></button></div><div className="top-right"><span className="preview-pill">PORTFOLIO PREVIEW</span><button className="icon-button" onClick={share} aria-label="Share this view" title="Share this view">↗</button></div></header>
+    <div className="main-shell"><header className="topbar"><div className="top-left"><button className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-expanded={menuOpen}>☰</button>{collapsed&&<button className="icon-button reopen" onClick={()=>setCollapsed(false)} aria-label="Open sidebar">☰</button>}<button className="model-button" onClick={()=>notify('Local portfolio model loads when you ask a question.')}>JayLL <span className="chevron">⌄</span></button></div><div className="top-right"><button className="icon-button more-button" onClick={()=>openView({kind:'contact'})} aria-label="Contact Jay" title="Contact Jay">···</button><button className="share-button" onClick={share} aria-label="Share this view" title="Share this view">↥ <span>Share</span></button></div></header>
       <main id="main" className="main-content" tabIndex="-1"><div className="conversation" ref={conversationRef} aria-live="polite">{messages.length===0?<section className="welcome"><span className="welcome-glyph" aria-hidden="true">✳</span><h1>What would you like to know about Jay?</h1><p className="welcome-sub">Explore the work, the systems behind it, and the path that brought me here. Start anywhere.</p><div className="suggestions">{suggestions.map(item=><button key={item.title} className="suggestion" onClick={()=>openView(item.view)}><span className="s-icon" aria-hidden="true">{item.icon}</span><strong>{item.title}</strong><span>{item.description}</span></button>)}</div><p className="welcome-footnote">Currently at FE Credit · Building voice and retrieval systems</p></section>:<div className="thread">{messages.map((message,index)=><div className="message-pair" key={`${index}-${viewKey(message.view)}`}><div className="message user-message"><div className="user-bubble">{message.question}</div></div><article className="message assistant-message"><div className="assistant-head"><span className="assistant-logo" aria-hidden="true">✳</span><span>JayLL</span></div><AssistantAnswer view={message.view} onOpen={next=>openView(next,{append:true})}/></article></div>)}</div>}</div>
-        <div className="composer-zone"><form className="composer" onSubmit={submit}><label className="sr-only" htmlFor="prompt">Search Jay’s portfolio</label><textarea id="prompt" ref={promptRef} rows="1" value={prompt} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();event.currentTarget.form.requestSubmit();}}} placeholder="Ask about a project, skill or experience…"/><div className="composer-tools"><button type="button" className="attach-button" onClick={()=>openView({kind:'experience'})} aria-label="Explore CV details" title="Explore CV details">＋</button><span className="composer-mode">Explore JayLL <span>⌄</span></span><button className="send-button" type="submit" aria-label="Search portfolio">↑</button></div></form><p className="composer-note">Searches curated portfolio content. No AI service or account required.</p></div>
+        <div className="composer-zone"><form className="composer" onSubmit={submit}><div className="composer-tools"><button type="button" className="attach-button" onClick={()=>openView({kind:'experience'})} aria-label="Explore CV details" title="Explore CV details">＋</button></div><label className="sr-only" htmlFor="prompt">Ask about Jay’s portfolio</label><textarea id="prompt" ref={promptRef} rows="1" value={prompt} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();event.currentTarget.form.requestSubmit();}}} placeholder="Ask JayLL"/><button className="send-button" type="submit" aria-label="Ask portfolio" disabled={!prompt.trim()}>↑</button></form><p className="composer-note">Small local model downloads on first question. Answers point to portfolio records.</p></div>
       </main></div></div>
-    <SearchDialog open={searchOpen} onClose={()=>setSearchOpen(false)} onOpen={openView}/>
+    <SearchDialog open={searchOpen} onClose={()=>setSearchOpen(false)} onOpen={openView} onAsk={askPortfolio}/>
     <div className={`toast ${toast?'show':''}`} role="status" aria-live="polite">{toast}</div>
   </>;
 }

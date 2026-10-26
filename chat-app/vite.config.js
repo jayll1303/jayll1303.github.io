@@ -2,6 +2,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   base: '/chat/',
+  worker: {
+    rolldownOptions: {
+      output: { entryFileNames: 'assets/local-model-worker.js' }
+    }
+  },
   build: {
     rollupOptions: {
       output: {
