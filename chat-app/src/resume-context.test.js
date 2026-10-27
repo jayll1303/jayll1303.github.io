@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { groundedAnswer, isVietnamese, retrieveResumeFacts } from './resume-context.js';
+import { directAnswer, groundedAnswer, isVietnamese, retrieveResumeFacts } from './resume-context.js';
 
 test('retrieves résumé facts for common English and Vietnamese questions', () => {
   assert.equal(retrieveResumeFacts('Who is Jay?')[0].key, 'overview');
@@ -10,6 +10,17 @@ test('retrieves résumé facts for common English and Vietnamese questions', () 
   assert.equal(retrieveResumeFacts('What did Jay do with GraphRAG?')[0].key, 'graph-rag');
   assert.equal(retrieveResumeFacts('Jay có kỹ năng gì?')[0].key, 'skills');
   assert.equal(retrieveResumeFacts('Jay đã làm những dự án nào?')[0].key, 'projects');
+  assert.equal(retrieveResumeFacts('sumary his knowledge about voice agent')[0].key, 'voice-ai');
+  assert.equal(retrieveResumeFacts("Explain Jay's work on voice agents")[0].key, 'voice-ai');
+});
+
+test('handles greetings and distinguishes Microsoft Copilot from documented Microsoft work', () => {
+  assert.match(directAnswer('hello').answer, /Hi!/);
+  assert.deepEqual(directAnswer('hello').ids, []);
+  const copilot = directAnswer('this guy work with MS copilot ?');
+  assert.match(copilot.answer, /doesn't mention Microsoft Copilot/i);
+  assert.match(copilot.answer, /Microsoft Agent Framework/);
+  assert.deepEqual(copilot.ids, ['alice']);
 });
 
 test('answers only from known facts and handles unknown questions', () => {
@@ -20,6 +31,7 @@ test('answers only from known facts and handles unknown questions', () => {
   assert.match(groundedAnswer([], false), /couldn't find/);
   assert.match(groundedAnswer([], true), /chưa thấy/);
   assert.deepEqual(retrieveResumeFacts('Does Jay have experience with Java?'), []);
+  assert.deepEqual(retrieveResumeFacts('What experience does Jay have with Java?'), []);
   assert.deepEqual(retrieveResumeFacts('Did Jay study medicine?'), []);
   assert.deepEqual(retrieveResumeFacts('What projects did Jay build in COBOL?'), []);
   assert.deepEqual(retrieveResumeFacts('Jay từng làm ở SpaceX chưa?'), []);

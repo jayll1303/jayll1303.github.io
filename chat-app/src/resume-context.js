@@ -37,6 +37,12 @@ const facts = [
     terms: 'projects project portfolio built created product du an san pham da lam',
     en: 'His résumé covers enterprise GraphRAG, a debt collection voicebot, Vietnamese speech research (VoxCPM-VN), document extraction, and conversational AI projects.',
     vi: 'CV của Jay ghi nhận các dự án GraphRAG doanh nghiệp, voicebot thu hồi nợ, nghiên cứu giọng nói tiếng Việt (VoxCPM-VN), trích xuất tài liệu và AI hội thoại.'
+  },
+  {
+    key: 'voice-ai', ids: ['voicebot', 'alice', 'voxcpm-vn'],
+    terms: 'voice agent voice ai voicebot speech assistant asr tts s2s conversation giong noi tro ly am thanh',
+    en: 'Jay has worked on voice AI through a debt collection voicebot using intent recognition and RAG, the Alice speech-to-speech assistant built with Azure AI Foundry and Microsoft Agent Framework, and Vietnamese speech model research in VoxCPM-VN.',
+    vi: 'Jay đã làm voice AI qua voicebot thu hồi nợ dùng nhận diện ý định và RAG, trợ lý Alice giao tiếp bằng giọng nói xây với Azure AI Foundry và Microsoft Agent Framework, cùng nghiên cứu mô hình tiếng nói tiếng Việt VoxCPM-VN.'
   }
 ];
 
@@ -50,13 +56,13 @@ for (const project of projects) {
   });
 }
 
-const stop = new Set('a an and are can did do does for has have he his how i is jay me of on or the to was what when where which who why with you your tell please show know about co cua da duoc gi la lam nhung the nao toi ve va tung chua dang cac dau current recent latest'.split(' '));
+const stop = new Set('a an and are can did do does for has have he his how i is jay me of on or the to was what when where which who why with you your tell please show know about summarize summary sumary summarise knowledge expertise guy this co cua da duoc gi la lam nhung the nao toi ve va tung chua dang cac dau current recent latest'.split(' '));
 const normalize = value => value.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/\bdu\s+an\b/g, 'project');
 const tokens = value => (normalize(value).match(/[\p{L}\p{N}+#.]+/gu) || []).filter(word => word.length > 2 && !stop.has(word));
 const aliases = new Map([
   ['awards', 'award'], ['achievements', 'achievement'], ['studied', 'study'],
   ['worked', 'work'], ['built', 'projects'], ['created', 'projects'],
-  ['projects', 'project'], ['technologies', 'technology'],
+  ['projects', 'project'], ['technologies', 'technology'], ['agents', 'agent'],
   ['hoc', 'education'], ['truong', 'university'], ['nganh', 'major'], ['bong', 'scholarship'],
   ['kinh', 'experience'], ['nghiem', 'experience'], ['viec', 'work'], ['cong', 'company'],
   ['nang', 'skill'], ['nghe', 'technology'], ['giai', 'award'], ['thuong', 'award'],
@@ -65,10 +71,29 @@ const aliases = new Map([
 ]);
 const knownTerms = new Set(facts.flatMap(fact => tokens(`${fact.terms} ${fact.en} ${fact.vi}`)));
 
+export function directAnswer(question) {
+  const normalized = normalize(question).trim();
+  if (/^(hi|hello|hey|xin chao|chao)[!?.\s]*$/.test(normalized)) return {
+    answer: isVietnamese(question)
+      ? 'Chào bạn! Bạn có thể hỏi mình về kinh nghiệm, dự án, voice AI hoặc kỹ năng của Jay.'
+      : "Hi! Ask me about Jay's work, projects, voice AI, or skills.",
+    ids: []
+  };
+  if (/\b(?:ms\s+|microsoft\s+)?copilot\b/.test(normalized)) return {
+    answer: isVietnamese(question)
+      ? 'CV của Jay không đề cập Microsoft Copilot. CV có ghi Jay xây dựng trợ lý Alice bằng Microsoft Agent Framework và Azure AI Foundry; đó là những công nghệ khác Copilot.'
+      : "Jay's résumé doesn't mention Microsoft Copilot. It does describe building the Alice assistant with Microsoft Agent Framework and Azure AI Foundry; those are different from Copilot.",
+    ids: ['alice']
+  };
+  return null;
+}
+
 export function retrieveResumeFacts(question, limit = 3) {
   const questionTerms = tokens(question);
-  // A broad topic match must not become an answer about an unlisted person, tool or field.
-  if (questionTerms.some(word => word.length >= 4 && !knownTerms.has(word) && !knownTerms.has(aliases.get(word)))) return [];
+  // Reject an unsupported subject after a relation such as "with Java" or "at SpaceX".
+  // Unfamiliar phrasing elsewhere should not hide an otherwise documented topic.
+  const target = normalize(question).match(/\b(?:with|using|in|at|about|study|studied|know|knows|voi|bang|tai|o|hoc)\s+([a-z0-9+#.]+)/)?.[1];
+  if (target?.length >= 4 && !knownTerms.has(target) && !knownTerms.has(aliases.get(target))) return [];
   const query = new Set(questionTerms.flatMap(word => [word, aliases.get(word)].filter(Boolean)));
   if (!query.size && /\bjay\b/i.test(question)) return [facts[0]];
   if (!query.size) return [];

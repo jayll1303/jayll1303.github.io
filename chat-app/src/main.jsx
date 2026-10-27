@@ -88,10 +88,10 @@ function AssistantAnswer({view,onOpen}) {
   if (view.kind === 'local-answer') {
     const vietnamese=/[à-ỹđ]/i.test(view.query);
     return <>
-    <div className="eyebrow">{view.mode === 'fallback' ? 'PORTFOLIO SEARCH' : 'LOCAL MODEL · ON YOUR DEVICE'}</div>
+    <div className="eyebrow">{view.mode === 'fallback' ? 'PORTFOLIO SEARCH' : view.mode === 'guide' ? 'PORTFOLIO GUIDE' : 'LOCAL MODEL · ON YOUR DEVICE'}</div>
     {view.status === 'loading' ? <p className="lead" role="status">{view.progress || 'Starting the local model…'}</p> : <>
       {view.mode === 'fallback' && <p className="search-notice">{vietnamese ? 'Model trên máy này chưa chạy được. Đây là kết quả tìm trong nội dung portfolio.' : 'The local model could not run here. Showing matches from portfolio text instead.'}</p>}
-      {view.mode === 'model' && <p className="lead local-model-answer">{view.answer}</p>}
+      {(view.mode === 'model' || view.mode === 'guide') && <p className="lead local-model-answer">{view.answer}</p>}
       {view.entries?.length ? <><h3 className="source-heading">{vietnamese ? 'Xem thêm trong portfolio' : 'Explore the source records'}</h3><div className="search-match-list">{view.entries.map(entry => <button key={entry.id} onClick={() => onOpen(entry.view)}><span>{entry.id === 'experience' || entry.id === 'contact' || entry.id === 'achievements' ? 'Portfolio' : 'Project'}</span><strong>{entry.title}</strong><small>{entry.summary}</small></button>)}</div></> : view.mode === 'fallback' ? <><h2>{vietnamese ? 'Portfolio hiện chưa có thông tin này.' : 'I don’t have that information here yet.'}</h2><p className="lead">{vietnamese ? 'Thử hỏi về dự án, voice AI, GraphRAG, xử lý tài liệu, kinh nghiệm hoặc liên hệ.' : 'Try asking about projects, voice AI, GraphRAG, document AI, experience or contact.'}</p></> : null}
     </>}
   </>;
@@ -172,7 +172,7 @@ function App() {
         modelWorker.current=new Worker(new URL('./local-model-worker.js',import.meta.url),{type:'module'});
         modelWorker.current.onmessage=({data})=>{
           if (data.type==='progress') updateForRequest(data.requestId,{progress:data.message});
-          if (data.type==='result') updateForRequest(data.requestId,{status:'done',mode:'model',answer:data.answer,entries:entriesForIds(data.ids)});
+          if (data.type==='result') updateForRequest(data.requestId,{status:'done',mode:data.source==='guide'?'guide':'model',answer:data.answer,entries:entriesForIds(data.ids)});
           if (data.type==='error') updateForRequest(data.requestId,{status:'done',mode:'fallback',entries:rankEntries(requestQuestions.current.get(data.requestId)||'')});
         };
         modelWorker.current.onerror=()=>{

@@ -1,4 +1,4 @@
-import { groundedAnswer, isVietnamese, retrieveResumeFacts } from './resume-context.js';
+import { directAnswer, groundedAnswer, isVietnamese, retrieveResumeFacts } from './resume-context.js';
 
 let generatorPromise;
 
@@ -23,18 +23,27 @@ async function getGenerator(requestId) {
 }
 
 async function answerQuestion({ requestId, question }) {
+  let relevant;
+  let fallback;
+  let ids;
   try {
-    const generator = await getGenerator(requestId);
+    const query = String(question || '');
+    const direct = directAnswer(query);
+    if (direct) {
+      self.postMessage({ requestId, type: 'result', ...direct, source: 'guide' });
+      return;
+    }
     self.postMessage({ requestId, type: 'progress', message: 'Finding relevant résumé facts…' });
-    const relevant = retrieveResumeFacts(String(question || ''));
-    const vietnamese = isVietnamese(String(question || ''));
-    const fallback = groundedAnswer(relevant, vietnamese);
-    const ids = [...new Set(relevant.flatMap(fact => fact.ids))].slice(0, 3);
+    relevant = retrieveResumeFacts(query);
+    const vietnamese = isVietnamese(query);
+    fallback = groundedAnswer(relevant.slice(0, 1), vietnamese);
+    ids = [...new Set(relevant.flatMap(fact => fact.ids))].slice(0, 3);
     if (!relevant.length) {
-      self.postMessage({ requestId, type: 'result', answer: fallback, ids });
+      self.postMessage({ requestId, type: 'result', answer: fallback, ids, source: 'guide' });
       return;
     }
 
+    const generator = await getGenerator(requestId);
     const evidence = relevant.map((fact, index) => `${index + 1}. ${vietnamese ? fact.vi : fact.en}`).join('\n');
     const result = await generator([
       { role: 'system', content: 'Answer the visitor using only the résumé facts supplied. Copy one or two complete fact sentences exactly; do not add any claim or explanation. Match the language of the question.' },
@@ -45,9 +54,10 @@ async function answerQuestion({ requestId, question }) {
     // The small local model may make up details. Only accept text copied from the vetted facts.
     const source = relevant.map(fact => vietnamese ? fact.vi : fact.en).join(' ');
     const answer = candidate && source.includes(candidate) ? candidate : fallback;
-    self.postMessage({ requestId, type: 'result', answer, ids });
+    self.postMessage({ requestId, type: 'result', answer, ids, source: 'model' });
   } catch (error) {
-    self.postMessage({ requestId, type: 'error', message: error instanceof Error ? error.message : 'The local model could not start.' });
+    if (relevant?.length) self.postMessage({ requestId, type: 'result', answer: fallback, ids, source: 'guide' });
+    else self.postMessage({ requestId, type: 'error', message: error instanceof Error ? error.message : 'The local model could not start.' });
   }
 }
 
