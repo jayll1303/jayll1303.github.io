@@ -8,6 +8,8 @@ const REVEAL_SELECTOR = [
   '.message-pair .assistant-head',
   '.assistant-message > .eyebrow',
   '.assistant-message > h2',
+  '.project-title-line',
+  '.project-links',
   '.assistant-message > .lead',
   '.answer-section',
   '.answer-panel',

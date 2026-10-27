@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { categories, projects, skills } from './portfolio-data';
 import UiIcon from './ui-icon';
+import { projectIconFor } from './project-icon';
 import './project-icons.css';
 
-const iconFiles = import.meta.glob(['./project-icons/*.svg', './project-icons/*.png'], { eager: true, query: '?url', import: 'default' });
-
 function ProjectRow({ project, onOpen }) {
-  const icon = iconFiles[`./project-icons/${project.id}.svg`] || iconFiles[`./project-icons/${project.id}.png`];
+  const [iconReady, setIconReady] = useState(false);
+  const icon = projectIconFor(project.id);
   return <button className="catalog-row" type="button" onClick={() => onOpen({ kind: 'project', id: project.id })}>
-    <span className="catalog-icon catalog-project-icon" aria-hidden="true"><img src={icon} alt="" /></span>
+    <span className={`catalog-icon catalog-project-icon ${iconReady ? 'is-ready' : 'is-loading'}`} aria-hidden="true"><img src={icon} alt="" onLoad={() => setIconReady(true)} onError={() => setIconReady(true)} /></span>
     <span className="catalog-row-copy"><strong>{project.title}</strong><span>{project.summary}</span><small>{project.category} · {project.context}</small></span>
     <span className="catalog-row-arrow"><UiIcon name="open-link" size={16}/></span>
   </button>;

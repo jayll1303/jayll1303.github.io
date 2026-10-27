@@ -2,14 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { achievements, certificates, community, contact, education, experience, projects, skills } from './portfolio-data';
 import { entriesForIds, rankEntries } from './portfolio-search';
-import ProjectCatalog from './project-catalog';
 import ImagesGallery from './images-gallery';
 import AchievementsLibrary from './achievements-library';
 import ExperienceTimeline from './experience-timeline';
 import UiIcon from './ui-icon';
+import StreamingText from './streaming-text';
+import { projectIconFor } from './project-icon';
 import { initPortfolioMotion } from './portfolio-motion';
 import './style.css';
 import './portfolio-motion.css';
+
+const ProjectCatalog = React.lazy(() => import('./project-catalog'));
 
 const topicLabels = {
   home: 'New chat', images: 'Images', projects: 'Projects', skills: 'Skills', experience: 'Experience', about: 'Who is Jay?',
@@ -39,18 +42,28 @@ function Icon({name}) {
 }
 
 function Followups({items,onOpen}) {
-  return <div className="followups">{items.map(item => <button className="followup" key={viewKey(item.view)} onClick={() => onOpen(item.view)}>{item.label}<UiIcon name="open-link" size={14} /></button>)}</div>;
+  const iconFor = {projects:'plugins',project:'plugins',experience:'clock',contact:'envelope',about:'explore',achievements:'books',approach:'lightbulb'};
+  return <nav className="followups" aria-label="Continue exploring"><span className="followups-label">CONTINUE EXPLORING</span><div className="followups-list">{items.map(item => <button className="followup" key={viewKey(item.view)} onClick={() => onOpen(item.view)}><UiIcon name={iconFor[item.view.kind] || 'explore'} size={16}/><span>{item.label}</span><span className="followup-arrow" aria-hidden="true">→</span></button>)}</div></nav>;
+}
+
+function ExternalProjectLink({href,label}) {
+  return <a href={href} target="_blank" rel="noopener noreferrer"><span className="project-link-icon"><UiIcon name="open-link" size={17}/></span><span className="project-link-copy"><strong>{label || 'Open project'}</strong><small>{new URL(href).hostname.replace(/^www\./, '')}</small></span><UiIcon name="open-link" size={14} className="project-link-arrow" /></a>;
+}
+
+function ProjectCatalogSkeleton({kind}) {
+  return <div className="catalog-page catalog-loading" role="status" aria-label={`Loading ${kind}`}><span className="sr-only">Loading {kind}…</span><div className="skeleton-line skeleton-title" aria-hidden="true"/><div className="skeleton-line skeleton-subtitle" aria-hidden="true"/><div className="skeleton-line skeleton-search" aria-hidden="true"/><div className="skeleton-line skeleton-filter" aria-hidden="true"/><div className="skeleton-line skeleton-heading" aria-hidden="true"/><div className="skeleton-grid" aria-hidden="true">{Array.from({length:6},(_,index)=><div className="skeleton-row" key={index}><span/><div><i/><i/></div></div>)}</div></div>;
 }
 
 function ProjectDetail({project,onOpen}) {
+  const icon = projectIconFor(project.id);
   return <>
     <div className="eyebrow">{project.category.toUpperCase()} <span className="eyebrow-divider">/</span> {project.period}</div>
-    <h2>{project.title}</h2><p className="lead">{project.summary}</p>
+    <div className="project-title-line">{icon && <span className="project-detail-icon" aria-hidden="true"><img src={icon} alt="" /></span>}<h2>{project.title}</h2></div><p className="lead">{project.summary}</p>
     <div className="context-line"><span className="status-dot" />{project.context}</div>
     <section className="answer-section"><h3>What I worked on</h3><ul className="detail-list">{project.details.map(detail => <li key={detail}>{detail}</li>)}</ul></section>
     {project.outcome && <section className="outcome-panel"><span>RESULT FROM THE SUPPLIED RÉSUMÉ</span><p>{project.outcome}</p></section>}
     <section className="answer-section"><h3>Tools & technologies</h3><div className="facts">{project.stack.map(item => <span className="fact" key={item}>{item}</span>)}</div></section>
-    {(project.link || project.links) && <div className="link-row">{project.link && <a href={project.link} target="_blank" rel="noopener noreferrer">{project.linkLabel} ↗</a>}{project.links?.map(link=><a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}
+    {(project.link || project.links) && <section className="project-links" aria-label="External project links"><h3>Open project links</h3><div className="link-row">{project.link && <ExternalProjectLink href={project.link} label={project.linkLabel} />}{project.links?.map(link=><ExternalProjectLink key={link.url} href={link.url} label={link.label} />)}</div></section>}
     <Followups onOpen={onOpen} items={[{label:'All projects',view:{kind:'projects'}},{label:'Experience',view:{kind:'experience'}},{label:'Contact Jay',view:{kind:'contact'}}]} />
   </>;
 }
@@ -89,11 +102,10 @@ function AssistantAnswer({view,onOpen}) {
     const vietnamese=/[à-ỹđ]/i.test(view.query);
     return <>
     <div className="eyebrow">{view.mode === 'fallback' ? 'PORTFOLIO SEARCH' : view.mode === 'guide' ? 'PORTFOLIO GUIDE' : 'LOCAL MODEL · ON YOUR DEVICE'}</div>
-    {view.status === 'loading' ? <>{view.answer && <p className="lead local-model-answer">{view.answer}</p>}<p className="search-notice" role="status">{view.progress || 'Starting the local model…'}</p></> : <>
-      {view.mode === 'fallback' && <p className="search-notice">{vietnamese ? 'Model trên máy này chưa chạy được. Đây là kết quả tìm trong nội dung portfolio.' : 'The local model could not run here. Showing matches from portfolio text instead.'}</p>}
-      {(view.mode === 'model' || view.mode === 'guide') && <p className="lead local-model-answer">{view.answer}</p>}
-      {!view.entries?.length && view.mode === 'fallback' && <><h2>{vietnamese ? 'Portfolio hiện chưa có thông tin này.' : 'I don’t have that information here yet.'}</h2><p className="lead">{vietnamese ? 'Thử hỏi về dự án, voice AI, GraphRAG, xử lý tài liệu, kinh nghiệm hoặc liên hệ.' : 'Try asking about projects, voice AI, GraphRAG, document AI, experience or contact.'}</p></>}
-    </>}
+    {view.answer && (view.mode === 'guide' || view.mode === 'model') && <StreamingText text={view.answer} />}
+    {view.status === 'loading' && !view.answer && <p className="search-notice" role="status">{view.progress || 'Searching the résumé…'}</p>}
+    {view.status !== 'loading' && view.mode === 'fallback' && <p className="search-notice">{vietnamese ? 'Model trên máy này chưa chạy được. Đây là kết quả tìm trong nội dung portfolio.' : 'The local model could not run here. Showing matches from portfolio text instead.'}</p>}
+    {!view.entries?.length && view.mode === 'fallback' && <><h2>{vietnamese ? 'Portfolio hiện chưa có thông tin này.' : 'I don’t have that information here yet.'}</h2><p className="lead">{vietnamese ? 'Thử hỏi về dự án, voice AI, GraphRAG, xử lý tài liệu, kinh nghiệm hoặc liên hệ.' : 'Try asking about projects, voice AI, GraphRAG, document AI, experience or contact.'}</p></>}
     {view.entries?.length ? <><h3 className="source-heading">{vietnamese ? 'Xem thêm trong portfolio' : 'Explore the source records'}</h3><div className="search-match-list">{view.entries.map(entry => <button key={entry.id} onClick={() => onOpen(entry.view)}><span>{entry.id === 'experience' || entry.id === 'contact' || entry.id === 'achievements' ? 'Portfolio' : 'Project'}</span><strong>{entry.title}</strong><small>{entry.summary}</small></button>)}</div></> : null}
   </>;
   }
@@ -208,7 +220,7 @@ function App() {
     </aside>
     {menuOpen&&<button className="scrim" aria-label="Close navigation" onClick={()=>setMenuOpen(false)} />}
     <div className="main-shell"><header className={`topbar ${catalogOpen?'catalog-topbar':''} ${galleryOpen?'gallery-topbar':''}`}><div className="top-left"><button className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-expanded={menuOpen}><UiIcon name="sidebar-menu" size={16}/></button>{collapsed&&<button className="icon-button reopen" onClick={()=>setCollapsed(false)} aria-label="Open sidebar"><UiIcon name="sidebar-hidden" size={16}/></button>}{catalogOpen?<nav className="catalog-tabs" aria-label="Browse portfolio"><button className={view.kind==='projects'?'active':''} aria-current={view.kind==='projects'?'page':undefined} onClick={()=>openView({kind:'projects'})}>Projects</button><button className={view.kind==='skills'?'active':''} aria-current={view.kind==='skills'?'page':undefined} onClick={()=>openView({kind:'skills'})}>Skills</button></nav>:galleryOpen?null:<button className="model-button" onClick={()=>notify('Local portfolio model loads when you ask a question.')}>JayLL <span className="chevron"><UiIcon name="chevron-down" size={16}/></span></button>}</div><div className="top-right">{catalogOpen?<button className="catalog-contact" onClick={()=>openView({kind:'contact'})}>Contact <UiIcon name="open-link" size={14}/></button>:galleryOpen?null:<><button ref={moreTrigger} className="icon-button more-button" onClick={()=>setMoreOpen(open=>!open)} aria-label="More options" aria-expanded={moreOpen} aria-controls="more-options" title="More options"><UiIcon name="more"/></button>{moreOpen&&<div id="more-options" ref={moreMenu} className="more-menu" aria-label="More options"><button onClick={()=>openView({kind:'about'})}>About Jay</button><button onClick={()=>openView({kind:'experience'})}>Work history</button><button onClick={()=>openView({kind:'projects'})}>Projects</button><button onClick={()=>openView({kind:'contact'})}>Contact</button></div>}<button className="share-button" onClick={share} aria-label="Share this view" title="Share this view"><UiIcon name="share" size={16}/><span>Share</span></button></>}</div></header>
-      <main id="main" className={`main-content ${fullPageOpen?'catalog-main':''}`} tabIndex="-1">{fullPageOpen?<div className="catalog-scroll">{catalogOpen?<ProjectCatalog key={view.kind} kind={view.kind} onOpen={openView}/>:view.kind==='images'?<ImagesGallery/>:<AchievementsLibrary/>}</div>:<><div className="conversation" ref={conversationRef} aria-live="polite">{messages.length===0?<section className="welcome"><span className="welcome-glyph" aria-hidden="true">✳</span><h1>What would you like to know about Jay?</h1><p className="welcome-sub">Explore the work, the systems behind it, and the path that brought me here. Start anywhere.</p><div className="suggestions">{suggestions.map(item=><button key={item.title} className="suggestion" onClick={()=>openView(item.view)}><span className="s-icon"><UiIcon name={item.icon}/></span><strong>{item.title}</strong><span>{item.description}</span></button>)}</div><p className="welcome-footnote">Currently at FE Credit · Building voice and retrieval systems</p></section>:<div className="thread">{messages.map((message,index)=><div className="message-pair" key={`${index}-${viewKey(message.view)}`}><div className="message user-message"><div className="user-bubble">{message.question}</div></div><article className="message assistant-message"><div className="assistant-head"><span className="assistant-logo" aria-hidden="true">✳</span><span>JayLL</span></div><AssistantAnswer view={message.view} onOpen={next=>openView(next,{append:true})}/></article></div>)}</div>}</div>
+      <main id="main" className={`main-content ${fullPageOpen?'catalog-main':''}`} tabIndex="-1">{fullPageOpen?<div className="catalog-scroll">{catalogOpen?<React.Suspense fallback={<ProjectCatalogSkeleton kind={view.kind} />}><ProjectCatalog key={view.kind} kind={view.kind} onOpen={openView}/></React.Suspense>:view.kind==='images'?<ImagesGallery/>:<AchievementsLibrary/>}</div>:<><div className="conversation" ref={conversationRef} aria-live="polite">{messages.length===0?<section className="welcome"><span className="welcome-glyph" aria-hidden="true">✳</span><h1>What would you like to know about Jay?</h1><p className="welcome-sub">Explore the work, the systems behind it, and the path that brought me here. Start anywhere.</p><div className="suggestions">{suggestions.map(item=><button key={item.title} className="suggestion" onClick={()=>openView(item.view)}><span className="s-icon"><UiIcon name={item.icon}/></span><strong>{item.title}</strong><span>{item.description}</span></button>)}</div><p className="welcome-footnote">Currently at FE Credit · Building voice and retrieval systems</p></section>:<div className="thread">{messages.map((message,index)=><div className="message-pair" key={`${index}-${viewKey(message.view)}`}><div className="message user-message"><div className="user-bubble">{message.question}</div></div><article className="message assistant-message"><div className="assistant-head"><span className="assistant-logo" aria-hidden="true">✳</span><span>JayLL</span></div><AssistantAnswer view={message.view} onOpen={next=>openView(next,{append:true})}/></article></div>)}</div>}</div>
         <div className="composer-zone"><form className="composer" onSubmit={submit}><div className="composer-tools"><button type="button" className="attach-button" onClick={()=>openView({kind:'experience'})} aria-label="Explore CV details" title="Explore CV details"><UiIcon name="plus" size={16}/></button></div><label className="sr-only" htmlFor="prompt">Ask about Jay’s portfolio</label><textarea id="prompt" ref={promptRef} rows="1" value={prompt} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();event.currentTarget.form.requestSubmit();}}} placeholder="Ask JayLL"/><button className="send-button" type="submit" aria-label="Ask portfolio" disabled={!prompt.trim()}><UiIcon name="send" size={20}/></button></form><p className="composer-note">Small local model downloads on first question. Answers point to portfolio records.</p></div></>}
       </main></div></div>
     <SearchDialog open={searchOpen} onClose={()=>setSearchOpen(false)} onOpen={openView} onAsk={askPortfolio}/>
