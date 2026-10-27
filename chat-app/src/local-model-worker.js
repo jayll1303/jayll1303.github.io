@@ -43,6 +43,7 @@ async function answerQuestion({ requestId, question }) {
       return;
     }
 
+    self.postMessage({ requestId, type: 'preview', answer: fallback, ids });
     const generator = await getGenerator(requestId);
     const evidence = relevant.map((fact, index) => `${index + 1}. ${vietnamese ? fact.vi : fact.en}`).join('\n');
     const result = await generator([
