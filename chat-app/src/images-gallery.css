@@ -1,7 +1,7 @@
 .images-page{--images-text:#f1f1f1;--images-muted:#aaa;--images-surface:#202020;--images-focus:#b7d7ff;flex:1;min-height:0;overflow-y:auto;background:#000;color:var(--images-text);scrollbar-color:#414141 transparent}
 .images-page-inner{width:min(100% - 40px,684px);margin:0 auto;padding:23px 0 80px}
 .images-page-header{display:flex;align-items:center;justify-content:space-between;min-height:40px;margin-bottom:18px}
-.images-page h1{font-size:22px;line-height:28px;font-weight:650;letter-spacing:-.02em;margin:0}
+.images-page h1{font-size:24px;line-height:28px;font-weight:600;letter-spacing:-.02em;margin:0}
 .images-search-toggle{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:#bdbdbd;font-size:26px;cursor:pointer}
 .images-search-toggle:hover,.images-search-toggle[aria-expanded=true]{background:#202020;color:#fff}
 .images-search-toggle svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
