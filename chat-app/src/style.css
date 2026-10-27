@@ -186,3 +186,11 @@ button.catalog-row:hover{background:#181818}
 .contact-links strong{font-size:14px;font-weight:650}
 .contact-links small{margin-top:2px;color:#a8a8a8;font-size:12px;overflow-wrap:anywhere}
 .contact-links .ui-icon{color:#9b9b9b}
+.top-right{position:relative}
+.more-menu{position:absolute;z-index:30;top:40px;right:56px;min-width:184px;padding:4px;background:#1f1f1f;border:1px solid #313131;border-radius:12px;box-shadow:0 16px 40px #0008}
+.more-menu button{display:block;width:100%;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:#ececec;text-align:left;font-size:14px}
+.more-menu button:hover{background:#313131}
+.more-menu button:active{transform:scale(.98)}
+.more-menu button:focus-visible{outline:2px solid #b7d7ff;outline-offset:-2px}
+.local-model-answer{white-space:pre-line}
+.source-heading{margin:24px 0 8px;color:#aaa;font-size:14px;font-weight:600}
