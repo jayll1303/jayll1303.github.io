@@ -27,7 +27,7 @@ const facts = [
     vi: 'Theo CV, Jay đạt giải Nhất RESFES 2023, học bổng 100% Đại học FPT, danh hiệu sinh viên xuất sắc trong bốn học kỳ, giải Best Mentor 2022, hai huy chương bạc và giải Nhất học sinh giỏi cấp tỉnh năm 2020.'
   },
   {
-    key: 'skills', ids: ['experience'],
+    key: 'skills', ids: ['achievements'],
     terms: 'skill technology technical stack language programming framework tools cloud ky nang cong nghe ngon ngu lap trinh',
     en: `Jay lists ${Object.entries(skills).map(([group, items]) => `${group}: ${items.join(', ')}`).join('; ')}.`,
     vi: 'Kỹ năng trong CV của Jay gồm Python, Rust, Go, .NET, C++; PyTorch, LangChain, Flask, YOLO, Pandas, Seaborn, PyQt5, vLLM; GitHub, GitLab, Docker, Python Wheel, AWS, Azure và GCP.'
@@ -50,8 +50,8 @@ for (const project of projects) {
   });
 }
 
-const stop = new Set('a an and are can did do does for has have he his how i is jay me of on or the to was what when where which who why with you your co cua da duoc gi la lam nhung the nao toi ve va'.split(' '));
-const normalize = value => value.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
+const stop = new Set('a an and are can did do does for has have he his how i is jay me of on or the to was what when where which who why with you your tell please show know about co cua da duoc gi la lam nhung the nao toi ve va tung chua dang cac dau current recent latest'.split(' '));
+const normalize = value => value.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/\bdu\s+an\b/g, 'project');
 const tokens = value => (normalize(value).match(/[\p{L}\p{N}+#.]+/gu) || []).filter(word => word.length > 2 && !stop.has(word));
 const aliases = new Map([
   ['awards', 'award'], ['achievements', 'achievement'], ['studied', 'study'],
@@ -63,9 +63,13 @@ const aliases = new Map([
   ['giong', 'voice'], ['noi', 'voice'], ['tieng', 'vietnamese'], ['lieu', 'document'],
   ['hoa', 'invoice'], ['don', 'invoice'], ['lich', 'calendar'], ['cuu', 'research']
 ]);
+const knownTerms = new Set(facts.flatMap(fact => tokens(`${fact.terms} ${fact.en} ${fact.vi}`)));
 
 export function retrieveResumeFacts(question, limit = 3) {
-  const query = new Set(tokens(question).flatMap(word => [word, aliases.get(word)].filter(Boolean)));
+  const questionTerms = tokens(question);
+  // A broad topic match must not become an answer about an unlisted person, tool or field.
+  if (questionTerms.some(word => word.length >= 4 && !knownTerms.has(word) && !knownTerms.has(aliases.get(word)))) return [];
+  const query = new Set(questionTerms.flatMap(word => [word, aliases.get(word)].filter(Boolean)));
   if (!query.size && /\bjay\b/i.test(question)) return [facts[0]];
   if (!query.size) return [];
   return facts.map(fact => {
