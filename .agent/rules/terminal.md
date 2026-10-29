@@ -65,3 +65,7 @@ The root route currently serves the React chat portfolio from `chat-app/`, also 
 ## React appearance and profile (2026-10-29)
 
 The sidebar profile uses the verified public GitHub avatar bundled locally, with a monogram fallback. Keep profile name/title at 16px line-height with a 2px gap and reserve the 32px avatar dimensions. Appearance offers Light/Dark/System, defaults to the system, persists separately as `jayll-color-mode`, follows live OS changes only in System, and synchronizes tabs. The shared `appearance-init.js` is inlined before paint by Vite; avoid duplicate startup logic. Preserve full palette coverage of routes, dialogs, skeletons, focus states and scrollbars. Native theme crossfades must honor reduced motion. Legacy static-page theme preferences remain separate.
+
+## React Projects Spotlight (2026-10-29)
+
+The default Projects directory includes the approved TiengNoi Spotlight with Pondie Tab, Win+V Panel Tweaks and Coin & Stock Monitor below. `project-spotlight.jsx` owns composition and reads existing project records/icons; `project-spotlight.css` owns scoped appearance-token styling. All four controls open internal project details. The voice visual is labelled as an illustration; do not add fake playback or product requests. Hide Spotlight during nonempty search, Open source scope or category filtering; restore it after clearing filters and keep it off Skills. Preserve the full directory, native scrolling, keyboard access, both palettes, responsive stacking and existing reduced-motion reveal cleanup.

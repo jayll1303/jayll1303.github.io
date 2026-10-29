@@ -4,10 +4,10 @@ const SELECTOR = [
   '.assistant-message > .eyebrow', '.assistant-message > h2', '.project-title-line',
   '.project-links', '.assistant-message > .lead', '.answer-section', '.answer-panel',
   '.outcome-panel', '.project-card', '.timeline-item', '.experience-timeline__entry',
-  '.catalog-intro', '.catalog-section h2', '.catalog-row', '.images-page-header',
+  '.spotlight-header', '.spotlight-hero', '.spotlight-card', '.catalog-intro', '.catalog-section h2', '.catalog-row', '.images-page-header',
   '.images-tile', '.achievements-library-heading', '.achievements-card',
 ].join(', ');
-const STAGGER = '.studio-heading-part, .suggestion, .catalog-row, .images-tile, .experience-timeline__entry';
+const STAGGER = '.spotlight-card, .studio-heading-part, .suggestion, .catalog-row, .images-tile, .experience-timeline__entry';
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 /** Visible base styles keep the portfolio readable if animation cannot run. */
