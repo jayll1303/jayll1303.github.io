@@ -1,0 +1,9 @@
+# VoxCPM Spotlight video
+
+Status: complete.
+Outcome: replace Coin & Stock Monitor with VoxCPM-VN in the supporting Spotlight cards and embed the user-supplied YouTube clip.
+Constraints: preserve TiengNoi lead, complete project directory, search/filter behavior, dark/light, mobile, keyboard and reduced motion. Keep player outside clickable project cards, at least 200px high with 16:9 framing and fullscreen. No autoplay or video download; use YouTube privacy-enhanced embed and an ordinary fallback link.
+Non-goals: removing Coin & Stock Monitor from the catalog, changing model metrics, replacing the leading product or adding a video library.
+Acceptance: VoxCPM card navigates correctly, full catalog still has 18 records, the specified video loads inline, external fallback/fullscreen are present, responsive/browser and build checks pass; commit the completed slice.
+Evidence: YouTube oEmbed confirmed the title and Mì AI channel for VyhSglcw8uo. Player parameters checked against official YouTube documentation.
+Validation: all 12 existing Node tests and production Vite build pass. Browser checks passed dark/light at 320/390/768/1440px: no overflow, player dimensions >=200px, correct privacy-enhanced source, fullscreen and no autoplay parameter. Supporting cards contain VoxCPM instead of Coin, total directory remains 18, VoxCPM detail opens and exposes the YouTube link, Coin search still returns its project, and filtering unmounts the iframe. Actual YouTube thumbnail/title rendered; a click inside the real player yielded playability status OK and paused=false. Full media progression was not timed; automated checks for YouTube's older overlay selectors timed out because current markup differed, so playback readiness was inspected directly. No video media was downloaded. Source, generated output and owning docs are scoped to the completed slice.

@@ -61,9 +61,11 @@ export const projects = [
     ],
     outcome: 'The supplied résumé records 600+ Hugging Face downloads and a MiAI feature with 5.1k+ views.',
     stack: ['PyTorch', 'Qwen3-ASR', 'VoxCPM', 'Hugging Face', 'Gradio'],
+    video: { youtubeId: 'VyhSglcw8uo', title: 'VoxCPM thử voice cloning với checkpoint finetune Tiếng Việt', channel: 'Mì AI' },
     links: [
       {label:'Open model card',url:'https://huggingface.co/JayLL13/VoxCPM-1.5-VN'},
-      {label:'Try the demo',url:'https://huggingface.co/spaces/JayLL13/VoxCPM-VN-Demo'}
+      {label:'Try the demo',url:'https://huggingface.co/spaces/JayLL13/VoxCPM-VN-Demo'},
+      {label:'Watch video on YouTube',url:'https://www.youtube.com/watch?v=VyhSglcw8uo'}
     ]
   },
   {

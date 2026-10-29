@@ -57,3 +57,10 @@
   .spotlight-action { margin-top: 16px; }
   .spotlight-voice-panel { padding: 16px; }
 }
+
+.spotlight-video { margin-top: 32px; }
+.spotlight-video > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.spotlight-video h3 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; text-wrap: balance; }
+.spotlight-video a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--appearance-secondary); font-size: 12px; line-height: 16px; }
+.spotlight-video iframe { display: block; width: 100%; height: auto; min-height: 200px; aspect-ratio: 16 / 9; border: 1px solid var(--appearance-line); border-radius: 16px; background: #000; }
+@media (max-width: 760px) { .spotlight-video > header { align-items: flex-start; flex-direction: column; gap: 8px; } }
