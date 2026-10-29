@@ -57,3 +57,7 @@ The application is a Terminal-themed portfolio `index.html` (and `terminal.js`) 
 - **Dynamic Loading**: Themes are applied by swapping the `<link id="theme-style">` href.
 - **Persistence**: Saved in `localStorage` key `terminal-theme`.
 - **Global**: All pages check this key on load to apply the correct theme.
+
+## React homepage motion (2026-10-29)
+
+The root route currently serves the React chat portfolio from `chat-app/`, also available at `/chat/`; the legacy landing scripts do not own this UI. See `chat/README.md` for build and interface behavior. AI studio motion lives in `chat-app/src/portfolio-motion.js` and `portfolio-motion.css`. Preserve visible default content, native scroll containers, transform/opacity animation, system reduced-motion changes, cleanup of animations/observers, and dialog focus restoration. The welcome uses existing copy split visually into words with one accessible text equivalent. Timeline segments reveal per visible entry; gallery details use native dialogs with animated close. Mobile navigation traps focus and hides closed off-canvas controls from keyboard navigation.

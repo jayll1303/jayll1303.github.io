@@ -33,3 +33,9 @@ The chat layout follows the first user-provided dark screenshot: narrow black si
 Interface icons are a small, sanitized local SVG subset extracted from the user-supplied ChatGPT HTML and its referenced icon sprite. The source HTML and full sprite are not shipped. Project icons are bundled locally; their [sources and provenance](../docs/project-icon-sources.md) are recorded separately. The JayLL identity remains portfolio-specific.
 
 The React component tree and the data in `chat-app/src/portfolio-data.js` provide extension points for future interactive projects, including Three.js. No 3D runtime or mini game is loaded in this version.
+
+## AI studio motion
+
+The existing chat layout uses an orchestrated welcome, word-by-word introduction, view entrances, card/icon feedback, timeline connector reveals and gallery zoom/detail transitions. Composer focus, enabled send, copy success, tab selection and mobile navigation provide motion feedback. Native Web Animations and CSS keep this dependency-free; `chat-app/src/portfolio-motion.js` owns viewport reveals and nested-scroll word triggers, while `portfolio-motion.css` owns interaction styling. Native dialogs retain Escape, focus restoration and a short exit. The mobile sidebar traps focus while open.
+
+Motion uses transform and opacity, the shared deceleration curve and one-time viewport observation. Base content remains visible if animation is unavailable. Changing the system reduced-motion preference cancels active reveal animations and removes CSS spatial transitions. Hidden tabs cancel active reveal animations. Pointer hover effects are limited to fine pointers. No scroll hijacking or model-answer changes are introduced.
