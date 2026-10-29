@@ -57,3 +57,19 @@ The application is a Terminal-themed portfolio `index.html` (and `terminal.js`) 
 - **Dynamic Loading**: Themes are applied by swapping the `<link id="theme-style">` href.
 - **Persistence**: Saved in `localStorage` key `terminal-theme`.
 - **Global**: All pages check this key on load to apply the correct theme.
+
+## React homepage motion (2026-10-29)
+
+The root route currently serves the React chat portfolio from `chat-app/`, also available at `/chat/`; the legacy landing scripts do not own this UI. See `chat/README.md` for build and interface behavior. AI studio motion lives in `chat-app/src/portfolio-motion.js` and `portfolio-motion.css`. Preserve visible default content, native scroll containers, transform/opacity animation, system reduced-motion changes, cleanup of animations/observers, and dialog focus restoration. The welcome uses existing copy split visually into words with one accessible text equivalent. Timeline segments reveal per visible entry; gallery details use native dialogs with animated close. Mobile navigation traps focus and hides closed off-canvas controls from keyboard navigation.
+
+## React appearance and profile (2026-10-29)
+
+The sidebar profile uses the verified public GitHub avatar bundled locally, with a monogram fallback. Keep profile name/title at 16px line-height with a 2px gap and reserve the 32px avatar dimensions. Appearance offers Light/Dark/System, defaults to the system, persists separately as `jayll-color-mode`, follows live OS changes only in System, and synchronizes tabs. The shared `appearance-init.js` is inlined before paint by Vite; avoid duplicate startup logic. Preserve full palette coverage of routes, dialogs, skeletons, focus states and scrollbars. Native theme crossfades must honor reduced motion. Legacy static-page theme preferences remain separate.
+
+## React Projects Spotlight (2026-10-29)
+
+The default Projects directory includes the approved TiengNoi Spotlight with Pondie Tab, Win+V Panel Tweaks and VoxCPM-VN below. `project-spotlight.jsx` owns composition and reads existing project records/icons; `project-spotlight.css` owns scoped appearance-token styling. All four controls open internal project details. The voice visual is labelled as an illustration; do not add fake playback or product requests. Hide Spotlight during nonempty search, Open source scope or category filtering; restore it after clearing filters and keep it off Skills. Preserve the full directory, native scrolling, keyboard access, both palettes, responsive stacking and existing reduced-motion reveal cleanup.
+
+The supporting VoxCPM-VN project has a verified YouTube video record. Render its privacy-enhanced iframe outside clickable cards, lazily, without autoplay, at least 200px in both dimensions, with a descriptive title, fullscreen support and strict-origin-when-cross-origin referrer policy. Keep a normal Watch on YouTube fallback and retain Coin & Stock Monitor in the full catalog. YouTube remains a third-party service contacted by the player; do not describe the embed as fully offline or tracking-free.
+
+`project-video.jsx` and `project-video.css` are the shared player owner for Spotlight and project details. In the VoxCPM-VN detail view, place it after intro/context and before work details. Render only when a video record exists, use a unique heading association per instance and preserve all native player attributes/fallback links across both surfaces.

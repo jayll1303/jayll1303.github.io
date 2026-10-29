@@ -30,7 +30,7 @@ function OrganizationMark({ name }) {
 
 function TimelineEntry({ kind, role, organization, period, detail }) {
   return (
-    <li className="experience-timeline__entry">
+    <li className="experience-timeline__entry"><span className="timeline-segment" aria-hidden="true"/>
       <article className="experience-timeline__card">
         <div className="experience-timeline__topline">
           <span className="experience-timeline__kind">{kind}</span>

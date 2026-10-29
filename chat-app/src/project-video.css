@@ -1,0 +1,7 @@
+.project-video { margin: 32px 0; color: var(--appearance-ink); }
+.project-video > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.project-video .project-video-eyebrow { display: block; margin-bottom: 8px; color: var(--appearance-muted); font-size: 12px; line-height: 16px; }
+.project-video .project-video-title { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; text-wrap: balance; }
+.project-video a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--appearance-secondary); font-size: 12px; line-height: 16px; }
+.project-video iframe { display: block; width: 100%; height: auto; min-height: 200px; aspect-ratio: 16 / 9; border: 1px solid var(--appearance-line); border-radius: 16px; background: #000; }
+@media (max-width: 760px) { .project-video > header { align-items: flex-start; flex-direction: column; gap: 8px; } }

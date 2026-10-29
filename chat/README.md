@@ -33,3 +33,31 @@ The chat layout follows the first user-provided dark screenshot: narrow black si
 Interface icons are a small, sanitized local SVG subset extracted from the user-supplied ChatGPT HTML and its referenced icon sprite. The source HTML and full sprite are not shipped. Project icons are bundled locally; their [sources and provenance](../docs/project-icon-sources.md) are recorded separately. The JayLL identity remains portfolio-specific.
 
 The React component tree and the data in `chat-app/src/portfolio-data.js` provide extension points for future interactive projects, including Three.js. No 3D runtime or mini game is loaded in this version.
+
+## AI studio motion
+
+The existing chat layout uses an orchestrated welcome, word-by-word introduction, view entrances, card/icon feedback, timeline connector reveals and gallery zoom/detail transitions. Composer focus, enabled send, copy success, tab selection and mobile navigation provide motion feedback. Native Web Animations and CSS keep this dependency-free; `chat-app/src/portfolio-motion.js` owns viewport reveals and nested-scroll word triggers, while `portfolio-motion.css` owns interaction styling. Native dialogs retain Escape, focus restoration and a short exit. The mobile sidebar traps focus while open.
+
+Motion uses transform and opacity, the shared deceleration curve and one-time viewport observation. Base content remains visible if animation is unavailable. Changing the system reduced-motion preference cancels active reveal animations and removes CSS spatial transitions. Hidden tabs cancel active reveal animations. Pointer hover effects are limited to fine pointers. No scroll hijacking or model-answer changes are introduced.
+
+## Sidebar identity
+
+The sidebar uses Jay's public [GitHub profile](https://github.com/jayll1303) avatar, verified by the account name and existing portfolio links. The image was retrieved from `https://avatars.githubusercontent.com/u/109547569?v=4&s=160` on 2026-10-29 and is bundled locally in `chat-app/src/profile-assets/jayll-avatar.jpg`; visitors do not fetch their avatar from GitHub. `sidebar-profile.jsx` reserves the image dimensions and falls back to the J monogram on image failure. The name and title use compact 16px line heights with a 2px gap.
+
+## Appearance
+
+The sidebar Appearance control offers Light, Dark and System. First visit follows the operating system; an explicit choice is remembered under the separate `jayll-color-mode` local preference. System mode follows live OS changes, and preference changes synchronize between browser tabs. If storage is unavailable, the current session can still switch modes. This preference applies to the React portfolio at `/` and `/chat/`.
+
+`chat-app/src/appearance-init.js` resolves the palette before CSS and React paint. The Vite HTML hook inlines that same initializer into both production entry pages, avoiding a separate startup request. `appearance-toggle.jsx` provides labelled keyboard-accessible controls; `appearance.css` supplies semantic palette tokens and light-mode coverage for the home, answers, project/skills catalog, experience, images, library and dialogs. Theme changes optionally crossfade through native View Transitions; reduced motion uses an immediate switch. Images and organization logos retain their original colors.
+
+## Selected products Spotlight
+
+The default Projects view leads with the approved Spotlight layout: TiengNoi is the main product and Pondie Tab, Win+V Panel Tweaks and VoxCPM-VN appear as supporting cards. Coin & Stock Monitor remains in the full directory. Each card opens its existing portfolio detail; the voice-interface art is explicitly labelled as an illustration and makes no audio/API requests. `project-spotlight.jsx` reads the same curated project records and bundled icons as the directory, while its scoped CSS uses the appearance tokens and existing motion controller.
+
+Spotlight is hidden when search text, Open source scope or a category filter is active, then returns when filters are cleared. The full 18-project directory, existing Featured/More projects grouping and Skills view are preserved. On phones, the voice illustration stacks above its description and the supporting cards stack vertically. Keyboard focus, reduced motion and both appearance modes remain supported.
+
+
+The VoxCPM-VN Spotlight includes the user-supplied [Mì AI voice-cloning video](https://www.youtube.com/watch?v=VyhSglcw8uo). The verified title/channel and video ID live on that project's `video` record in `portfolio-data.js`; its detail view also has a YouTube source link. The shared `project-video.jsx` / `project-video.css` component renders a lazy `youtube-nocookie.com` iframe below the supporting cards and immediately after the introduction/context in the VoxCPM-VN detail view with native controls, inline playback, fullscreen and no autoplay. A visible Watch on YouTube link remains available if embedding or playback is restricted. The iframe reserves a responsive 16:9 region with a 200px minimum height, meeting YouTube's minimum player dimensions on small screens. Opening/filtering away from Spotlight unmounts the player. This third-party player contacts YouTube when its lazy-loading threshold is reached; the local illustrative TiengNoi art still makes no requests.
+
+
+The shared player renders only for projects with a video record. Each rendered instance has a React-generated unique heading ID, so repeated project answers in the chat keep valid accessible associations. The detail player and Spotlight player use the same source, responsive dimensions, native controls and fallback link.

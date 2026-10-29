@@ -1,93 +1,142 @@
-const REVEAL_SELECTOR = [
-  '.welcome-glyph',
-  '.welcome h1',
-  '.welcome-sub',
-  '.welcome .suggestion',
-  '.welcome-footnote',
-  '.message-pair .user-message',
-  '.message-pair .assistant-head',
-  '.assistant-message > .eyebrow',
-  '.assistant-message > h2',
-  '.project-title-line',
-  '.project-links',
-  '.assistant-message > .lead',
-  '.answer-section',
-  '.answer-panel',
-  '.outcome-panel',
-  '.project-card',
-  '.timeline-item',
-  '.experience-timeline__entry',
-  '.catalog-intro',
-  '.catalog-section h2',
-  '.catalog-row',
-  '.images-page-header',
-  '.images-tile',
-  '.achievements-library-heading',
-  '.achievements-card',
+const SELECTOR = [
+  '.welcome-glyph', '.studio-heading-part', '.welcome .suggestion', '.welcome-footnote',
+  '.message-pair .user-message', '.message-pair .assistant-head',
+  '.assistant-message > .eyebrow', '.assistant-message > h2', '.project-title-line',
+  '.project-links', '.assistant-message > .lead', '.answer-section', '.answer-panel',
+  '.outcome-panel', '.project-card', '.timeline-item', '.experience-timeline__entry',
+  '.spotlight-header', '.spotlight-hero', '.spotlight-card', '.catalog-intro', '.catalog-section h2', '.catalog-row', '.images-page-header',
+  '.images-tile', '.achievements-library-heading', '.achievements-card',
 ].join(', ');
+const STAGGER = '.spotlight-card, .studio-heading-part, .suggestion, .catalog-row, .images-tile, .experience-timeline__entry';
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
-const STAGGER_SELECTOR = '.suggestion, .project-card, .timeline-item, .experience-timeline__entry, .catalog-row, .images-tile, .achievements-card';
-
-/** Adds one-time viewport reveals to React content, including later route renders. */
+/** Visible base styles keep the portfolio readable if animation cannot run. */
 export function initPortfolioMotion(root = document.getElementById('root')) {
-  if (!root || !('IntersectionObserver' in window) || !('MutationObserver' in window)) return () => {};
+  if (!root || !('IntersectionObserver' in window)) return () => {};
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const seen = new WeakSet();
+  const pending = new Set();
+  const running = new Map();
+  let frame = 0;
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reducedMotion.matches) return () => {};
+  function play(element, keyframes, options = {}) {
+    if (reduced.matches || document.hidden || !element.animate) return;
+    running.get(element)?.cancel();
+    const animation = element.animate(keyframes, { duration: 700, easing: EASE, ...options });
+    running.set(element, animation);
+    const clear = () => { if (running.get(element) === animation) running.delete(element); };
+    animation.onfinish = clear;
+    animation.oncancel = clear;
+  }
 
-  const tracked = new Set();
-  const reveal = element => {
-    if (!tracked.delete(element)) return;
-    observer.unobserve(element);
-    element.classList.remove('pm-pending');
-  };
   const observer = new IntersectionObserver(entries => {
-    for (const entry of entries) if (entry.isIntersecting) reveal(entry.target);
-  }, { threshold: 0.08, rootMargin: '0px 0px 24px 0px' });
-
-  const watch = element => {
-    if (reducedMotion.matches || element.classList.contains('pm-reveal')) return;
-    if (element.matches(STAGGER_SELECTOR)) {
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue;
+      pending.delete(target);
+      observer.unobserve(target);
       let position = 0;
-      let sibling = element.previousElementSibling;
-      while (sibling && position < 6) {
-        if (sibling.matches(STAGGER_SELECTOR)) position += 1;
-        sibling = sibling.previousElementSibling;
+      if (target.matches(STAGGER)) {
+        let sibling = target.previousElementSibling;
+        while (sibling && position < 6) {
+          if (sibling.matches(STAGGER)) position++;
+          sibling = sibling.previousElementSibling;
+        }
       }
-      element.style.setProperty('--pm-delay', `${position * 60}ms`);
+      const transform = target.matches('.welcome-glyph') ? 'rotate(-60deg) scale(.65)'
+        : target.matches('.images-tile') ? 'scale(.94)'
+        : target.matches('.experience-timeline__entry') ? 'translateX(24px)'
+        : 'translateY(32px)';
+      play(target, [{ opacity: 0, transform }, { opacity: 1, transform: 'none' }],
+        { delay: position * 60, fill: 'backwards' });
+      if (target.matches('.experience-timeline__entry')) {
+        target.classList.add('pm-arrived');
+        const line = target.querySelector('.timeline-segment');
+        if (line) play(line, [{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }], { duration: 800 });
+      }
     }
-    element.classList.add('pm-reveal', 'pm-pending');
-    tracked.add(element);
-    observer.observe(element);
-  };
-  const scan = node => {
-    if (node.nodeType !== Node.ELEMENT_NODE) return;
-    if (node.matches(REVEAL_SELECTOR)) watch(node);
-    node.querySelectorAll(REVEAL_SELECTOR).forEach(watch);
-  };
+  }, { threshold: 0.08 });
 
+  function scan(node) {
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const elements = [...(node.matches(SELECTOR) ? [node] : []), ...node.querySelectorAll(SELECTOR)];
+    for (const element of elements) {
+      if (seen.has(element)) continue;
+      seen.add(element);
+      pending.add(element);
+      observer.observe(element);
+    }
+  }
+
+  // Scroll containers in this app are nested. Capture their scroll events and
+  // coalesce measurements into one frame, without re-rendering React.
+  function updateWords() {
+    frame = 0;
+    for (const block of root.querySelectorAll('[data-word-reveal]')) {
+      const container = block.closest('.conversation, .catalog-scroll');
+      const bounds = container?.getBoundingClientRect();
+      const trigger = Math.min(innerHeight, bounds?.bottom ?? innerHeight) * 0.82;
+      const words = [...block.querySelectorAll('.studio-word')];
+      for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        if (reduced.matches || word.getBoundingClientRect().top <= trigger) {
+          if (!word.classList.contains('is-lit')) {
+            word.classList.add('is-lit');
+            play(word, [{ opacity: 0.3 }, { opacity: 1 }], { duration: 600, delay: i * 45, fill: 'backwards' });
+          }
+        }
+      }
+    }
+  }
+  const scheduleWords = () => { if (!frame) frame = requestAnimationFrame(updateWords); };
   scan(root);
+  scheduleWords();
   const mutations = new MutationObserver(records => {
     for (const record of records) for (const node of record.addedNodes) scan(node);
+    for (const element of pending) if (!root.contains(element)) { observer.unobserve(element); pending.delete(element); }
+    for (const [element, animation] of running) if (!root.contains(element)) { animation.cancel(); running.delete(element); }
+    scheduleWords();
   });
   mutations.observe(root, { childList: true, subtree: true });
-
-  const revealFocused = event => {
-    const target = event.target.closest?.('.pm-pending');
-    if (target) reveal(target);
-  };
+  function finishMotion() {
+    if (!reduced.matches && !document.hidden) return;
+    for (const animation of running.values()) animation.cancel();
+    running.clear();
+    root.querySelectorAll('.studio-word').forEach(word => word.classList.add('is-lit'));
+  }
+  function revealFocused(event) {
+    const element = event.target.closest?.(SELECTOR);
+    if (element) running.get(element)?.cancel();
+  }
+  root.addEventListener('scroll', scheduleWords, true);
   root.addEventListener('focusin', revealFocused);
-  const onMotionChange = () => {
-    if (reducedMotion.matches) for (const element of [...tracked]) reveal(element);
-  };
-  reducedMotion.addEventListener('change', onMotionChange);
-
+  window.addEventListener('resize', scheduleWords);
+  reduced.addEventListener('change', finishMotion);
+  document.addEventListener('visibilitychange', finishMotion);
   return () => {
-    mutations.disconnect();
-    observer.disconnect();
+    observer.disconnect(); mutations.disconnect(); cancelAnimationFrame(frame);
+    for (const animation of running.values()) animation.cancel();
+    root.removeEventListener('scroll', scheduleWords, true);
     root.removeEventListener('focusin', revealFocused);
-    reducedMotion.removeEventListener('change', onMotionChange);
-    for (const element of tracked) element.classList.remove('pm-pending');
-    tracked.clear();
+    window.removeEventListener('resize', scheduleWords);
+    reduced.removeEventListener('change', finishMotion);
+    document.removeEventListener('visibilitychange', finishMotion);
   };
+}
+
+/** Keep native dialog focus restoration and Escape behavior after its exit. */
+export function closeMotionDialog(dialog) {
+  if (!dialog?.open || dialog.dataset.closing) return;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduced.matches || !dialog.animate) { dialog.close(); return; }
+  dialog.dataset.closing = 'true';
+  const animation = dialog.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(12px) scale(.98)' }], { duration: 200, easing: EASE });
+  const finish = () => {
+    reduced.removeEventListener('change', finishReducedMotion);
+    delete dialog.dataset.closing;
+    if (dialog.open) dialog.close();
+  };
+  const finishReducedMotion = () => { if (reduced.matches) animation.cancel(); };
+  reduced.addEventListener('change', finishReducedMotion);
+  animation.onfinish = finish;
+  animation.oncancel = finish;
 }

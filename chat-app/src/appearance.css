@@ -1,0 +1,128 @@
+:root {
+  color-scheme: dark;
+  --appearance-page: #000000;
+  --appearance-sidebar: #080808;
+  --appearance-surface: #181818;
+  --appearance-raised: #272727;
+  --appearance-hover: #313131;
+  --appearance-ink: #f1f1f1;
+  --appearance-secondary: #c4c4c4;
+  --appearance-muted: #a6a6a6;
+  --appearance-line: #313131;
+  --appearance-accent: #b7d7ff;
+  --appearance-selected: #313131;
+  --appearance-shadow: 0 2px 8px #0003;
+}
+:root[data-color-mode=light] {
+  color-scheme: light;
+  --appearance-page: #ffffff;
+  --appearance-sidebar: #f7f7f7;
+  --appearance-surface: #f3f3f3;
+  --appearance-raised: #ffffff;
+  --appearance-hover: #eaeaea;
+  --appearance-ink: #1a1a1a;
+  --appearance-secondary: #454545;
+  --appearance-muted: #666666;
+  --appearance-line: #dedede;
+  --appearance-accent: #175a9e;
+  --appearance-selected: #ffffff;
+  --appearance-shadow: 0 2px 8px #00000012;
+  --surface: var(--appearance-page);
+  --surface-soft: var(--appearance-sidebar);
+  --surface-hover: var(--appearance-hover);
+  --line: var(--appearance-line);
+  --ink: var(--appearance-ink);
+  --muted: var(--appearance-muted);
+  --accent: var(--appearance-accent);
+}
+.appearance-control { padding: 12px 8px; }
+.appearance-label { display: block; margin-bottom: 8px; color: var(--appearance-muted); font-size: 12px; line-height: 16px; }
+.appearance-options { position: relative; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); isolation: isolate; padding: 4px; border: 1px solid var(--appearance-line); border-radius: 12px; background: var(--appearance-surface); }
+.appearance-options button { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 44px; padding: 4px 0; border: 0; border-radius: 8px; background: transparent; color: var(--appearance-muted); font-size: 12px; line-height: 16px; }
+.appearance-options button[aria-pressed=true] { color: var(--appearance-ink); }
+.appearance-options button:hover { color: var(--appearance-ink); }
+.appearance-options button:focus-visible { outline: 2px solid var(--appearance-accent); outline-offset: -2px; }
+.appearance-selection { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 8px; background: var(--appearance-selected); box-shadow: var(--appearance-shadow); transform: translateX(calc(var(--appearance-index) * 100%)); }
+@media (prefers-reduced-motion: no-preference) {
+  .appearance-selection { transition: transform 500ms cubic-bezier(.22,1,.36,1); }
+  .appearance-options svg { transition: transform 500ms cubic-bezier(.22,1,.36,1); }
+  .appearance-options button[aria-pressed=true] svg { transform: rotate(-8deg); }
+  .appearance-options button:active svg { transform: scale(.9); }
+  ::view-transition-old(root) { animation: appearance-out 200ms cubic-bezier(.22,1,.36,1) both; }
+  ::view-transition-new(root) { animation: appearance-in 300ms cubic-bezier(.22,1,.36,1) both; }
+  @keyframes appearance-out { to { opacity: 0; } }
+  @keyframes appearance-in { from { opacity: 0; } to { opacity: 1; } }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
+/* The established dark interface stays intact; light surfaces share semantic tokens. */
+[data-color-mode=light] body,
+[data-color-mode=light] :is(.app-shell,.main-shell,.conversation,.composer-zone,.composer-zone::before,.images-page,.achievements-library) { background: var(--appearance-page); color: var(--appearance-ink); }
+[data-color-mode=light] :is(.sidebar,.sidebar-bottom) { background: var(--appearance-sidebar); color: var(--appearance-ink); border-color: var(--appearance-line); }
+[data-color-mode=light] :is(.profile,.sidebar-bottom,.project-card,.project-card:last-child,.contact-links,.contact-links a,.followups,.catalog-section h2,.search-match-list button,.timeline-item,.answer-panel,.outcome-panel,.principle-grid>div,.library-preview,.contact-card) { border-color: var(--appearance-line); }
+[data-color-mode=light] :is(.brand,.profile,.welcome h1,.welcome-glyph,.suggestion,.suggestion strong,.assistant-message,.assistant-message h2,.assistant-message h3,.project-card h3,.model-button,.share-button,.more-button,.assistant-head,.contact-links a,.catalog-intro h1,.catalog-section h2,.catalog-row-copy strong,.catalog-row,.catalog-row-copy,.images-page h1) { color: var(--appearance-ink); }
+[data-color-mode=light] :is(.assistant-message p,.assistant-message .lead,.detail-list,.project-card p,.timeline-item p,.principle-grid p,.library-preview p,.contact-card p,.nav-action,.nav-topic,.nav-group button,.catalog-tabs button,.catalog-scope button,.catalog-row-copy>span,.images-tabs button,.composer textarea,.search-head input,.search-results button,.search-match-list button,.achievements-library-search input) { color: var(--appearance-secondary); }
+[data-color-mode=light] :is(.profile small,.sidebar-file small,.welcome-sub,.welcome-footnote,.suggestion span:last-child,.nav-heading,.empty-recent,.context-line,.eyebrow,.timeline-item span,.composer-note,.search-notice,.source-heading,.search-results small,.search-results p,.contact-links small,.contact-links .ui-icon,.catalog-intro p,.catalog-row-copy small,.catalog-count,.catalog-category-label,.catalog-row-arrow,.followups-label,.followup .ui-icon,.followup-arrow,.project-card-bottom span,.images-dialog-category) { color: var(--appearance-muted); }
+[data-color-mode=light] .search-notice { color: var(--appearance-muted) !important; }
+[data-color-mode=light] .outcome-panel p { color: #28533c !important; }
+[data-color-mode=light] :is(.user-bubble,.fact,.file-icon,.catalog-tabs button.active,.catalog-scope button.selected,.nav-action.active,.nav-topic.active,.nav-group button.active,.images-tabs button.selected,.catalog-category-label select,.search-head button,.composer,.search-results .ask-model-result) { background: var(--appearance-surface); color: var(--appearance-ink); border-color: var(--appearance-line); }
+[data-color-mode=light] .suggestion { background: var(--appearance-page); border-color: var(--appearance-line); }
+[data-color-mode=light] :is(.suggestion:hover,.icon-button:hover,.model-button:hover,.share-button:hover,.sidebar-file:hover,.nav-action:hover,.nav-group button:hover,.nav-topic:hover,.catalog-row:hover,.catalog-tabs button:hover,.catalog-scope button:hover,.images-tabs button:hover,.images-search-toggle:hover,.images-search-toggle[aria-expanded=true],.followup:hover,.search-match-list button:hover,.search-results button:hover,.contact-links a:hover,.attach-button:hover) { background: var(--appearance-hover); }
+[data-color-mode=light] .icon-button { color: var(--appearance-secondary); }
+[data-color-mode=light] .chevron { color: var(--appearance-muted); }
+[data-color-mode=light] :is(.attach-button,.images-search-toggle) { color: var(--appearance-secondary); }
+[data-color-mode=light] .composer textarea { color: var(--appearance-ink); }
+[data-color-mode=light] :is(.composer textarea,.catalog-search input,.images-search input,.achievements-library-search input)::placeholder { color: var(--appearance-muted); }
+[data-color-mode=light] .composer::after { border-color: var(--appearance-accent); }
+[data-color-mode=light] .send-button { background: #175a9e; color: #fff; }
+[data-color-mode=light] .send-button:hover { background: #104578; }
+[data-color-mode=light] .send-button:disabled { background: #dedede; color: #666; }
+[data-color-mode=light] .assistant-logo { background: #202020; color: #fff; }
+[data-color-mode=light] :is(.search-dialog,.more-menu,.images-dialog) { background: var(--appearance-page); color: var(--appearance-ink); border-color: var(--appearance-line); box-shadow: 0 16px 48px #00000024; }
+[data-color-mode=light] :is(.more-menu button,.search-results button) { background: transparent; color: var(--appearance-ink); }
+[data-color-mode=light] :is(.more-menu button:hover,.search-results button:hover) { background: var(--appearance-surface); }
+[data-color-mode=light] :is(.search-head,.catalog-search,.images-search input,.achievements-library-search) { border-color: var(--appearance-line); }
+[data-color-mode=light] :is(.catalog-search,.images-search input) { background: var(--appearance-surface); color: var(--appearance-secondary); }
+[data-color-mode=light] .catalog-search input { color: var(--appearance-ink); }
+[data-color-mode=light] :is(.catalog-contact,.images-copy) { background: #202020; color: #fff; }
+[data-color-mode=light] :is(.catalog-contact:hover,.images-copy:hover) { background: #454545; }
+[data-color-mode=light] :is(.inline-button,.project-card button,.category-tabs button) { background: var(--appearance-surface); color: var(--appearance-ink); border-color: var(--appearance-line); }
+[data-color-mode=light] .followup { background: transparent; color: var(--appearance-secondary); }
+[data-color-mode=light] .link-row a { background: #f1f7f3; border-color: #bfd3c5; color: #20472d; }
+[data-color-mode=light] .link-row a:hover { background: #e4efe7; border-color: #648871; }
+[data-color-mode=light] .project-link-icon { background: #dceadf; color: #28533c; }
+[data-color-mode=light] :is(.project-link-copy small,.project-link-arrow) { color: #43674d; }
+[data-color-mode=light] .project-detail-icon { background: var(--appearance-surface); }
+[data-color-mode=light] :is(.outcome-panel span,.contact-card>span,.library-preview span,.principle-grid span,.project-category,.search-match-list span) { color: #285d40; }
+[data-color-mode=light] .experience-timeline { --timeline-ink: #1a1a1a; --timeline-muted: #555555; --timeline-line: #dedede; }
+[data-color-mode=light] .experience-timeline .experience-timeline__card { background: var(--appearance-surface); }
+[data-color-mode=light] .experience-timeline__entry::before { border-color: #fff; background: #35754f; }
+[data-color-mode=light] .experience-timeline__kind { color: #285d40; }
+[data-color-mode=light] .experience-timeline .experience-timeline__organization { color: var(--appearance-secondary); }
+[data-color-mode=light] .experience-timeline__list::before { background: var(--appearance-line); }
+[data-color-mode=light] .timeline-segment { background: #35754f; }
+[data-color-mode=light] .experience-timeline__mark { box-shadow: 0 0 0 1px #dedede; }
+[data-color-mode=light] .images-page { --images-text: #1a1a1a; --images-muted: #666; --images-surface: #eee; --images-focus: #175a9e; }
+[data-color-mode=light] .images-dialog-image { background: var(--appearance-surface); }
+[data-color-mode=light] .images-dialog h3 { color: var(--appearance-muted); }
+[data-color-mode=light] :is(.images-close,.images-retry) { background: var(--appearance-surface); color: var(--appearance-ink); border-color: var(--appearance-line); }
+[data-color-mode=light] .images-close:hover { background: var(--appearance-hover); }
+[data-color-mode=light] .images-copy-error { color: #a12222; }
+[data-color-mode=light] .achievements-library { --library-ink: #1a1a1a; --library-muted: #666; --library-line: #dedede; --library-surface: #f3f3f3; --library-pill: #eaeaea; }
+[data-color-mode=light] :is(.achievements-layout-switch button,.achievements-library-tabs button) { color: var(--appearance-secondary); }
+[data-color-mode=light] :is(.achievements-layout-switch button.is-active,.achievements-library-tabs button.is-active) { color: var(--appearance-ink); }
+[data-color-mode=light] :is(.achievements-layout-switch button:hover,.achievements-library-tabs button:hover,.achievements-card:hover) { color: var(--appearance-ink); background: var(--appearance-hover); }
+[data-color-mode=light] .achievements-empty-mark { background: var(--appearance-surface); color: var(--appearance-secondary); border-color: var(--appearance-line); }
+[data-color-mode=light] :is(.skeleton-line,.skeleton-row span,.skeleton-row i,.catalog-project-icon.is-loading) { background: #eaeaea; }
+[data-color-mode=light] .catalog-loading :is(.skeleton-line,.skeleton-row span,.skeleton-row i)::after { background: #ffffff70; }
+[data-color-mode=light] .toast { background: #202020; color: #fff; }
+[data-color-mode=light] .skip-link:focus { background: #202020; color: #fff; }
+[data-color-mode=light] :is(.conversation,.sidebar-scroll,.catalog-scroll,.images-page,.achievements-library) { scrollbar-color: #aaa transparent; }
+[data-color-mode=light] :is(button,a,input,textarea,select):focus-visible,
+[data-color-mode=light] .achievements-library :is(button,a,input):focus-visible,
+[data-color-mode=light] .more-menu button:focus-visible { outline-color: var(--appearance-accent); }
+@media (max-width:760px) { .sidebar .appearance-control { padding-top: 8px; padding-bottom: 8px; } }
+
+[data-color-mode=light] .nav-icon, [data-color-mode=light] .catalog-empty { color: var(--appearance-muted); }

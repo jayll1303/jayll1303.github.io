@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './images-gallery.css';
+import { closeMotionDialog } from './portfolio-motion';
 
 const ROOT = '/prompts/data/';
 const IMAGE_ROOT = '/prompts/';
@@ -51,9 +52,9 @@ function PromptDialog({ item, onClose }) {
     } catch { setCopyState('error'); }
   }
 
-  return <dialog ref={dialogRef} className="images-dialog" onClose={onClose} onClick={event => { if (event.target === dialogRef.current) dialogRef.current.close(); }} aria-labelledby="images-dialog-title">
+  return <dialog ref={dialogRef} className="images-dialog" onClose={onClose} onClick={event => { if (event.target === dialogRef.current) closeMotionDialog(dialogRef.current); }} onCancel={event=>{event.preventDefault();closeMotionDialog(dialogRef.current);}} aria-labelledby="images-dialog-title">
     <div className="images-dialog-content">
-      <button type="button" className="images-close" aria-label="Close image details" onClick={() => dialogRef.current.close()}>×</button>
+      <button type="button" className="images-close" aria-label="Close image details" onClick={() => closeMotionDialog(dialogRef.current)}>×</button>
       <div className="images-dialog-image"><img src={IMAGE_ROOT + item.imageUrl} alt={`Example for ${item.title}`} /></div>
       <div className="images-dialog-details">
         <span className="images-dialog-category">{COLLECTION_LABELS[item.collection] || item.collection}</span>
@@ -62,7 +63,7 @@ function PromptDialog({ item, onClose }) {
         {loadState === 'loading' && <p role="status">Loading prompt…</p>}
         {loadState === 'error' && <div role="alert"><p>This prompt could not be loaded.</p><button type="button" className="images-retry" onClick={() => setRetry(value => value + 1)}>Try again</button></div>}
         {loadState === 'ready' && <p className="images-prompt-text">{prompt}</p>}
-        <button type="button" className="images-copy" disabled={loadState !== 'ready' || copyState === 'copying'} onClick={copy}>{copyState === 'copied' ? 'Copied' : copyState === 'copying' ? 'Copying…' : 'Copy prompt'}</button>
+        <button type="button" className="images-copy" data-copied={copyState === 'copied'} disabled={loadState !== 'ready' || copyState === 'copying'} onClick={copy}>{copyState === 'copied' ? 'Copied' : copyState === 'copying' ? 'Copying…' : 'Copy prompt'}</button>
         {copyState === 'error' && <p className="images-copy-error" role="alert">Could not copy. Select the prompt text and copy it manually.</p>}
       </div>
     </div>
