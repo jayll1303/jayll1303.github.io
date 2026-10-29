@@ -2,6 +2,7 @@ import React from 'react';
 import { projects } from './portfolio-data';
 import { projectIconFor } from './project-icon';
 import UiIcon from './ui-icon';
+import ProjectVideo from './project-video';
 import './project-spotlight.css';
 
 const lead = projects.find(project => project.id === 'tiengnoi');
@@ -20,9 +21,6 @@ export default function ProjectSpotlight({ onOpen }) {
     </button>
     <div className="spotlight-supporting">{supporting.map(project => <button className="spotlight-card" type="button" key={project.id} onClick={() => open(project)} aria-label={`Explore ${project.title} project`}><span className="spotlight-card-heading"><img src={projectIconFor(project.id)} alt="" width="32" height="32"/><span><strong>{project.id === 'pondie-tab' ? 'Pondie Tab' : project.title}</strong><small>{project.context.split(' · ')[0]}</small></span><UiIcon name="open-link" size={16}/></span><span className="spotlight-card-description">{project.summary}</span></button>)}</div>
     <p className="spotlight-note">TiengNoi voice interface illustration.</p>
-    <section className="spotlight-video" aria-labelledby="spotlight-video-heading">
-      <header><div><span className="spotlight-eyebrow">VoxCPM-VN · {voxcpm.video.channel}</span><h3 id="spotlight-video-heading">Vietnamese voice cloning, in action.</h3></div><a href={`https://www.youtube.com/watch?v=${voxcpm.video.youtubeId}`} target="_blank" rel="noopener noreferrer">Watch on YouTube <UiIcon name="open-link" size={16}/></a></header>
-      <iframe src={`https://www.youtube-nocookie.com/embed/${voxcpm.video.youtubeId}?playsinline=1&rel=0`} title={voxcpm.video.title} loading="lazy" width="864" height="486" referrerPolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen />
-    </section>
+    <ProjectVideo project={voxcpm}/>
   </section>;
 }

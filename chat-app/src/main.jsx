@@ -9,6 +9,7 @@ import UiIcon from './ui-icon';
 import StreamingText from './streaming-text';
 import SidebarProfile from './sidebar-profile';
 import AppearanceToggle from './appearance-toggle';
+import ProjectVideo from './project-video';
 import { projectIconFor } from './project-icon';
 import { initPortfolioMotion, closeMotionDialog } from './portfolio-motion';
 import './style.css';
@@ -63,6 +64,7 @@ function ProjectDetail({project,onOpen}) {
     <div className="eyebrow">{project.category.toUpperCase()} <span className="eyebrow-divider">/</span> {project.period}</div>
     <div className="project-title-line">{icon && <span className="project-detail-icon" aria-hidden="true"><img src={icon} alt="" /></span>}<h2>{project.title}</h2></div><p className="lead">{project.summary}</p>
     <div className="context-line"><span className="status-dot" />{project.context}</div>
+    {project.video && <ProjectVideo project={project}/>}
     <section className="answer-section"><h3>What I worked on</h3><ul className="detail-list">{project.details.map(detail => <li key={detail}>{detail}</li>)}</ul></section>
     {project.outcome && <section className="outcome-panel"><span>RESULT FROM THE SUPPLIED RÉSUMÉ</span><p>{project.outcome}</p></section>}
     <section className="answer-section"><h3>Tools & technologies</h3><div className="facts">{project.stack.map(item => <span className="fact" key={item}>{item}</span>)}</div></section>
