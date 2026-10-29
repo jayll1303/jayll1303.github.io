@@ -43,3 +43,9 @@ Motion uses transform and opacity, the shared deceleration curve and one-time vi
 ## Sidebar identity
 
 The sidebar uses Jay's public [GitHub profile](https://github.com/jayll1303) avatar, verified by the account name and existing portfolio links. The image was retrieved from `https://avatars.githubusercontent.com/u/109547569?v=4&s=160` on 2026-10-29 and is bundled locally in `chat-app/src/profile-assets/jayll-avatar.jpg`; visitors do not fetch their avatar from GitHub. `sidebar-profile.jsx` reserves the image dimensions and falls back to the J monogram on image failure. The name and title use compact 16px line heights with a 2px gap.
+
+## Appearance
+
+The sidebar Appearance control offers Light, Dark and System. First visit follows the operating system; an explicit choice is remembered under the separate `jayll-color-mode` local preference. System mode follows live OS changes, and preference changes synchronize between browser tabs. If storage is unavailable, the current session can still switch modes. This preference applies to the React portfolio at `/` and `/chat/`.
+
+`chat-app/src/appearance-init.js` resolves the palette before CSS and React paint. The Vite HTML hook inlines that same initializer into both production entry pages, avoiding a separate startup request. `appearance-toggle.jsx` provides labelled keyboard-accessible controls; `appearance.css` supplies semantic palette tokens and light-mode coverage for the home, answers, project/skills catalog, experience, images, library and dialogs. Theme changes optionally crossfade through native View Transitions; reduced motion uses an immediate switch. Images and organization logos retain their original colors.
