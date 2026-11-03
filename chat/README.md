@@ -11,7 +11,7 @@ The React/Vite source in [`chat-app/`](../chat-app/) is the default homepage at 
 | Images | Jay's existing image gallery with filters, prompt details and copy controls |
 | Library | Achievement image collection; currently empty until images are supplied |
 | Projects | A searchable, filterable directory of 18 résumé projects and shipped products |
-| Skills tab | The skills listed in Jay's résumé, grouped by subject |
+| Skills tab | Demonstrated capabilities, implementation summaries and project references from résumé records and inspected public repositories |
 | Recent this visit | Views opened in this browser session |
 | Conversation | Detail for a project, career stage or topic |
 | Composer | A small browser model answers from curated résumé facts and links to relevant portfolio records; no server or API key |
@@ -33,6 +33,8 @@ The chat layout follows the first user-provided dark screenshot: narrow black si
 Interface icons are a small, sanitized local SVG subset extracted from the user-supplied ChatGPT HTML and its referenced icon sprite. The source HTML and full sprite are not shipped. Project icons are bundled locally; their [sources and provenance](../docs/project-icon-sources.md) are recorded separately. The JayLL identity remains portfolio-specific.
 
 The React component tree and the data in `chat-app/src/portfolio-data.js` provide extension points for future interactive projects, including Three.js. No 3D runtime or mini game is loaded in this version.
+
+The Skills tab uses a separate evidence-backed catalog in `chat-app/src/skills-data.js`. Its search covers capabilities, technologies, project titles and work context; internal résumé records are distinguished from public code and product links. See the [Skills catalog guide](../docs/skills-catalog.md) for content and validation rules.
 
 ## AI studio motion
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { categories, projects, skills } from './portfolio-data';
+import { categories, projects } from './portfolio-data';
+import SkillsCatalog from './skills-catalog';
 import UiIcon from './ui-icon';
 import ProjectSpotlight from './project-spotlight';
 import { projectIconFor } from './project-icon';
@@ -35,18 +36,12 @@ export default function ProjectCatalog({ kind, onOpen }) {
     (category === 'All' || project.category === category) &&
     `${project.title} ${project.summary} ${project.category} ${project.context} ${project.stack.join(' ')}`.toLocaleLowerCase().includes(normalizedQuery)
   );
-  const skillGroups = Object.entries(skills).map(([group, items]) => ({
-    group,
-    items: items.filter(item => `${group} ${item}`.toLocaleLowerCase().includes(normalizedQuery))
-  })).filter(group => group.items.length);
 
   return <div className="catalog-page">
-    <div className="catalog-intro"><h1>{isSkills ? 'Skills' : 'Projects'}</h1><p>{isSkills ? 'The tools behind the systems I build' : 'Explore the products, systems and research I’ve built'}</p></div>
+    <div className="catalog-intro"><h1>{isSkills ? 'Skills, put into practice' : 'Projects'}</h1><p>{isSkills ? 'What I’ve built, how I built it, and the projects behind each skill.' : 'Explore the products, systems and research I’ve built'}</p></div>
     {showSpotlight && <ProjectSpotlight onOpen={onOpen}/>}
     <label className="catalog-search"><UiIcon name="search" size={16}/><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={isSkills ? 'Search skills' : 'Search projects'} aria-label={isSkills ? 'Search skills' : 'Search projects'} /></label>
-    {isSkills ? <div className="catalog-skills">
-      {skillGroups.length ? skillGroups.map(({ group, items }) => <section className="catalog-section" key={group} aria-label={group}><h2>{group} <span aria-hidden="true">›</span></h2><div className="catalog-grid">{items.map(item => <div className="catalog-row catalog-skill" key={item}><span className="catalog-icon catalog-icon-skill" aria-hidden="true">✦</span><span className="catalog-row-copy"><strong>{item}</strong><small>{group}</small></span></div>)}</div></section>) : <p className="catalog-empty" role="status">No skills match “{query}”.</p>}
-    </div> : <>
+    {isSkills ? <SkillsCatalog query={query}/> : <>
       <div className="catalog-filters" aria-label="Filter projects"><div className="catalog-scope"><button type="button" className={scope === 'all' ? 'selected' : ''} aria-pressed={scope === 'all'} onClick={() => setScope('all')}>All</button><button type="button" className={scope === 'open-source' ? 'selected' : ''} aria-pressed={scope === 'open-source'} onClick={() => setScope('open-source')}>Open source</button></div><label className="catalog-category-label">Category <select value={category} onChange={event => setCategory(event.target.value)}>{categories.map(item => <option key={item}>{item}</option>)}</select></label></div>
       <div role="status" className="catalog-count">{shown.length} {shown.length === 1 ? 'project' : 'projects'}</div>
       {shown.length ? normalizedQuery ? <ProjectSection title="Results" items={shown} onOpen={onOpen} /> : <><ProjectSection title="Featured" items={shown.filter(project => project.featured)} onOpen={onOpen} /><ProjectSection title="More projects" items={shown.filter(project => !project.featured)} onOpen={onOpen} /></> : <p className="catalog-empty">No projects match these filters.</p>}
