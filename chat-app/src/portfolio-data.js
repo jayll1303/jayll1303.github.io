@@ -69,6 +69,18 @@ export const projects = [
     ]
   },
   {
+    id: 'tune-studio', title: 'Tune Studio', category: 'Products', period: '2026',
+    context: 'Hugging Face Space · AI music generation', featured: true,
+    summary: 'Turn a topic into an original song with AI-written lyrics and generated vocals.',
+    details: [
+      'Creates English lyrics from a topic, then composes and sings a song in a selected style.',
+      'Lets users edit lyrics and the musical score, rewrite lyrics while keeping the melody, or generate new music for existing lyrics.',
+      'Uses a Hugging Face token for lyric generation and YuE2-3B on ZeroGPU for music rendering.'
+    ],
+    stack: ['Gradio', 'YuE2-3B', 'Hugging Face Inference Providers', 'ZeroGPU'],
+    link: 'https://huggingface.co/spaces/JayLL13/tune-studio', linkLabel: 'Try Tune Studio'
+  },
+  {
     id: 'graph-rag', title: 'Enterprise GraphRAG', category: 'Current work', period: 'Jul 2025 — present',
     context: 'FE Credit · internal system', featured: true,
     summary: 'An internal knowledge retrieval system connecting complex enterprise documents and data points.',
