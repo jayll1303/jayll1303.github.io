@@ -6,3 +6,7 @@
 @media(max-width:1000px){.tools-page,.games-page{padding:30px 24px 24px}.tool-picker button{min-width:0;flex:1}.tool-editors{gap:12px}}
 @media(max-width:760px){.tools-page,.games-page{padding:22px 18px}.utility-heading{margin-bottom:24px}.utility-heading h1{font-size:28px}.tool-picker{gap:8px;margin-bottom:22px}.tool-picker button{padding:12px 10px;font-size:12px;gap:8px;line-height:18px}.tool-picker small{font-size:10px}.tool-symbol{font-size:17px;min-width:22px}.tool-editors{grid-template-columns:minmax(0,1fr);gap:16px}.tool-pane textarea{height:260px;min-height:220px;font-size:16px}.tool-pane-heading{padding-left:14px}.tool-toolbar{flex-wrap:wrap;gap:8px}.tool-setting{gap:8px}.tool-actions{margin-left:auto}.tool-help{margin-top:12px}.games-empty{min-height:360px;height:65vh}.games-empty h2{font-size:21px}.sidebar .sidebar-nav{max-height:calc(100dvh - 300px);min-height:110px;flex-shrink:1}}
 @media(max-height:560px){.sidebar{overflow-y:auto!important}.sidebar .sidebar-nav{max-height:none;overflow:visible;flex-shrink:0}.sidebar .sidebar-scroll{flex:0 0 auto;overflow:visible}.sidebar .sidebar-bottom{flex-shrink:0}}
+
+/* The page heading supplies the desktop title; mobile keeps its navigation label. */
+@media(min-width:761px){.utility-topbar .utility-topbar-label{display:none}}
+@media(max-width:760px){.tools-page button,.tools-page .tool-setting select{min-height:44px}.tool-pane-heading button{min-width:44px}}

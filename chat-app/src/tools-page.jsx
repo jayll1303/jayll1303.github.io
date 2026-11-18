@@ -17,6 +17,17 @@ function derive(draft, tool, setting) {
   }
 }
 
+// A format selection may reformat the right pane; typing still preserves it.
+function reformatJson(draft, indent) {
+  const source = draft[draft.side];
+  if (source === '') return draft;
+  try {
+    return { ...draft, right: formatJson(source, indent), error: '' };
+  } catch (error) {
+    return { ...draft, error: error.message || 'Check the JSON and try again.' };
+  }
+}
+
 export default function ToolsPage() {
   const [tool, setTool] = useState('json');
   const [drafts, setDrafts] = useState({ json: emptyDraft(), string: emptyDraft() });
@@ -36,7 +47,7 @@ export default function ToolsPage() {
   function changeSetting(value) {
     if (tool === 'json') setIndent(value); else setMode(value);
     setFeedback('');
-    setDrafts(previous => ({ ...previous, [tool]: derive(previous[tool], tool, value) }));
+    setDrafts(previous => ({ ...previous, [tool]: tool === 'json' ? reformatJson(previous[tool], value) : derive(previous[tool], tool, value) }));
   }
   async function copy(side) {
     try {
@@ -65,7 +76,7 @@ export default function ToolsPage() {
       <button type='button' aria-pressed={tool === 'string'} onClick={() => { setTool('string'); setFeedback(''); }}><span className='tool-symbol' aria-hidden='true'>Aa</span><span>String Escape / Unescape<small>JSON, HTML & URL</small></span></button>
     </div>
     <div className='tool-toolbar'><div className='tool-setting'><label htmlFor='tool-setting'>{tool === 'json' ? 'Format' : 'Encoding'}</label><select id='tool-setting' value={setting} onChange={event => changeSetting(tool === 'json' ? Number(event.target.value) : event.target.value)}>{tool === 'json' ? <><option value={2}>2 spaces</option><option value={4}>4 spaces</option><option value={0}>Minify</option></> : <><option value='json'>JSON string</option><option value='html'>HTML entities</option><option value='url'>URL component</option></>}</select></div><div className='tool-actions'>{isEmpty && <button type='button' onClick={example}>Try an example</button>}<button type='button' onClick={clear} disabled={isEmpty}>Clear</button></div></div>
-    <p className='tool-help' id='tool-help'>Edit either side. The other updates as you type.{tool === 'string' && mode === 'json' ? ' JSON includes the surrounding quotes.' : ''}</p>
+    <p className='tool-help' id='tool-help'>Edit either side. The other updates as you type.{tool === 'string' && (mode === 'json' ? ' JSON includes the surrounding quotes.' : mode === 'html' ? ' HTML entities require a semicolon and decode once: &amp;lt; becomes &lt;.' : ' Encodes a URL component. A + stays a literal plus when decoding; spaces encode as %20.')}</p>
     <div className='tool-editors'>{['left', 'right'].map((side, index) => {
       const invalid = Boolean(draft.error) && draft.side === side;
       return <div className={'tool-pane' + (invalid ? ' has-error' : '')} key={side}><div className='tool-pane-heading'><label htmlFor={'tool-' + side}>{labels[index]}</label><button type='button' onClick={() => copy(side)} disabled={draft[side] === ''} aria-label={'Copy ' + labels[index].toLowerCase()}>Copy</button></div><textarea id={'tool-' + side} ref={side === 'left' ? leftRef : rightRef} value={draft[side]} onChange={event => edit(side, event.target.value)} aria-invalid={invalid} aria-describedby={'tool-help' + (invalid ? ' tool-error' : '')} spellCheck={false} autoCapitalize='off' autoCorrect='off' placeholder={tool === 'json' ? index === 0 ? 'Paste JSON here...' : 'Formatted JSON appears here...' : index === 0 ? 'Type or paste plain text...' : 'Paste an escaped string here...'}/><div className='tool-pane-footer'><span>{draft[side].length.toLocaleString()} characters</span><span>Editable</span></div></div>;
