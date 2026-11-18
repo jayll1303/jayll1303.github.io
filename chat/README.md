@@ -63,3 +63,13 @@ The VoxCPM-VN Spotlight includes the user-supplied [Mì AI voice-cloning video](
 
 
 The shared player renders only for projects with a video record. Each rendered instance has a React-generated unique heading ID, so repeated project answers in the chat keep valid accessible associations. The detail player and Spotlight player use the same source, responsive dimensions, native controls and fallback link.
+
+## Timestamp Converter and Diff Checker
+
+Tools exposes `#tools/timestamp` and `#tools/diff` through the sidebar, search, and direct links. Both update automatically and process data in the current tab. Drafts survive navigation between sibling tools; reload or leaving Tools resets them. Nothing is uploaded or saved.
+
+Timestamp accepts Unix seconds/milliseconds and ISO dates/date-times and shows UTC, local time, ISO, and both Unix units. Use the unit selector for ambiguous numbers; dates without an offset use UTC. Copy results or use Now for the current instant.
+
+Diff Checker compares Original and Modified text by line and highlights inline changes in replaced lines. Large inputs are bounded to protect responsiveness. It compares literal text, including whitespace and JSON key order.
+
+Run `npm test` and `npm run build` from `chat-app/`; source modules own conversion and diff validation, while `timestamp-page.jsx` and `diff-page.jsx` own presentation. Generated assets in `chat/` are checked in for GitHub Pages.

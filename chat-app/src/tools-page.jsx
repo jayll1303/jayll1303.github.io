@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { formatJson, escapeString, unescapeString } from './tool-conversions';
 import './tools-page.css';
 import { defaultTool, toolFor } from './tools-data';
+import TimestampPage from './timestamp-page.jsx';
+import DiffPage from './diff-page.jsx';
 
 const emptyDraft = () => ({ left: '', right: '', side: 'left', error: '' });
 function derive(draft, tool, setting) {
@@ -30,15 +32,26 @@ function reformatJson(draft, indent) {
 }
 
 export default function ToolsPage({ tool = defaultTool }) {
-  const [drafts, setDrafts] = useState({ json: emptyDraft(), string: emptyDraft() });
+  const [drafts, setDrafts] = useState({ json: emptyDraft(), string: emptyDraft(), timestamp: '', diff: { left: '', right: '' } });
   const [indent, setIndent] = useState(2);
   const [mode, setMode] = useState('json');
   const [feedback, setFeedback] = useState('');
+  const [timestampUnit, setTimestampUnit] = useState('auto');
   const feedbackRequest = useRef(0);
+  const activeTool = useRef(tool);
+  activeTool.current = tool;
   useEffect(() => {
+    invalidateFeedback();
+    return () => { feedbackRequest.current += 1; };
+  }, [tool]);
+  function invalidateFeedback() {
     feedbackRequest.current += 1;
     setFeedback('');
-  }, [tool]);
+  }
+  function updateDraft(value) {
+    invalidateFeedback();
+    setDrafts(previous => ({ ...previous, [tool]: typeof value === 'function' ? value(previous[tool]) : value }));
+  }
   const leftRef = useRef(null);
   const rightRef = useRef(null);
   const draft = drafts[tool];
@@ -46,29 +59,45 @@ export default function ToolsPage({ tool = defaultTool }) {
   const isEmpty = draft.left === '' && draft.right === '';
   const labels = tool === 'json' ? ['Source JSON', 'Formatted JSON'] : ['Plain text', 'Escaped string'];
   function edit(side, value) {
-    setFeedback('');
+    invalidateFeedback();
     setDrafts(previous => ({ ...previous, [tool]: derive({ ...previous[tool], [side]: value, side }, tool, setting) }));
   }
   function changeSetting(value) {
     if (tool === 'json') setIndent(value); else setMode(value);
-    setFeedback('');
+    invalidateFeedback();
     setDrafts(previous => ({ ...previous, [tool]: tool === 'json' ? reformatJson(previous[tool], value) : derive(previous[tool], tool, value) }));
   }
-  async function copy(side) {
+  function copy(side) {
+    return copyText(draft[side], labels[side === 'left' ? 0 : 1], side === 'left' ? leftRef.current : rightRef.current);
+  }
+  async function copyText(value, label, element) {
     const request = ++feedbackRequest.current;
+    const requestedTool = tool;
+    const isCurrent = () => request === feedbackRequest.current && requestedTool === activeTool.current;
     try {
-      await navigator.clipboard.writeText(draft[side]);
-      if (request !== feedbackRequest.current) return;
-      setFeedback(labels[side === 'left' ? 0 : 1] + ' copied.');
+      await navigator.clipboard.writeText(value);
+      if (isCurrent()) setFeedback(label + ' copied.');
     } catch {
-      if (request !== feedbackRequest.current) return;
-      const editor = side === 'left' ? leftRef.current : rightRef.current;
-      editor?.focus();
-      editor?.select();
-      setFeedback('Clipboard unavailable. Text selected. Press Ctrl+C or Command+C to copy.');
+      if (!isCurrent()) return;
+      if (element && element.isConnected) {
+        if (typeof element.select === 'function') {
+          element.focus();
+          element.select();
+        } else {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(element);
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+        setFeedback('Clipboard unavailable. Text selected. Press Ctrl+C or Command+C to copy.');
+      } else {
+        setFeedback('Clipboard unavailable. Select the text and copy manually.');
+      }
     }
   }
   function clear() {
+    invalidateFeedback();
     setDrafts(previous => ({ ...previous, [tool]: emptyDraft() }));
     setFeedback('Both editors cleared.');
     leftRef.current?.focus();
@@ -77,6 +106,8 @@ export default function ToolsPage({ tool = defaultTool }) {
     edit('left', tool === 'json' ? JSON.stringify({ hello: 'world', items: [1, 2, 3], ready: true }) : 'Hello, world! ' + String.fromCharCode(10) + 'A little text, ready to escape.');
     leftRef.current?.focus();
   }
+  if (tool === 'timestamp') return <TimestampPage value={drafts.timestamp} onChange={updateDraft} unit={timestampUnit} onUnitChange={value => { invalidateFeedback(); setTimestampUnit(value); }} onCopy={copyText} copyStatus={feedback} onNow={() => { setTimestampUnit('milliseconds'); updateDraft(String(Date.now())); }} onClear={() => updateDraft('')}/>;
+  if (tool === 'diff') return <DiffPage draft={drafts.diff} onChange={(side, value) => { invalidateFeedback(); setDrafts(previous => ({ ...previous, diff: { ...previous.diff, [side]: value } })); }} onCopy={copyText} copyStatus={feedback} onClear={() => updateDraft({ left: '', right: '' })}/>;
   return <section className='tools-page' aria-labelledby='tools-title'>
     <header className='utility-heading'><span className='utility-eyebrow'>TOOLS</span><h1 id='tools-title'>{toolFor(tool).title}</h1><p>{toolFor(tool).description}</p></header>
     <div className='tool-toolbar'><div className='tool-setting'><label htmlFor='tool-setting'>{tool === 'json' ? 'Format' : 'Encoding'}</label><select id='tool-setting' value={setting} onChange={event => changeSetting(tool === 'json' ? Number(event.target.value) : event.target.value)}>{tool === 'json' ? <><option value={2}>2 spaces</option><option value={4}>4 spaces</option><option value={0}>Minify</option></> : <><option value='json'>JSON string</option><option value='html'>HTML entities</option><option value='url'>URL component</option></>}</select></div><div className='tool-actions'>{isEmpty && <button type='button' onClick={example}>Try an example</button>}<button type='button' onClick={clear} disabled={isEmpty}>Clear</button></div></div>
