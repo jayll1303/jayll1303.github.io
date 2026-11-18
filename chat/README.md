@@ -63,3 +63,17 @@ The VoxCPM-VN Spotlight includes the user-supplied [Mì AI voice-cloning video](
 
 
 The shared player renders only for projects with a video record. Each rendered instance has a React-generated unique heading ID, so repeated project answers in the chat keep valid accessible associations. The detail player and Spotlight player use the same source, responsive dimensions, native controls and fallback link.
+
+
+## Tools: Prompt Forge
+
+Open Tools → Prompt Forge from the sidebar or global search, or load /#tools/prompt-forge (/chat/#tools/prompt-forge also works). The tool adapts the user-supplied jayll-publics/jayll-prompt-forge reference into the portfolio appearance system. It runs locally without a backend or API key.
+
+Write placeholders such as {{task}} in the template and assign values in Variables. Preview updates immediately. Names are case-sensitive and trimmed; repeated tokens are replaced together in one pass. Replacement text, markup and additional placeholder text inside a value stay literal. Missing or blank values remain visible as placeholders; duplicate or invalid names show inline errors. Detect variables adds missing names without removing existing values. Rows support drag handles and up/down buttons, plus multiline values, add and delete.
+
+Import JSON accepts the original format with a template string and a variables array of key/value strings (legacy IDs are ignored). Export JSON downloads a versioned configuration with the same fields. Invalid imports keep the current draft. Names must be unique and contain no braces or line breaks. Limits are 1 MiB per configuration, 100,000 template characters, 200 variables, 100 characters per name, 20,000 per value and 1,000,000 rendered characters. No prompt data is uploaded or saved automatically; leaving the tool or reloading resets its draft. Export before leaving to keep your work. Copy falls back to selecting the result when clipboard access is denied.
+
+Source owners: chat-app/src/prompt-forge.jsx (UI), prompt-forge.js (rendering and config validation), prompt-forge.css (scoped responsive styling) and tools-data.js (navigation/search registration). Existing JSON/String tools keep their drafts when switching among Tools. Run npm test and npm run build from chat-app after edits. See ../.agent/rules/chat-tools.md for maintenance rules.
+
+
+Prompt Forge now separates Prompt template and Variables into keyboard-accessible tabs. Each variable has a stable color shared by its row, template placeholders and rendered values: the name is stronger/bold, the value is softer. Reordering uses a short FLIP animation and respects reduced-motion settings. The workspace fills the visible content area, with internal scrolling for long variable lists and code editors; short viewports keep a compact scrollable fallback. The native textarea and an aria-hidden colored mirror are owned by prompt-forge-editor.jsx, with literal text parts from prompt-forge.js.
