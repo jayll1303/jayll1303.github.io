@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { formatJson, escapeString, unescapeString } from './tool-conversions';
 import './tools-page.css';
+import { defaultTool, toolFor } from './tools-data';
 
 const emptyDraft = () => ({ left: '', right: '', side: 'left', error: '' });
 function derive(draft, tool, setting) {
@@ -28,12 +29,16 @@ function reformatJson(draft, indent) {
   }
 }
 
-export default function ToolsPage() {
-  const [tool, setTool] = useState('json');
+export default function ToolsPage({ tool = defaultTool }) {
   const [drafts, setDrafts] = useState({ json: emptyDraft(), string: emptyDraft() });
   const [indent, setIndent] = useState(2);
   const [mode, setMode] = useState('json');
   const [feedback, setFeedback] = useState('');
+  const feedbackRequest = useRef(0);
+  useEffect(() => {
+    feedbackRequest.current += 1;
+    setFeedback('');
+  }, [tool]);
   const leftRef = useRef(null);
   const rightRef = useRef(null);
   const draft = drafts[tool];
@@ -50,10 +55,13 @@ export default function ToolsPage() {
     setDrafts(previous => ({ ...previous, [tool]: tool === 'json' ? reformatJson(previous[tool], value) : derive(previous[tool], tool, value) }));
   }
   async function copy(side) {
+    const request = ++feedbackRequest.current;
     try {
       await navigator.clipboard.writeText(draft[side]);
+      if (request !== feedbackRequest.current) return;
       setFeedback(labels[side === 'left' ? 0 : 1] + ' copied.');
     } catch {
+      if (request !== feedbackRequest.current) return;
       const editor = side === 'left' ? leftRef.current : rightRef.current;
       editor?.focus();
       editor?.select();
@@ -70,11 +78,7 @@ export default function ToolsPage() {
     leftRef.current?.focus();
   }
   return <section className='tools-page' aria-labelledby='tools-title'>
-    <header className='utility-heading'><span className='utility-eyebrow'>A SMALL WORKBENCH</span><h1 id='tools-title'>Tools</h1><p>Everyday text tasks, a little easier.</p></header>
-    <div className='tool-picker' role='group' aria-label='Choose a tool'>
-      <button type='button' aria-pressed={tool === 'json'} onClick={() => { setTool('json'); setFeedback(''); }}><span className='tool-symbol' aria-hidden='true'>{'{ }'}</span><span>JSON Beautify<small>Format & minify</small></span></button>
-      <button type='button' aria-pressed={tool === 'string'} onClick={() => { setTool('string'); setFeedback(''); }}><span className='tool-symbol' aria-hidden='true'>Aa</span><span>String Escape / Unescape<small>JSON, HTML & URL</small></span></button>
-    </div>
+    <header className='utility-heading'><span className='utility-eyebrow'>TOOLS</span><h1 id='tools-title'>{toolFor(tool).title}</h1><p>{toolFor(tool).description}</p></header>
     <div className='tool-toolbar'><div className='tool-setting'><label htmlFor='tool-setting'>{tool === 'json' ? 'Format' : 'Encoding'}</label><select id='tool-setting' value={setting} onChange={event => changeSetting(tool === 'json' ? Number(event.target.value) : event.target.value)}>{tool === 'json' ? <><option value={2}>2 spaces</option><option value={4}>4 spaces</option><option value={0}>Minify</option></> : <><option value='json'>JSON string</option><option value='html'>HTML entities</option><option value='url'>URL component</option></>}</select></div><div className='tool-actions'>{isEmpty && <button type='button' onClick={example}>Try an example</button>}<button type='button' onClick={clear} disabled={isEmpty}>Clear</button></div></div>
     <p className='tool-help' id='tool-help'>Edit either side. The other updates as you type.{tool === 'string' && (mode === 'json' ? ' JSON includes the surrounding quotes.' : mode === 'html' ? ' HTML entities require a semicolon and decode once: &amp;lt; becomes &lt;.' : ' Encodes a URL component. A + stays a literal plus when decoding; spaces encode as %20.')}</p>
     <div className='tool-editors'>{['left', 'right'].map((side, index) => {
