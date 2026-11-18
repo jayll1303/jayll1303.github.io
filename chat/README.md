@@ -77,3 +77,13 @@ Source owners: chat-app/src/prompt-forge.jsx (UI), prompt-forge.js (rendering an
 
 
 Prompt Forge now separates Prompt template and Variables into keyboard-accessible tabs. Each variable has a stable color shared by its row, template placeholders and rendered values: the name is stronger/bold, the value is softer. Reordering uses a short FLIP animation and respects reduced-motion settings. The workspace fills the visible content area, with internal scrolling for long variable lists and code editors; short viewports keep a compact scrollable fallback. The native textarea and an aria-hidden colored mirror are owned by prompt-forge-editor.jsx, with literal text parts from prompt-forge.js.
+
+## Timestamp Converter and Diff Checker
+
+Tools exposes `#tools/timestamp` and `#tools/diff` through the sidebar, search, and direct links. All tools update as you work; Timestamp Converter and Diff Checker process data in the current tab. Drafts survive navigation between sibling tools; reload or leaving Tools resets them. Nothing is uploaded or saved.
+
+Timestamp accepts Unix seconds/milliseconds and ISO dates/date-times and shows UTC, local time, ISO, and both Unix units. Use the unit selector for ambiguous numbers; dates without an offset use UTC. Copy results or use Now for the current instant.
+
+Diff Checker compares Original and Modified text by line and highlights inline changes in replaced lines. Large inputs are bounded to protect responsiveness. It compares literal text, including whitespace and JSON key order.
+
+Run `npm test` and `npm run build` from `chat-app/`; source modules own conversion and diff validation, while `timestamp-page.jsx` and `diff-page.jsx` own presentation. The checked-in `chat/assets/*` bundles must be regenerated with the build before the new tools appear on the static site.
