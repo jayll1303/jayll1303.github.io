@@ -1,6 +1,6 @@
 ﻿# Tools and Games
 
-Status: implementing
+Status: verified; ready for PR
 Issue: https://github.com/jayll1303/jayll1303.github.io/issues/1
 
 ## Confirmed outcome
@@ -8,8 +8,8 @@ Add Tools and Games to the existing sidebar. Tools provides live bidirectional J
 
 ## Execution
 - [x] Phase 1: conversion functions and meaningful edge-case tests (isolated tools-logic worktree).
-- [ ] Phase 2: responsive dual-editor UI, Games placeholder, routing/sidebar integration (isolated tools-ui worktree).
-- [ ] Phase 3: integrate, tests, build static assets, browser verification.
+- [x] Phase 2: responsive dual-editor UI, Games placeholder, routing/sidebar integration (isolated tools-ui worktree).
+- [x] Phase 3: integrate, tests, build static assets, browser verification.
 - [ ] Phase 4: isolated review, fixes, PR, issue transition, cleanup.
 
 ## Verification
@@ -34,3 +34,4 @@ Color: Restrained; existing appearance tokens for page, text, focus and error st
 Type: Existing system sans; monospace editor text.
 Signature: Paired live editors; edit either side without a Convert action.
 Dials: variance 2/10, motion 1/10, density 5/10.
+
