@@ -4,6 +4,7 @@ import './tools-page.css';
 import { defaultTool, toolFor } from './tools-data';
 import TimestampPage from './timestamp-page.jsx';
 import DiffPage from './diff-page.jsx';
+import PromptForge from './prompt-forge.jsx';
 
 const emptyDraft = () => ({ left: '', right: '', side: 'left', error: '' });
 function derive(draft, tool, setting) {
@@ -54,7 +55,7 @@ export default function ToolsPage({ tool = defaultTool }) {
   }
   const leftRef = useRef(null);
   const rightRef = useRef(null);
-  const draft = drafts[tool];
+  const draft = drafts[tool] || drafts[defaultTool];
   const setting = tool === 'json' ? indent : mode;
   const isEmpty = draft.left === '' && draft.right === '';
   const labels = tool === 'json' ? ['Source JSON', 'Formatted JSON'] : ['Plain text', 'Escaped string'];
@@ -108,6 +109,7 @@ export default function ToolsPage({ tool = defaultTool }) {
   }
   if (tool === 'timestamp') return <TimestampPage value={drafts.timestamp} onChange={updateDraft} unit={timestampUnit} onUnitChange={value => { invalidateFeedback(); setTimestampUnit(value); }} onCopy={copyText} copyStatus={feedback} onNow={() => { setTimestampUnit('milliseconds'); updateDraft(String(Date.now())); }} onClear={() => updateDraft('')}/>;
   if (tool === 'diff') return <DiffPage draft={drafts.diff} onChange={(side, value) => { invalidateFeedback(); setDrafts(previous => ({ ...previous, diff: { ...previous.diff, [side]: value } })); }} onCopy={copyText} copyStatus={feedback} onClear={() => updateDraft({ left: '', right: '' })}/>;
+  if (tool === 'prompt-forge') return <PromptForge/>;
   return <section className='tools-page' aria-labelledby='tools-title'>
     <header className='utility-heading'><span className='utility-eyebrow'>TOOLS</span><h1 id='tools-title'>{toolFor(tool).title}</h1><p>{toolFor(tool).description}</p></header>
     <div className='tool-toolbar'><div className='tool-setting'><label htmlFor='tool-setting'>{tool === 'json' ? 'Format' : 'Encoding'}</label><select id='tool-setting' value={setting} onChange={event => changeSetting(tool === 'json' ? Number(event.target.value) : event.target.value)}>{tool === 'json' ? <><option value={2}>2 spaces</option><option value={4}>4 spaces</option><option value={0}>Minify</option></> : <><option value='json'>JSON string</option><option value='html'>HTML entities</option><option value='url'>URL component</option></>}</select></div><div className='tool-actions'>{isEmpty && <button type='button' onClick={example}>Try an example</button>}<button type='button' onClick={clear} disabled={isEmpty}>Clear</button></div></div>
