@@ -43,3 +43,7 @@ Dials: variance 2/10, motion 1/10, density 5/10.
 - Rebuild local version served on port 5000 and verify desktop/short mobile navigation.
 Status: verified refinement. Production build and Edge checks passed: sidebar ordering, nested tool URLs, search, draft preservation, history/reload and short mobile access. Local preview retained on port 5000.
 
+
+## User refinement: collapsible sidebar groups
+Tools and Games become independent disclosures: parent clicks only expand/collapse; children navigate. Home starts collapsed; direct tool/Games links reveal their selected group. Games contains Coming soon until real games exist. Manual collapse preserves the active editor and draft. Explore stays last.
+Verified: production build and Edge checks passed (initial collapsed groups, independent toggles without routing, preserved draft, Games child, deep-link expansion, short mobile sidebar).
