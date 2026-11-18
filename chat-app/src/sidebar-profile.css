@@ -4,3 +4,13 @@
 .profile .profile-copy { display: grid; gap: 2px; min-width: 0; }
 .profile .profile-copy strong { font-size: 12px; line-height: 16px; font-weight: 600; }
 .profile .profile-copy small { margin: 0; font-size: 12px; line-height: 16px; }
+.sidebar .profile { text-decoration: none; border-radius: 8px; }
+.profile .profile-copy small { grid-area: 2 / 1; }
+.profile .profile-download, .profile .profile-download-icon { opacity: 0; }
+.profile .profile-download-icon { flex: 0 0 18px; margin-left: auto; color: var(--appearance-ink); }
+.sidebar .profile:is(:hover, :focus-visible) { background: var(--appearance-surface); }
+.profile:is(:hover, :focus-visible) .profile-role { opacity: 0; }
+.profile:is(:hover, :focus-visible) .profile-download, .profile:is(:hover, :focus-visible) .profile-download-icon { opacity: 1; color: var(--appearance-ink); }
+.sidebar .profile:active { background: var(--appearance-hover); }
+@media (hover: none) { .profile .profile-role { opacity: 0; } .profile .profile-download, .profile .profile-download-icon { opacity: 1; color: var(--appearance-ink); } }
+@media (prefers-reduced-motion: no-preference) { .sidebar .profile { transition: background-color 150ms ease; } .profile .profile-role, .profile .profile-download, .profile .profile-download-icon { transition: opacity 150ms ease; } }
