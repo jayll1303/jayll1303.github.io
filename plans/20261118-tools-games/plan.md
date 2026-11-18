@@ -1,4 +1,4 @@
-# Tools and Games
+﻿# Tools and Games
 
 Status: complete; PR https://github.com/jayll1303/jayll1303.github.io/pull/3
 Issue: https://github.com/jayll1303/jayll1303.github.io/issues/1
@@ -34,3 +34,12 @@ Color: Restrained; existing appearance tokens for page, text, focus and error st
 Type: Existing system sans; monospace editor text.
 Signature: Paired live editors; edit either side without a Convert action.
 Dials: variance 2/10, motion 1/10, density 5/10.
+
+## User refinement: sidebar tool children
+- Explore remains the final quick navigation item.
+- Move JSON Beautify and String Escape / Unescape from the page picker into nested Tools sidebar items.
+- Direct tool hashes and browser history select the actual tool; legacy #tools opens JSON.
+- Preserve drafts across sibling tool navigation and remove redundant picker cards.
+- Rebuild local version served on port 5000 and verify desktop/short mobile navigation.
+Status: verified refinement. Production build and Edge checks passed: sidebar ordering, nested tool URLs, search, draft preservation, history/reload and short mobile access. Local preview retained on port 5000.
+
