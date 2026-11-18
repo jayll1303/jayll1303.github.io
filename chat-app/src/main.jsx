@@ -143,6 +143,8 @@ function SearchDialog({open,onClose,onOpen,onAsk}) {
 
 function App() {
   const [view,setView] = useState(viewFromHash);
+  const [toolsExpanded,setToolsExpanded] = useState(() => view.kind==='tools');
+  const [gamesExpanded,setGamesExpanded] = useState(() => view.kind==='games');
   const [messages,setMessages] = useState(() => viewFromHash().kind === 'home' || isFullPageView(viewFromHash()) ? [] : [{question:titleFor(viewFromHash()),view:viewFromHash()}]);
   const [recent,setRecent] = useState([]);
   const [menuOpen,setMenuOpen] = useState(false);
@@ -179,6 +181,10 @@ function App() {
     });
   }
   useEffect(() => {const sync=()=>{const next=viewFromHash();setView(next);setMessages(next.kind==='home'||isFullPageView(next)?[]:[{question:titleFor(next),view:next}]);};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)};},[]);
+  useEffect(() => {
+    if(view.kind==='tools')setToolsExpanded(true);
+    if(view.kind==='games')setGamesExpanded(true);
+  },[view.kind,view.tool]);
   useEffect(() => {document.title=`${view.kind==='home'?'Ask JayLL':titleFor(view)||'Ask JayLL'} · Portfolio`;},[view]);
   useEffect(() => {if(view.kind==='home'&&conversationRef.current)conversationRef.current.scrollTop=0;},[view.kind]);
   useEffect(() => {const key=event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchTrigger.current=document.activeElement;setSearchOpen(true);}if(event.key==='Escape'){setMenuOpen(false);if(moreOpen){setMoreOpen(false);moreTrigger.current?.focus();}}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[moreOpen]);
@@ -243,7 +249,10 @@ function App() {
   return <><a className="skip-link" href="#main" onClick={event=>{event.preventDefault();document.getElementById('main').focus();}}>Skip to content</a><div className={`app-shell ${collapsed?'collapsed':''} ${menuOpen?'menu-open':''}`}>
     <aside className="sidebar" id="sidebar" aria-label="Portfolio navigation">
       <div className="sidebar-top"><a className="brand" href="/" onClick={event=>{event.preventDefault();openView({kind:'home'});}}>JayLL</a><button className="icon-button sidebar-search" onClick={()=>{searchTrigger.current=document.activeElement;setSearchOpen(true);setMenuOpen(false);}} aria-label="Search portfolio"><Icon name="search"/></button><button className="icon-button desktop-collapse" onClick={()=>setCollapsed(true)} aria-label="Collapse sidebar"><UiIcon name="sidebar" size={16}/></button><button className="icon-button mobile-close" onClick={()=>setMenuOpen(false)} aria-label="Close sidebar"><span className="studio-menu-icon" aria-hidden="true"><i/><i/></span></button></div>
-      <nav className="sidebar-nav" aria-label="Quick navigation"><button className="nav-action" onClick={()=>openView({kind:'home'})}><Icon name="new"/><span>New chat</span></button>{navButton('Images',{kind:'images'},'images')}{navButton('Experience',{kind:'experience'},'experience')}{navButton('Library',{kind:'library'},'library')}{navButton('Projects',{kind:'projects'},'projects')}<ul className='tools-nav-group'><li><button className={`nav-action ${view.kind==='tools'?'active':''}`} onClick={()=>openView({kind:'tools',tool:defaultTool})}><Icon name='tools'/><span>Tools</span></button><ul className='tools-nav-children' aria-label='Tools'>{tools.map(tool=><li key={tool.id}>{navButton(tool.title,{kind:'tools',tool:tool.id},'tools')}</li>)}</ul></li></ul>{navButton('Games',{kind:'games'},'games')}{navButton('Explore',{kind:'about'},'about')}</nav>
+      <nav className="sidebar-nav" aria-label="Quick navigation"><button className="nav-action" onClick={()=>openView({kind:'home'})}><Icon name="new"/><span>New chat</span></button>{navButton('Images',{kind:'images'},'images')}{navButton('Experience',{kind:'experience'},'experience')}{navButton('Library',{kind:'library'},'library')}{navButton('Projects',{kind:'projects'},'projects')}<ul className='tools-nav-group'>
+        <li><button className='nav-action nav-disclosure' onClick={()=>setToolsExpanded(expanded=>!expanded)} aria-expanded={toolsExpanded} aria-controls='tools-nav-children'><Icon name='tools'/><span className='nav-disclosure-label'>Tools</span><UiIcon name='chevron-down' size={16} className='nav-disclosure-chevron'/></button><ul id='tools-nav-children' className='tools-nav-children' aria-label='Tools' hidden={!toolsExpanded}>{tools.map(tool=><li key={tool.id}>{navButton(tool.title,{kind:'tools',tool:tool.id},'tools')}</li>)}</ul></li>
+        <li><button className='nav-action nav-disclosure' onClick={()=>setGamesExpanded(expanded=>!expanded)} aria-expanded={gamesExpanded} aria-controls='games-nav-children'><Icon name='games'/><span className='nav-disclosure-label'>Games</span><UiIcon name='chevron-down' size={16} className='nav-disclosure-chevron'/></button><ul id='games-nav-children' className='tools-nav-children' aria-label='Games' hidden={!gamesExpanded}><li>{navButton('Coming soon',{kind:'games'},'games')}</li></ul></li>
+      </ul>{navButton('Explore',{kind:'about'},'about')}</nav>
       <div className="sidebar-scroll"><div className="nav-group recent"><p className="nav-heading">Recents</p>{recent.length>0 ? recent.map(item=><button className="nav-topic" key={viewKey(item)} onClick={()=>openView(item)}>{titleFor(item)}</button>) : <p className="empty-recent">No recent chats</p>}</div></div>
       <div className="sidebar-bottom"><button className="sidebar-file" onClick={()=>openView({kind:'experience'})}><span className="file-icon"><UiIcon name="document"/></span><span><strong>Experience & CV details</strong><small>Updated from Jay’s résumé</small></span></button><AppearanceToggle/><SidebarProfile/></div>
     </aside>
