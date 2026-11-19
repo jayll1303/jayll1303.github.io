@@ -17,3 +17,4 @@ Rule list:
 2. Prompt Collection: .agent\rules\prompt-collection.md
 3. Resume page: .agent\rules\resume.md
 4. React Tools / Prompt Forge: .agent/rules/chat-tools.md
+5. Games gallery: .agent/rules/games.md

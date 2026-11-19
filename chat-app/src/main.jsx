@@ -158,7 +158,6 @@ function SidebarDisclosure({label, icon, expanded, onToggle, children}) {
 function App() {
   const [view,setView] = useState(viewFromHash);
   const [toolsExpanded,setToolsExpanded] = useState(() => view.kind==='tools');
-  const [gamesExpanded,setGamesExpanded] = useState(() => view.kind==='games');
   const [messages,setMessages] = useState(() => viewFromHash().kind === 'home' || isFullPageView(viewFromHash()) ? [] : [{question:titleFor(viewFromHash()),view:viewFromHash()}]);
   const [recent,setRecent] = useState([]);
   const [menuOpen,setMenuOpen] = useState(false);
@@ -345,9 +344,7 @@ function App() {
         <SidebarDisclosure label="Tools" icon="tools" expanded={toolsExpanded} onToggle={()=>setToolsExpanded(expanded=>!expanded)}>
           {tools.map(tool=><li key={tool.id}>{navButton(tool.title,{kind:'tools',tool:tool.id},'tools')}</li>)}
         </SidebarDisclosure>
-        <SidebarDisclosure label="Games" icon="games" expanded={gamesExpanded} onToggle={()=>setGamesExpanded(expanded=>!expanded)}>
-          <li>{navButton('Coming soon',{kind:'games'},'games')}</li>
-        </SidebarDisclosure>
+        <li>{navButton('Games',{kind:'games'},'games')}</li>
       </ul>{navButton('Explore',{kind:'about'},'about')}</nav>
       <div className="sidebar-scroll"><div className="nav-group recent"><p className="nav-heading">Recents</p>{recent.length>0 ? recent.map(item=><button className="nav-topic" key={viewKey(item)} onClick={()=>openView(item)}>{titleFor(item)}</button>) : <p className="empty-recent">No recent chats</p>}</div></div>
       <div className="sidebar-bottom"><AppearanceToggle/><SidebarProfile/></div>
