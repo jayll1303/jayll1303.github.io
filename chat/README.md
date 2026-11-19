@@ -89,3 +89,7 @@ Timestamp accepts Unix seconds/milliseconds and ISO dates/date-times and shows U
 Diff Checker compares Original and Modified text by line and highlights inline changes in replaced lines. Large inputs are bounded to protect responsiveness. It compares literal text, including whitespace and JSON key order.
 
 Run `npm test` and `npm run build` from `chat-app/`; source modules own conversion and diff validation, while `timestamp-page.jsx` and `diff-page.jsx` own presentation. The checked-in `chat/assets/*` bundles must be regenerated with the build before the new tools appear on the static site.
+
+## Games library
+
+Games is a direct sidebar item in the chat portfolio and follows the Projects catalog row layout. En Bac opens at `/games/ace7/` as a separate viewport-filling web game. Its static artifact is refreshed automatically by the private En Bac source repository workflow.

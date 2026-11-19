@@ -1,0 +1,34 @@
+.games-catalog .catalog-section { margin-top: 34px; }
+.games-catalog .catalog-grid { grid-template-columns: minmax(0, 1fr); }
+.games-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 7px;
+  border-radius: 10px;
+  color: var(--appearance-ink);
+  text-decoration: none;
+}
+.games-row:hover { background: var(--appearance-hover); }
+.games-row-art {
+  width: 104px;
+  height: 68px;
+  flex: 0 0 104px;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--appearance-line);
+  border-radius: 8px;
+  background: var(--appearance-surface);
+}
+.games-row-art img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 58%; }
+.games-row-copy { padding: 2px 0; }
+.games-row-copy>span { -webkit-line-clamp: 2; }
+.games-catalog :is(a,button):focus-visible { outline: 2px solid var(--appearance-accent); outline-offset: 3px; }
+@media(max-width:560px) {
+  .games-catalog .catalog-section { margin-top: 28px; }
+  .games-row { align-items: flex-start; gap: 11px; }
+  .games-row-art { width: 82px; height: 64px; flex-basis: 82px; }
+  .games-row-copy { gap: 2px; }
+}
+@media(prefers-reduced-motion:reduce) { .games-row-art img { transition: none; } }
