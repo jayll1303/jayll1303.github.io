@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#151d23" />
+    <meta name="description" content="Én Bạc — game không chiến tri ân phi công Nguyễn Văn Bảy và bầu trời quê hương." />
+    <title>ÉN BẠC — Bầu trời quê hương</title>
+    <script type="module" crossorigin src="/games/ace7/assets/index-DvLrxBeY.js"></script>
+    <link rel="stylesheet" crossorigin href="/games/ace7/assets/index-ByQsFFZu.css">
+  </head>
+  <body>
+    <div id="app" class="tribute-app">
+      <div id="viewport" aria-hidden="true"></div>
+      <div class="scene-wash" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <header id="site-header" class="site-header">
+        <a class="brand" href="#top" aria-label="Én Bạc — về đầu trang">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" role="presentation"><path d="M5 8h30v24H5z" fill="#a92b32" /><path d="m20 11 2.6 6.7h7l-5.7 4.1 2.2 6.8-6.1-4-6.1 4 2.2-6.8-5.7-4.1h7z" fill="#f2c65d" /></svg>
+          </span>
+          <strong>ÉN BẠC</strong>
+        </a>
+        <nav class="site-nav" aria-label="Mục lục">
+          <a href="#story">HÀNH TRÌNH</a>
+          <a href="#campaign">CHIẾN DỊCH</a>
+          <button type="button" data-help>ĐIỀU KHIỂN</button>
+        </nav>
+        <div class="site-toggles">
+          <button id="theme-motion" class="icon-toggle" type="button" aria-pressed="false" title="Bật/tắt chuyển động">CHUYỂN ĐỘNG</button>
+          <button id="sound" class="icon-toggle" type="button" aria-pressed="true" title="Bật/tắt âm thanh">ÂM THANH: BẬT</button>
+        </div>
+      </header>
+
+      <div id="home" class="home" tabindex="-1">
+        <section id="top" class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span aria-hidden="true"></span> TRI ÂN PHI CÔNG NGUYỄN VĂN BẢY · 1936 – 2019</p>
+            <h1 id="hero-title"><span>ÉN</span><em>BẠC</em></h1>
+            <p class="lede">Bảy chuyến bay qua cuộc đời một người nông dân trở thành phi công huyền thoại.</p>
+            <div class="hero-actions">
+              <button id="continue" class="primary" type="button"><span><small id="continue-kicker">CHIẾN DỊCH</small><b id="continue-title">Học bay</b></span><i aria-hidden="true">↗</i></button>
+              <button id="free-flight" class="secondary" type="button">BAY TỰ DO</button>
+            </div>
+            <a class="scroll-cue" href="#story"><i aria-hidden="true"></i> CUỘN XUỐNG · HÀNH TRÌNH CỦA ÔNG</a>
+          </div>
+          <figure class="hero-visual">
+            <div class="tribute-aura" aria-hidden="true"></div>
+            <img class="portrait-art" src="/games/ace7/assets/nguyen-van-bay-portrait.png" alt="Chân dung minh họa phi công Nguyễn Văn Bảy" fetchpriority="high" />
+            <div class="tribute-sparks" aria-hidden="true"></div>
+            <div class="hero-visual-shade" aria-hidden="true"></div>
+            <figcaption><strong>NGUYỄN VĂN BẢY</strong><small>ANH HÙNG LỰC LƯỢNG VŨ TRANG NHÂN DÂN</small></figcaption>
+          </figure>
+        </section>
+
+        <section id="story" class="story" aria-labelledby="story-title">
+          <header class="section-head">
+            <p class="eyebrow"><span aria-hidden="true"></span> HÀNH TRÌNH</p>
+            <h2 id="story-title">TỪ CÁNH ĐỒNG <em>ĐẾN BẦU TRỜI</em></h2>
+            <p>Cuộn để bay cùng ông qua từng mốc. Số trong ngoặc dẫn tới nguồn ở cuối trang.</p>
+          </header>
+          <div id="timeline" class="timeline"></div>
+        </section>
+
+        <section id="campaign" class="campaign" aria-labelledby="campaign-title">
+          <header class="section-head">
+            <p class="eyebrow"><span aria-hidden="true"></span> CHIẾN DỊCH</p>
+            <h2 id="campaign-title">BẢY <em>CHUYẾN BAY</em></h2>
+            <p>Mỗi màn lấy cảm hứng từ một mốc có thật. Hoàn thành màn trước để mở màn sau.</p>
+          </header>
+          <div class="campaign-body">
+            <ol id="mission-list" class="mission-list"></ol>
+            <article id="mission-detail" class="mission-detail" aria-live="polite">
+              <p class="mission-meta"><span id="detail-number">01</span><span id="detail-date"></span><span id="detail-place"></span></p>
+              <h3 id="detail-title"></h3>
+              <p id="detail-brief" class="detail-brief"></p>
+              <h4>MỤC TIÊU</h4>
+              <ol id="detail-objectives" class="detail-objectives"></ol>
+              <div class="detail-chips" id="detail-chips"></div>
+              <div class="detail-start">
+                <div class="segmented" id="ai-level" role="radiogroup" aria-label="Độ khó">
+                  <button type="button" role="radio" aria-checked="true" data-level="easy">DỄ</button>
+                  <button type="button" role="radio" aria-checked="false" data-level="normal">THƯỜNG</button>
+                </div>
+                <button id="start" class="primary" type="button"><span><b>CẤT CÁNH</b></span><i aria-hidden="true">↗</i></button>
+              </div>
+              <p id="detail-locked" class="detail-locked" hidden>Hoàn thành màn trước để mở khóa.</p>
+            </article>
+          </div>
+        </section>
+
+        <footer id="sources" class="sources">
+          <h2>NGUỒN</h2>
+          <ol id="source-list"></ol>
+          <p>Trò chơi là một lời tri ân, không phải tái hiện lịch sử. Nguyễn Văn Bảy bay MiG-17 và chỉ dùng pháo; chiếc MiG-21, tên lửa và mồi bẫy trong game là lựa chọn gameplay. Các nguồn còn chênh nhau ở vài chi tiết; trang này chỉ nêu phần đã đối chiếu. Chân dung là tranh minh họa, không phải ảnh tư liệu.</p>
+        </footer>
+      </div>
+
+      <main id="main-content">
+        <section id="intro-panel" class="intro-panel" hidden aria-labelledby="intro-title">
+          <p class="eyebrow"><span aria-hidden="true"></span> <span id="intro-kicker">CHUẨN BỊ CẤT CÁNH</span></p>
+          <h2 id="intro-title">Từ mặt đất quê hương</h2>
+          <button id="skip-intro" class="text-button" type="button">BỎ QUA CẢNH <span aria-hidden="true">→</span></button>
+        </section>
+
+        <section id="warmup-panel" class="warmup-panel" hidden aria-labelledby="warmup-step">
+          <p id="warmup-step" class="warmup-step">GIỮ SPACE · TĂNG GA</p>
+          <div class="warmup-metrics">
+            <label><span>TỐC ĐỘ</span><strong id="warmup-speed-value"></strong><progress id="warmup-speed" max="100" value="0"></progress></label>
+            <label><span>ĐỘ CAO</span><strong id="warmup-altitude-value"></strong><progress id="warmup-altitude" max="100" value="0"></progress></label>
+          </div>
+        </section>
+
+        <section id="hud" hidden aria-label="Thông tin chuyến bay">
+          <div id="threat-glow" class="threat-glow" aria-hidden="true"></div>
+
+          <div class="objective">
+            <small><b id="obj-step">1/1</b> <span id="obj-mission">NHIỆM VỤ</span></small>
+            <strong id="obj-label"></strong>
+            <span id="obj-detail"></span>
+            <div class="bar"><i id="obj-progress"></i></div>
+            <div id="asset" class="asset" hidden><small id="asset-label">CẦU</small><div class="bar"><i id="asset-bar"></i></div><b id="asset-value">100%</b></div>
+          </div>
+
+          <div class="compass" aria-label="Hướng bay">
+            <div class="compass-tape" aria-hidden="true"><div id="compass-strip" class="compass-strip"></div></div>
+            <strong id="heading">000</strong>
+          </div>
+
+          <aside id="hotkeys" class="hotkeys" aria-label="Phím tắt">
+            <dl>
+              <div><dt><kbd>CHUỘT</kbd></dt><dd>Hướng bay</dd></div>
+              <div><dt><kbd>TRÁI</kbd></dt><dd>Bắn pháo</dd></div>
+              <div><dt><kbd>PHẢI</kbd></dt><dd>Tên lửa</dd></div>
+              <div><dt><kbd>SPACE</kbd></dt><dd>Tăng ga</dd></div>
+              <div><dt><kbd>CTRL</kbd></dt><dd>Phanh</dd></div>
+              <div><dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Rẽ gắt</dd></div>
+              <div><dt><kbd>Q</kbd><kbd>E</kbd></dt><dd>Lái hướng</dd></div>
+              <div><dt><kbd>T</kbd></dt><dd>Đổi mục tiêu</dd></div>
+              <div><dt><kbd>G</kbd></dt><dd>Mồi bẫy</dd></div>
+              <div><dt><kbd>L</kbd></dt><dd>Càng</dd></div>
+              <div><dt><kbd>C</kbd></dt><dd>Góc nhìn</dd></div>
+              <div><dt><kbd>ALT</kbd></dt><dd>Nhìn quanh</dd></div>
+              <div><dt><kbd>V</kbd></dt><dd>Nhìn sau</dd></div>
+              <div><dt><kbd>ESC</kbd></dt><dd>Tạm dừng</dd></div>
+              <div class="hotkeys-toggle"><dt><kbd>H</kbd></dt><dd>Ẩn bảng này</dd></div>
+            </dl>
+            <p class="hotkeys-hint"><kbd>H</kbd> Phím tắt</p>
+          </aside>
+
+          <div class="tape tape-speed"><small>TỐC ĐỘ</small><strong id="speed">0</strong><span>KM/H</span><div class="bar"><i id="throttle"></i></div><em id="flight-status">CRUISE</em></div>
+          <div class="tape tape-altitude"><small>ĐỘ CAO</small><strong id="altitude">0</strong><span>M</span><b id="g-force">1.0 G</b><em id="gear-state" hidden>CÀNG ĐÃ HẠ</em></div>
+
+          <div id="reticle" class="reticle" aria-hidden="true"><i></i></div>
+          <div id="hit-marker" class="hit-marker" hidden aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div id="flight-command" class="flight-command" hidden aria-hidden="true"></div>
+          <div id="gun-lead" class="gun-lead" hidden aria-hidden="true"></div>
+          <div id="markers" aria-hidden="true"></div>
+          <div id="waypoint" class="waypoint" hidden aria-hidden="true"><i></i><small id="waypoint-distance"></small></div>
+          <div id="target-arrow" class="target-arrow" hidden aria-hidden="true"><i>▲</i><small id="target-arrow-label"></small></div>
+          <div id="threats" aria-hidden="true"></div>
+
+          <div id="master-warning" class="master-warning" hidden role="alert">
+            <span class="warn-icon" aria-hidden="true">!</span>
+            <div><strong><span id="warn-title"></span> <b id="warn-detail"></b></strong><small id="warn-action"></small></div>
+          </div>
+          <div id="cautions" class="cautions" aria-live="polite"></div>
+          <div id="alert" class="alert" role="status" aria-live="polite"></div>
+
+          <div class="weapons" aria-label="Vũ khí">
+            <div class="weapon" id="weapon-gun"><kbd>CHUỘT TRÁI</kbd><strong>PHÁO</strong><span>∞</span></div>
+            <div class="weapon" id="weapon-missile"><kbd>CHUỘT PHẢI</kbd><strong>TÊN LỬA <b id="missile-ammo">00</b></strong><div class="rails"><i><b id="rail-0"></b></i><i><b id="rail-1"></b></i></div><span id="lock-status">CHƯA KHÓA</span><div class="bar lock"><i id="lock-progress"></i></div></div>
+            <div class="weapon" id="weapon-flare"><kbd>G</kbd><strong>MỒI BẪY <b id="flare-ammo">00</b></strong></div>
+          </div>
+          <div class="armor"><small>THÂN MÁY BAY</small><div class="bar"><i id="health-bar"></i></div><strong id="health">100%</strong></div>
+          <div class="radar"><canvas id="radar" width="264" height="264" aria-label="Radar"></canvas><small>4 KM</small></div>
+        </section>
+
+        <section id="result" class="result panel" hidden aria-labelledby="result-title">
+          <p class="eyebrow" id="result-eyebrow"></p>
+          <h2 id="result-title"></h2>
+          <p id="result-description"></p>
+          <dl id="result-stats" class="result-stats"></dl>
+          <button id="next-mission" class="primary" type="button"><span><b id="next-mission-label">NHIỆM VỤ KẾ</b></span><i aria-hidden="true">↗</i></button>
+          <div class="panel-actions"><button id="restart" class="secondary" type="button">BAY LẠI</button><button id="hangar" class="secondary" type="button">VỀ TRANG CHỦ</button></div>
+        </section>
+
+        <div id="pause-panel" class="pause-panel panel" hidden aria-labelledby="pause-title">
+          <p class="eyebrow">ĐÃ TẠM DỪNG</p>
+          <h2 id="pause-title">SẴN SÀNG TRỞ LẠI?</h2>
+          <button id="resume" class="primary" type="button"><span><b>TIẾP TỤC</b></span><i aria-hidden="true">↗</i></button>
+          <div class="panel-actions"><button id="pause-restart" class="secondary" type="button">BAY LẠI</button><button id="pause-help" class="secondary" type="button" data-help>ĐIỀU KHIỂN</button><button id="pause-quit" class="secondary" type="button">THOÁT</button></div>
+        </div>
+      </main>
+
+      <div class="touch-controls" id="touch-controls" hidden>
+        <div class="touch-flight"><div><button type="button" data-key="KeyQ" aria-label="Lái hướng trái">Q</button><button type="button" data-key="KeyW" aria-label="Kéo mũi lên">↑</button><button type="button" data-key="KeyE" aria-label="Lái hướng phải">E</button></div><div><button type="button" data-key="KeyA" aria-label="Rẽ trái">↶</button><button type="button" data-key="KeyS" aria-label="Hạ mũi">↓</button><button type="button" data-key="KeyD" aria-label="Rẽ phải">↷</button></div><div><button type="button" data-key="Space" aria-label="Tăng ga">GA</button><button type="button" data-key="ControlLeft" aria-label="Phanh">PHANH</button></div></div>
+        <div class="touch-weapons"><div class="touch-system"><button id="pause" type="button" aria-label="Tạm dừng">Ⅱ</button><button type="button" data-key="KeyC" aria-label="Đổi góc nhìn">C</button></div><button type="button" data-key="KeyT">MỤC TIÊU</button><button type="button" data-key="KeyG">MỒI</button><button type="button" data-key="KeyF">TÊN LỬA</button><button type="button" data-key="MouseGun" class="touch-fire">PHÁO</button></div>
+      </div>
+
+      <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
+        <div class="help-shell">
+          <header class="help-header"><h2 id="help-title">ĐIỀU KHIỂN</h2><button id="close-help" type="button" aria-label="Đóng">✕</button></header>
+          <div class="help-grid">
+            <section class="help-card help-mouse">
+              <h3>CHUỘT · LÁI VÀ BẮN</h3>
+              <svg viewBox="0 0 320 226" role="img" aria-label="Chuột trái bắn pháo, chuột phải phóng tên lửa, chuột giữa đổi mục tiêu, rê chuột để định hướng">
+                <g fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="120" y="34" width="80" height="140" rx="40" />
+                  <path d="M160 34v56M120 90h80" />
+                </g>
+                <path class="lmb" d="M158 36c-22 1-36 18-36 38v14h36z" />
+                <path class="rmb" d="M162 36c22 1 36 18 36 38v14h-36z" />
+                <rect class="mmb" x="154" y="50" width="12" height="26" rx="6" />
+                <g class="callout"><path d="M132 60H74" /><text x="70" y="56" text-anchor="end">BẮN PHÁO</text><text class="sub" x="70" y="72" text-anchor="end">giữ chuột trái</text></g>
+                <g class="callout"><path d="M188 60h58" /><text x="250" y="56">TÊN LỬA</text><text class="sub" x="250" y="72">chuột phải</text></g>
+                <g class="callout"><path d="M160 50V18" /><text x="160" y="12" text-anchor="middle">ĐỔI MỤC TIÊU · chuột giữa</text></g>
+                <g class="move"><path d="M96 150H66m0 0 8-6m-8 6 8 6M224 150h30m0 0-8-6m8 6-8 6M160 180v22m0 0-6-8m6 8 6-8" /></g>
+                <text x="160" y="222" text-anchor="middle">RÊ CHUỘT = HƯỚNG BAY</text>
+              </svg>
+            </section>
+            <section class="help-card help-keys">
+              <h3>PHÍM · HỖ TRỢ</h3>
+              <dl>
+                <div><dt><kbd>SPACE</kbd></dt><dd>Tăng ga</dd></div>
+                <div><dt><kbd>CTRL</kbd></dt><dd>Phanh</dd></div>
+                <div><dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Rẽ gắt hơn</dd></div>
+                <div><dt><kbd>Q</kbd><kbd>E</kbd></dt><dd>Lái hướng</dd></div>
+                <div><dt><kbd>G</kbd></dt><dd>Thả mồi bẫy</dd></div>
+                <div><dt><kbd>T</kbd></dt><dd>Đổi mục tiêu</dd></div>
+                <div><dt><kbd>L</kbd></dt><dd>Hạ / thu càng</dd></div>
+                <div><dt><kbd>C</kbd></dt><dd>Buồng lái</dd></div>
+                <div><dt><kbd>ALT</kbd></dt><dd>Nhìn quanh</dd></div>
+                <div><dt><kbd>V</kbd></dt><dd>Nhìn sau</dd></div>
+                <div><dt><kbd>ESC</kbd></dt><dd>Tạm dừng</dd></div>
+                <div><dt><kbd>H</kbd></dt><dd>Ẩn / hiện phím tắt</dd></div>
+              </dl>
+            </section>
+          </div>
+          <section class="help-legend" aria-label="Cách đọc màn hình">
+            <div><span class="legend-icon legend-nose" aria-hidden="true"></span><p><b>Vòng tròn</b> là mũi máy bay. Đạn bay theo nó, không theo con trỏ.</p></div>
+            <div><span class="legend-icon legend-lock" aria-hidden="true"></span><p><b>Khung chuyển vàng</b> là đã khóa. Lúc đó mới phóng tên lửa.</p></div>
+            <div><span class="legend-icon legend-threat" aria-hidden="true">▲</span><p><b>Mũi tên đỏ</b> chỉ hướng tên lửa đang tới. Thả mồi bẫy rồi rẽ gắt.</p></div>
+          </section>
+        </div>
+      </dialog>
+    </div>
+  </body>
+</html>
