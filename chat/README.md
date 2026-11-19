@@ -42,6 +42,8 @@ The existing chat layout uses an orchestrated welcome, word-by-word introduction
 
 Motion uses transform and opacity, the shared deceleration curve and one-time viewport observation. Base content remains visible if animation is unavailable. Changing the system reduced-motion preference cancels active reveal animations and removes CSS spatial transitions. Hidden tabs cancel active reveal animations. Pointer hover effects are limited to fine pointers. No scroll hijacking or model-answer changes are introduced.
 
+The desktop sidebar transitions its layout width on collapse and reopen. On mobile, the drawer slides and the backdrop fades. Tools and Games animate the height of each group as a unit, with closed links removed from keyboard navigation. Reduced motion switches all sidebar states immediately.
+
 ## Sidebar identity
 
 The sidebar uses Jay's public [GitHub profile](https://github.com/jayll1303) avatar, verified by the account name and existing portfolio links. The image was retrieved from `https://avatars.githubusercontent.com/u/109547569?v=4&s=160` on 2026-10-29 and is bundled locally in `chat-app/src/profile-assets/jayll-avatar.jpg`; visitors do not fetch their avatar from GitHub. `sidebar-profile.jsx` reserves the image dimensions and falls back to the J monogram on image failure. The name and title use compact 16px line heights with a 2px gap.

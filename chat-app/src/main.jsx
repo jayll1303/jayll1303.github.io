@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { achievements, certificates, community, contact, education, experience, projects, skills } from './portfolio-data';
 import { entriesForIds, rankEntries } from './portfolio-search';
@@ -141,6 +141,20 @@ function SearchDialog({open,onClose,onOpen,onAsk}) {
   return <dialog ref={ref} className="search-dialog" onCancel={event=>{event.preventDefault();closeMotionDialog(ref.current);}} onClose={onClose}><div className="search-head"><Icon name="search" /><input aria-label="Search portfolio" placeholder="Search projects, skills, experience…" value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => {if(event.key==='Enter'&&query.trim()){event.preventDefault();onAsk(query.trim());closeMotionDialog(ref.current);}}} /><button onClick={()=>closeMotionDialog(ref.current)} aria-label="Close search">Esc</button></div><div className="search-results">{query.trim()&&<button className="ask-model-result" onClick={()=>{onAsk(query.trim());closeMotionDialog(ref.current);}}><strong>Ask local model: “{query.trim()}”</strong><small>Find relevant work using a small browser model</small></button>}{results.length ? results.map(entry => <button key={entry.key} onClick={() => {onOpen(entry.view);closeMotionDialog(ref.current);}}><strong>{entry.label}</strong><small>{entry.detail}</small></button>) : <p>No direct matches. Ask the local model instead.</p>}</div></dialog>;
 }
 
+const mobileSidebarQuery = '(max-width: 760px)';
+
+function SidebarDisclosure({label, icon, expanded, onToggle, children}) {
+  const id = `${icon}-nav-children`;
+  return <li>
+    <button className="nav-action nav-disclosure" onClick={onToggle} aria-expanded={expanded} aria-controls={id}>
+      <Icon name={icon}/><span className="nav-disclosure-label">{label}</span><UiIcon name="chevron-down" size={16} className="nav-disclosure-chevron"/>
+    </button>
+    <div id={id} className="sidebar-disclosure-panel" inert={!expanded}>
+      <div><ul className="tools-nav-children" aria-label={label}>{children}</ul></div>
+    </div>
+  </li>;
+}
+
 function App() {
   const [view,setView] = useState(viewFromHash);
   const [toolsExpanded,setToolsExpanded] = useState(() => view.kind==='tools');
@@ -148,6 +162,7 @@ function App() {
   const [messages,setMessages] = useState(() => viewFromHash().kind === 'home' || isFullPageView(viewFromHash()) ? [] : [{question:titleFor(viewFromHash()),view:viewFromHash()}]);
   const [recent,setRecent] = useState([]);
   const [menuOpen,setMenuOpen] = useState(false);
+  const [isMobile,setIsMobile] = useState(() => matchMedia(mobileSidebarQuery).matches);
   const [moreOpen,setMoreOpen] = useState(false);
   const [collapsed,setCollapsed] = useState(false);
   const [searchOpen,setSearchOpen] = useState(false);
@@ -155,12 +170,39 @@ function App() {
   const [toast,setToast] = useState('');
   const conversationRef=useRef(null);
   const promptRef=useRef(null);
+  const sidebarRef=useRef(null);
+  const mobileMenu=useRef(null);
+  const desktopCollapse=useRef(null);
+  const desktopReopen=useRef(null);
+  const sidebarFocusTarget=useRef(null);
+  const lastFocused=useRef(null);
   const searchTrigger=useRef(null);
   const moreTrigger=useRef(null);
   const moreMenu=useRef(null);
   const toastTimer=useRef(null);
   const modelWorker=useRef(null);
   const nextRequestId=useRef(0);
+
+  const drawerOpen = isMobile && menuOpen;
+
+  function restoreSidebarFocus(target) {
+    const available = element => element?.getClientRects().length &&
+      !element.closest('[inert]') && getComputedStyle(element).visibility === 'visible';
+    const fallback = isMobile ? mobileMenu.current : collapsed ? desktopReopen.current : desktopCollapse.current;
+    if (available(target)) target.focus({preventScroll:true});
+    else if (available(fallback)) fallback.focus({preventScroll:true});
+  }
+
+  function toggleSidebar(nextCollapsed) {
+    sidebarFocusTarget.current = nextCollapsed ? desktopReopen : desktopCollapse;
+    setCollapsed(nextCollapsed);
+  }
+
+  function openSearch(trigger) {
+    searchTrigger.current = drawerOpen ? mobileMenu.current : trigger;
+    setMenuOpen(false);
+    setSearchOpen(true);
+  }
 
   function openView(next,{append=false,question}={}) {
     const label=question || titleFor(next) || 'Explore Jay’s work';
@@ -187,27 +229,77 @@ function App() {
   },[view.kind,view.tool]);
   useEffect(() => {document.title=`${view.kind==='home'?'Ask JayLL':titleFor(view)||'Ask JayLL'} · Portfolio`;},[view]);
   useEffect(() => {if(view.kind==='home'&&conversationRef.current)conversationRef.current.scrollTop=0;},[view.kind]);
-  useEffect(() => {const key=event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchTrigger.current=document.activeElement;setSearchOpen(true);}if(event.key==='Escape'){setMenuOpen(false);if(moreOpen){setMoreOpen(false);moreTrigger.current?.focus();}}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[moreOpen]);
+  useEffect(() => {
+    const key = event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (!searchOpen) openSearch(document.activeElement);
+      }
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        if (moreOpen) {
+          setMoreOpen(false);
+          moreTrigger.current?.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', key);
+    return () => document.removeEventListener('keydown', key);
+  }, [drawerOpen, moreOpen, searchOpen]);
   useEffect(() => {if(!moreOpen)return;const close=event=>{if(!moreMenu.current?.contains(event.target)&&!moreTrigger.current?.contains(event.target))setMoreOpen(false);};document.addEventListener('pointerdown',close);moreMenu.current?.querySelector('button')?.focus();return()=>document.removeEventListener('pointerdown',close);},[moreOpen]);
-  useEffect(() => {if(!searchOpen&&searchTrigger.current?.focus){searchTrigger.current.focus();searchTrigger.current=null;}},[searchOpen]);
+  useEffect(() => {if(!searchOpen&&searchTrigger.current?.focus){restoreSidebarFocus(searchTrigger.current);searchTrigger.current=null;}},[searchOpen]);
   useEffect(() => {return()=>clearTimeout(toastTimer.current);},[]);
   useEffect(() => () => modelWorker.current?.terminate(), []);
   useEffect(() => initPortfolioMotion(), []);
   useEffect(() => {
-    if (!menuOpen || !matchMedia('(max-width:760px)').matches) return;
-    const previous = document.activeElement;
-    const sidebar = document.getElementById('sidebar');
-    const controls = () => [...sidebar.querySelectorAll('a,button')].filter(item=>item.getClientRects().length);
+    const breakpoint = matchMedia(mobileSidebarQuery);
+    const sync = () => {
+      setIsMobile(breakpoint.matches);
+      if (!breakpoint.matches) setMenuOpen(false);
+    };
+    const rememberFocus = event => { lastFocused.current = event.target; };
+    breakpoint.addEventListener('change', sync);
+    document.addEventListener('focusin', rememberFocus);
+    sync();
+    return () => {
+      breakpoint.removeEventListener('change', sync);
+      document.removeEventListener('focusin', rememberFocus);
+    };
+  }, []);
+  useLayoutEffect(() => {
+    sidebarFocusTarget.current?.current?.focus({preventScroll:true});
+    sidebarFocusTarget.current = null;
+  }, [collapsed]);
+  useLayoutEffect(() => {
+    const current = document.activeElement;
+    const previous = current === document.body ? lastFocused.current : current;
+    if (previous && (sidebarRef.current?.contains(previous) ||
+      previous === mobileMenu.current || previous === desktopReopen.current)) {
+      restoreSidebarFocus(previous);
+    }
+  }, [isMobile]);
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const sidebar = sidebarRef.current;
+    const opener = mobileMenu.current;
+    const controls = () => [...sidebar.querySelectorAll('a[href], button:not(:disabled)')]
+      .filter(item => item.tabIndex >= 0 && !item.closest('[inert]') && item.getClientRects().length);
     controls()[0]?.focus();
     const trap = event => {
-      if (event.key !== 'Tab') return;
+      if (event.key !== 'Tab' || event.defaultPrevented) return;
       const items = controls(), first = items[0], last = items.at(-1);
-      if (event.shiftKey && document.activeElement===first) { event.preventDefault();last?.focus(); }
-      else if (!event.shiftKey && document.activeElement===last) { event.preventDefault();first?.focus(); }
+      const active = document.activeElement;
+      if (!items.includes(active) || active === (event.shiftKey ? first : last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first)?.focus();
+      }
     };
     document.addEventListener('keydown',trap);
-    return () => { document.removeEventListener('keydown',trap);previous?.focus(); };
-  }, [menuOpen]);
+    return () => {
+      document.removeEventListener('keydown',trap);
+      if (matchMedia(mobileSidebarQuery).matches) opener?.focus({preventScroll:true});
+    };
+  }, [drawerOpen]);
   function notify(message){setToast(message);clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),3500);}
   function askPortfolio(text) {
     const requestId=++nextRequestId.current;
@@ -246,18 +338,22 @@ function App() {
   const galleryOpen=view.kind==='images'||view.kind==='library'||utilityOpen;
   const fullPageOpen=isFullPageView(view);
   const navButton=(label,next,icon)=> <button className={`nav-action ${viewKey(view)===viewKey(next)?'active':''}`} key={viewKey(next)} aria-current={viewKey(view)===viewKey(next)?'page':undefined} onClick={()=>openView(next)}><Icon name={icon}/><span>{label}</span></button>;
-  return <><a className="skip-link" href="#main" onClick={event=>{event.preventDefault();document.getElementById('main').focus();}}>Skip to content</a><div className={`app-shell ${collapsed?'collapsed':''} ${menuOpen?'menu-open':''}`}>
-    <aside className="sidebar" id="sidebar" aria-label="Portfolio navigation">
-      <div className="sidebar-top"><a className="brand" href="/" onClick={event=>{event.preventDefault();openView({kind:'home'});}}>JayLL</a><button className="icon-button sidebar-search" onClick={()=>{searchTrigger.current=document.activeElement;setSearchOpen(true);setMenuOpen(false);}} aria-label="Search portfolio"><Icon name="search"/></button><button className="icon-button desktop-collapse" onClick={()=>setCollapsed(true)} aria-label="Collapse sidebar"><UiIcon name="sidebar" size={16}/></button><button className="icon-button mobile-close" onClick={()=>setMenuOpen(false)} aria-label="Close sidebar"><span className="studio-menu-icon" aria-hidden="true"><i/><i/></span></button></div>
+  return <><a className="skip-link" href="#main" inert={drawerOpen} onClick={event=>{event.preventDefault();document.getElementById('main').focus();}}>Skip to content</a><div className={`app-shell ${collapsed?'collapsed':''} ${drawerOpen?'menu-open':''}`}>
+    <aside ref={sidebarRef} className="sidebar" id="sidebar" aria-label="Portfolio navigation" inert={isMobile ? !drawerOpen : collapsed}>
+      <div className="sidebar-top"><a className="brand" href="/" onClick={event=>{event.preventDefault();openView({kind:'home'});}}>JayLL</a><button className="icon-button sidebar-search" onClick={event=>openSearch(event.currentTarget)} aria-label="Search portfolio"><Icon name="search"/></button><button ref={desktopCollapse} className="icon-button desktop-collapse" onClick={()=>toggleSidebar(true)} aria-label="Collapse sidebar" aria-controls="sidebar" aria-expanded={!collapsed}><UiIcon name="sidebar" size={16}/></button><button className="icon-button mobile-close" onClick={()=>setMenuOpen(false)} aria-label="Close sidebar"><span className="studio-menu-icon" aria-hidden="true"><i/><i/></span></button></div>
       <nav className="sidebar-nav" aria-label="Quick navigation"><button className="nav-action" onClick={()=>openView({kind:'home'})}><Icon name="new"/><span>New chat</span></button>{navButton('Images',{kind:'images'},'images')}{navButton('Experience',{kind:'experience'},'experience')}{navButton('Library',{kind:'library'},'library')}{navButton('Projects',{kind:'projects'},'projects')}<ul className='tools-nav-group'>
-        <li><button className='nav-action nav-disclosure' onClick={()=>setToolsExpanded(expanded=>!expanded)} aria-expanded={toolsExpanded} aria-controls='tools-nav-children'><Icon name='tools'/><span className='nav-disclosure-label'>Tools</span><UiIcon name='chevron-down' size={16} className='nav-disclosure-chevron'/></button><ul id='tools-nav-children' className='tools-nav-children' aria-label='Tools' hidden={!toolsExpanded}>{tools.map(tool=><li key={tool.id}>{navButton(tool.title,{kind:'tools',tool:tool.id},'tools')}</li>)}</ul></li>
-        <li><button className='nav-action nav-disclosure' onClick={()=>setGamesExpanded(expanded=>!expanded)} aria-expanded={gamesExpanded} aria-controls='games-nav-children'><Icon name='games'/><span className='nav-disclosure-label'>Games</span><UiIcon name='chevron-down' size={16} className='nav-disclosure-chevron'/></button><ul id='games-nav-children' className='tools-nav-children' aria-label='Games' hidden={!gamesExpanded}><li>{navButton('Coming soon',{kind:'games'},'games')}</li></ul></li>
+        <SidebarDisclosure label="Tools" icon="tools" expanded={toolsExpanded} onToggle={()=>setToolsExpanded(expanded=>!expanded)}>
+          {tools.map(tool=><li key={tool.id}>{navButton(tool.title,{kind:'tools',tool:tool.id},'tools')}</li>)}
+        </SidebarDisclosure>
+        <SidebarDisclosure label="Games" icon="games" expanded={gamesExpanded} onToggle={()=>setGamesExpanded(expanded=>!expanded)}>
+          <li>{navButton('Coming soon',{kind:'games'},'games')}</li>
+        </SidebarDisclosure>
       </ul>{navButton('Explore',{kind:'about'},'about')}</nav>
       <div className="sidebar-scroll"><div className="nav-group recent"><p className="nav-heading">Recents</p>{recent.length>0 ? recent.map(item=><button className="nav-topic" key={viewKey(item)} onClick={()=>openView(item)}>{titleFor(item)}</button>) : <p className="empty-recent">No recent chats</p>}</div></div>
       <div className="sidebar-bottom"><AppearanceToggle/><SidebarProfile/></div>
     </aside>
-    {menuOpen&&<button className="scrim" aria-label="Close navigation" onClick={()=>setMenuOpen(false)} />}
-    <div className="main-shell"><header className={`topbar ${catalogOpen?'catalog-topbar':''} ${utilityOpen?'gallery-topbar utility-topbar':galleryOpen?'gallery-topbar':''}`}><div className="top-left"><button className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-expanded={menuOpen}><span className="studio-menu-icon" aria-hidden="true"><i/><i/></span></button>{collapsed&&<button className="icon-button reopen" onClick={()=>setCollapsed(false)} aria-label="Open sidebar"><UiIcon name="sidebar-hidden" size={16}/></button>}{catalogOpen?<nav className="catalog-tabs" aria-label="Browse portfolio"><button className={view.kind==='projects'?'active':''} aria-current={view.kind==='projects'?'page':undefined} onClick={()=>openView({kind:'projects'})}>Projects</button><button className={view.kind==='skills'?'active':''} aria-current={view.kind==='skills'?'page':undefined} onClick={()=>openView({kind:'skills'})}>Skills</button></nav>:galleryOpen?(utilityOpen?<span className='utility-topbar-label'>{topicLabels[view.kind]}</span>:null):<button className="model-button" onClick={()=>notify('Local portfolio model loads when you ask a question.')}>JayLL <span className="chevron"><UiIcon name="chevron-down" size={16}/></span></button>}</div><div className="top-right">{catalogOpen?<button className="catalog-contact" onClick={()=>openView({kind:'contact'})}>Contact <UiIcon name="open-link" size={14}/></button>:galleryOpen?null:<><button ref={moreTrigger} className="icon-button more-button" onClick={()=>setMoreOpen(open=>!open)} aria-label="More options" aria-expanded={moreOpen} aria-controls="more-options" title="More options"><UiIcon name="more"/></button>{moreOpen&&<div id="more-options" ref={moreMenu} className="more-menu" aria-label="More options"><button onClick={()=>openView({kind:'about'})}>About Jay</button><button onClick={()=>openView({kind:'experience'})}>Work history</button><button onClick={()=>openView({kind:'projects'})}>Projects</button><button onClick={()=>openView({kind:'contact'})}>Contact</button></div>}<button className="share-button" onClick={share} aria-label="Share this view" title="Share this view"><UiIcon name="share" size={16}/><span>Share</span></button></>}</div></header>
+    <button className="scrim" inert={!drawerOpen} tabIndex={-1} aria-label="Close navigation" onClick={()=>setMenuOpen(false)} />
+    <div className="main-shell" inert={drawerOpen}><header className={`topbar ${catalogOpen?'catalog-topbar':''} ${utilityOpen?'gallery-topbar utility-topbar':galleryOpen?'gallery-topbar':''}`}><div className="top-left"><button ref={mobileMenu} className="icon-button mobile-menu" onClick={()=>setMenuOpen(true)} aria-label="Open sidebar" aria-controls="sidebar" aria-expanded={drawerOpen}><span className="studio-menu-icon" aria-hidden="true"><i/><i/></span></button>{collapsed&&<button ref={desktopReopen} className="icon-button reopen" onClick={()=>toggleSidebar(false)} aria-label="Open sidebar" aria-controls="sidebar" aria-expanded={false}><UiIcon name="sidebar-hidden" size={16}/></button>}{catalogOpen?<nav className="catalog-tabs" aria-label="Browse portfolio"><button className={view.kind==='projects'?'active':''} aria-current={view.kind==='projects'?'page':undefined} onClick={()=>openView({kind:'projects'})}>Projects</button><button className={view.kind==='skills'?'active':''} aria-current={view.kind==='skills'?'page':undefined} onClick={()=>openView({kind:'skills'})}>Skills</button></nav>:galleryOpen?(utilityOpen?<span className='utility-topbar-label'>{topicLabels[view.kind]}</span>:null):<button className="model-button" onClick={()=>notify('Local portfolio model loads when you ask a question.')}>JayLL <span className="chevron"><UiIcon name="chevron-down" size={16}/></span></button>}</div><div className="top-right">{catalogOpen?<button className="catalog-contact" onClick={()=>openView({kind:'contact'})}>Contact <UiIcon name="open-link" size={14}/></button>:galleryOpen?null:<><button ref={moreTrigger} className="icon-button more-button" onClick={()=>setMoreOpen(open=>!open)} aria-label="More options" aria-expanded={moreOpen} aria-controls="more-options" title="More options"><UiIcon name="more"/></button>{moreOpen&&<div id="more-options" ref={moreMenu} className="more-menu" aria-label="More options"><button onClick={()=>openView({kind:'about'})}>About Jay</button><button onClick={()=>openView({kind:'experience'})}>Work history</button><button onClick={()=>openView({kind:'projects'})}>Projects</button><button onClick={()=>openView({kind:'contact'})}>Contact</button></div>}<button className="share-button" onClick={share} aria-label="Share this view" title="Share this view"><UiIcon name="share" size={16}/><span>Share</span></button></>}</div></header>
       <main id="main" className={`main-content ${fullPageOpen?'catalog-main':''}`} tabIndex="-1">{fullPageOpen?<div className="catalog-scroll" key={view.kind}>{catalogOpen?<React.Suspense fallback={<ProjectCatalogSkeleton kind={view.kind} />}><ProjectCatalog key={view.kind} kind={view.kind} onOpen={openView}/></React.Suspense>:utilityOpen?<React.Suspense fallback={<div className='tools-page' role='status'>Loading {topicLabels[view.kind]}...</div>}>{view.kind==='tools'?<ToolsPage tool={toolFor(view.tool).id}/>:<GamesPage/>}</React.Suspense>:view.kind==='images'?<ImagesGallery/>:<AchievementsLibrary/>}</div>:<><div className="conversation" ref={conversationRef} aria-live="polite">{messages.length===0?<section className="welcome"><span className="welcome-glyph" aria-hidden="true">✳</span><h1><span className="studio-heading-part">What would you like</span>{' '}<span className="studio-heading-part">to know about Jay?</span></h1><p className="welcome-sub studio-tagline" data-word-reveal><span className="sr-only">Explore the work, the systems behind it, and the path that brought me here. Start anywhere.</span><span aria-hidden="true">{['Explore the work,', 'the systems behind it,', 'and the path that brought me here.', 'Start anywhere.'].map((line,index)=><React.Fragment key={line}>{index>0 && ' '}{line.split(' ').map((word,i)=><React.Fragment key={i}><span className="studio-word">{word}</span>{' '}</React.Fragment>)}{index===1 && <br/>}</React.Fragment>)}</span></p><div className="suggestions">{suggestions.map(item=><button key={item.title} className="suggestion" onClick={()=>openView(item.view)}><span className="s-icon"><UiIcon name={item.icon}/></span><strong>{item.title}</strong><span>{item.description}</span></button>)}</div><p className="welcome-footnote">Currently at FE Credit · Building voice and retrieval systems</p></section>:<div className="thread">{messages.map((message,index)=><div className="message-pair" key={`${index}-${viewKey(message.view)}`}><div className="message user-message"><div className="user-bubble">{message.question}</div></div><article className="message assistant-message"><div className="assistant-head"><span className="assistant-logo" aria-hidden="true">✳</span><span>JayLL</span></div><AssistantAnswer view={message.view} onOpen={next=>openView(next,{append:true})}/></article></div>)}</div>}</div>
         <div className="composer-zone"><form className={`composer ${prompt.trim()?'has-prompt':''}`} onSubmit={submit}><div className="composer-tools"><button type="button" className="attach-button" onClick={()=>openView({kind:'experience'})} aria-label="Explore CV details" title="Explore CV details"><UiIcon name="plus" size={16}/></button></div><label className="sr-only" htmlFor="prompt">Ask about Jay’s portfolio</label><textarea id="prompt" ref={promptRef} rows="1" value={prompt} onChange={event=>setPrompt(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();event.currentTarget.form.requestSubmit();}}} placeholder="Ask JayLL"/><button className="send-button" type="submit" aria-label="Ask portfolio" disabled={!prompt.trim()}><UiIcon name="send" size={20}/></button></form><p className="composer-note">Small local model downloads on first question. Answers point to portfolio records.</p></div></>}
       </main></div></div>
