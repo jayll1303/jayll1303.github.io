@@ -224,7 +224,6 @@ function App() {
   useEffect(() => {const sync=()=>{const next=viewFromHash();setView(next);setMessages(next.kind==='home'||isFullPageView(next)?[]:[{question:titleFor(next),view:next}]);};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)};},[]);
   useEffect(() => {
     if(view.kind==='tools')setToolsExpanded(true);
-    if(view.kind==='games')setGamesExpanded(true);
   },[view.kind,view.tool]);
   useEffect(() => {document.title=`${view.kind==='home'?'Ask JayLL':titleFor(view)||'Ask JayLL'} · Portfolio`;},[view]);
   useEffect(() => {if(view.kind==='home'&&conversationRef.current)conversationRef.current.scrollTop=0;},[view.kind]);
