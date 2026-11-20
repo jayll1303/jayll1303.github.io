@@ -93,3 +93,5 @@ Run `npm test` and `npm run build` from `chat-app/`; source modules own conversi
 ## Games library
 
 Games is a direct sidebar item in the chat portfolio and follows the Projects catalog row layout. En Bac opens at `/games/ace7/` as a separate viewport-filling web game. Its static artifact is refreshed automatically by the private En Bac source repository workflow.
+
+Tom’s Trap-o-Matic plays directly below its catalog row through `https://archive.org/embed/toms_trap-o-matic`. Opening the row mounts a responsive 3:2 iframe; closing it or leaving Games stops playback by unmounting the player. It includes optional fullscreen, source credit and an always-visible Archive fallback link. Playback depends on Internet Archive availability and can take time to initialize; mouse controls are described and touch support is unverified. No SWF or Ruffle distribution is bundled. The local trap illustration is generic; game credits follow the [Archive record](https://archive.org/details/toms_trap-o-matic).
